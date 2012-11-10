@@ -1,4 +1,5 @@
 *.log
 *.pot
 *.pyc
+venv
 local_settings.py

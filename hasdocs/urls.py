@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserDetailView, UserUpdateView
-
+from hasdocs.projects.view import ProjectDetailView
 
 admin.autodiscover()
 
@@ -31,6 +31,8 @@ urlpatterns = patterns('',
 
     # User detail
     url(r'^(?P<slug>\w+)/$', UserDetailView.as_view(), name='user_detail'),
+    # Project detail
+    #url(r'^(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
 
     # How it works
     url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),

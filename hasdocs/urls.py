@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserDetailView, UserUpdateView
-from hasdocs.projects.views import ProjectDetailView
+from hasdocs.projects.views import ProjectDetailView, ProjectUpdateView
 
 admin.autodiscover()
 
@@ -28,13 +28,15 @@ urlpatterns = patterns('',
     url(r'^oauth2/$', 'hasdocs.accounts.views.oauth_authenticate', name='oauth_authenticate'),
     url(r'^oauth2/authenticated/$', 'hasdocs.accounts.views.oauth_authenticated', name='oauth_authenticated'),
 
-    # User detail
-    url(r'^(?P<slug>\w+)/$', UserDetailView.as_view(), name='user_detail'),
-    # Project detail
-    #url(r'^(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
-
     # How it works
     url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
     # Pricing
     url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='how'),
+    
+    # User detail
+    url(r'^(?P<slug>\w+)/$', UserDetailView.as_view(), name='user_detail'),
+    # Project detail
+    url(r'^(?P<username>\w+)/(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
+    # Project edit
+    url(r'^(?P<username>\w+)/(?P<slug>\w+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
 )

@@ -1,9 +1,10 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Generator(models.Model):
@@ -37,11 +38,11 @@ class Project(models.Model):
     # Whether this project is private or not
     private = models.BooleanField(default=False)
     # URL of the git repository
-    git_url = models.URLField(blank=True)
+    git_url = models.CharField(max_length=200, blank=True)
     # Programming language this project is in    
-    language = models.ForeignKey(Language)
+    language = models.ForeignKey(Language, blank=True, null=True)
     # Documentation generator to be used for this project
-    generator = models.ForeignKey(Generator)
+    generator = models.ForeignKey(Generator, blank=True, null=True)
     # Published date
     pub_date = models.DateTimeField(auto_now_add=True)
     # Last modified date
@@ -50,5 +51,6 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
     
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('project_detail', args=[self.slug])
+        return ('project_detail', [self.owner, self.name])

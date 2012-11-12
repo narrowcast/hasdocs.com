@@ -15,7 +15,6 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from hasdocs.accounts.forms import SignupForm, UserUpdateForm
 
-# Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 # GitHub OAuth 2.0 client
@@ -40,6 +39,7 @@ class UserDetailView(DetailView):
     context_object_name = 'account'
     template_name='accounts/user_detail.html'
     
+    '''
     def get_context_data(self, **kwargs):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         # Retrieves the list of GitHub repos
@@ -54,6 +54,7 @@ class UserDetailView(DetailView):
                      auth=('', self.request.user.get_profile().heroku_api_key))
         context['apps'] = r.json
         return context
+    '''
         
 class UserUpdateView(UpdateView):
     """View for updating user settings."""
@@ -73,7 +74,6 @@ def oauth_authenticate(request):
     request.session['state'] = 'random'
     # the return URL is used to validate the request
     url = github.get_authorize_url(state=request.session['state'])
-    print url
     logger.debug('authorize_url: %s' % url)
     return HttpResponseRedirect(url)
 
@@ -81,11 +81,15 @@ def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
+        logger.info('Possible CSRF attack was attempted.' % url)
         return HttpResponse('You may be a victim of CSRF attack.')
     data = dict(code = request.GET['code'], state = request.GET['state'])
     token = github.get_access_token('POST', data=data)
     
     if token.content.get('error'):
         logger.debug(token.content['error'])
-    print token.content
+    # Stores the access token in user profile
+    profile = request.user.get_profile()
+    profile.github_access_token = token.content['access_token']
+    profile.save()
     return HttpResponseRedirect(reverse('settings'))

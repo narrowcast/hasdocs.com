@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block container %}
+  
+  <h1>{{ project }}</h1>
+  <form action="{{ project.get_absolute_url}}edit/" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input class="btn" type="submit" value="Save" />
+  </form>
+
+{% endblock %}

@@ -13,19 +13,19 @@
     <dd>{{ account.email }}</dd>
     <dt>Joined on</dt>
     <dd>{{ account.date_joined|date }}</dd>
-  </dl>
-  <h3>GitHub Repositories</h3>
+  </dl>  
+  <h2>Projects</h3>
   <ul>
-    {% for repo in repos %}
-      <li class="repo">
-        {{ repo.full_name }}
+    {% for project in account.project_set.all %}
+      <li class="project">
+        <ul class="unstyled">
+          <li>{{ project.language }}</li>
+          <li>{{ project.generator }}</li>
+        </ul>
+        <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
+        <p class="description">{{ project.description }}</p>
+        <p class="mod_date">Last modified {{ project.mod_date|timesince }} ago</p>
       </li>
-    {% endfor %}
-  </ul>
-  <h3>Heroku Apps</h3>
-  <ul>
-    {% for app in apps %}
-      <li class="app">{{ app.name }}</li>
     {% endfor %}
   </ul>
 

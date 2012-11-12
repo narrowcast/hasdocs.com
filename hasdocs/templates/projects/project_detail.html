@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.owner }}/{{ project }}{% endblock %}
+
+{% block container %}
+  
+  <h1>{{ project.owner }} / {{ project }}</h1>
+  {% if project.private %}
+    <span>Private</span>
+  {% else %}
+    <span>Public</span>
+  {% endif %}
+  <p>{{ project.git_url }}</p>
+  <p>{{ project.description }}</p>
+  <a class="btn" href="{{ project.owner }}/{{ project }}">View Docs</a>
+  <a class="btn" href="edit/">Edit</a>
+  
+{% endblock %}

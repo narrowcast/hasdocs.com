@@ -26,6 +26,7 @@ github = OAuth2Service(
     authorize_url=settings.GITHUB_AUTHORIZE_URL
 )
 
+
 class UserCreateView(CreateView):
     """View for creating a user."""
     model = User

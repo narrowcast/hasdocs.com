@@ -25,9 +25,8 @@ urlpatterns = patterns('',
     url(r'^settings/$', UserUpdateView.as_view(), name='settings'),
 
     # OAuth
-    url(r'^oauth2/$', 'oauth_authenticate', name='oauth_authenticate'),
-    url(r'^oauth2/authenticated/$', 'oauth_authenticated',
-        name='oauth_authenticated'),
+    url(r'^oauth2/$', 'hasdocs.accounts.views.oauth_authenticate', name='oauth_authenticate'),
+    url(r'^oauth2/authenticated/$', 'hasdocs.accounts.views.oauth_authenticated', name='oauth_authenticated'),
 
     # User detail
     url(r'^(?P<slug>\w+)/$', UserDetailView.as_view(), name='user_detail'),

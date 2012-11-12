@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'hasdocs.views.home', name='home'),
+    url(r'^$', 'hasdocs.core.views.home', name='home'),
     # url(r'^hasdocs/', include('hasdocs.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

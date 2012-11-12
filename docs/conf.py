@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Has Docs documentation build configuration file, created by
-# sphinx-quickstart on Sat Nov 10 11:06:58 2012.
+# HasDocs documentation build configuration file, created by
+# sphinx-quickstart on Mon Nov 12 13:35:52 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Has Docs'
+project = u'HasDocs'
 copyright = u'2012, Narrowcast, Inc.'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'HasDocs.tex', u'Has Docs Documentation',
+  ('index', 'HasDocs.tex', u'HasDocs Documentation',
    u'Narrowcast, Inc.', 'manual'),
 ]
 
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'hasdocs', u'Has Docs Documentation',
+    ('index', 'hasdocs', u'HasDocs Documentation',
      [u'Narrowcast, Inc.'], 1)
 ]
 
@@ -227,7 +227,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'HasDocs', u'Has Docs Documentation',
+  ('index', 'HasDocs', u'HasDocs Documentation',
    u'Narrowcast, Inc.', 'HasDocs', 'One line description of project.',
    'Miscellaneous'),
 ]

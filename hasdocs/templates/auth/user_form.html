@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block container %}
+  
+  <h1>Sign Up</h1>
+  <form action="/signup/" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="form-warning">
+      <p>By clicking on "Create an account" below, you are agreeing to the
+      <a href="/terms/" target="_blank">Terms of Service</a> and the
+      <a href="/privacy/" target="_blank">Privacy Policy</a>.</p>
+    </div>
+    <input class="btn btn-primary" type="submit" value="Create an account" />
+  </form>  
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block container %}
+  
+  <h1>{{ user }}</h1>
+  <form action="/settings/" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input class="btn" type="submit" value="Save" />
+  </form>
+  <h3>GitHub</h3>
+  {% if user.get_profile.github_access_token %}
+    <a class="btn disabled">Connected</a>
+  {% else %}
+    <a class="btn" href="/oauth2/">Connect with GitHub</a>
+  {% endif %}  
+  <h3>Heroku</h3>
+  {% if user.get_profile.heroku_api_key %}
+    <a class="btn disabled">Connected</a>
+  {% else %}
+    <a class="btn" href="#heroku">Connect with Heroku</a>
+  {% endif %}
+
+{% endblock %}

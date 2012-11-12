@@ -1,17 +1,39 @@
 from django.conf.urls import patterns, include, url
-
-# Uncomment the next two lines to enable the admin:
+from django.views.generic import TemplateView
 from django.contrib import admin
+
+from hasdocs.accounts.views import UserCreateView, UserDetailView, UserUpdateView
+
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    url(r'^$', 'hasdocs.core.views.home', name='home'),
-    # url(r'^hasdocs/', include('hasdocs.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    # Home
+    url(r'^$', 'hasdocs.core.views.home', name='home'),    
+    # Admin
     url(r'^admin/', include(admin.site.urls)),
+    
+    # Login view
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    # Logout view
+    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
+
+    # Signup
+    url(r'^signup/$', UserCreateView.as_view(), name='signup'),
+
+    # User settings
+    url(r'^settings/$', UserUpdateView.as_view(), name='settings'),
+
+    # OAuth
+    url(r'^oauth2/$', 'oauth_authenticate', name='oauth_authenticate'),
+    url(r'^oauth2/authenticated/$', 'oauth_authenticated',
+        name='oauth_authenticated'),
+
+    # User detail
+    url(r'^(?P<slug>\w+)/$', UserDetailView.as_view(), name='user_detail'),
+
+    # How it works
+    url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
+    # Pricing
+    url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='how'),
 )

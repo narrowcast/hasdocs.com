@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block container %}
+  
+  <h1>{{ account }}</h1>
+  <a href="/settings/" class="btn">
+    <i class="icon-edit"></i> Edit Your Profile
+  </a>
+  <dl>
+    <dt>Location</dt>
+    <dd>{{ account.get_profile.location }}</dd>
+    <dt>Email</dt>
+    <dd>{{ account.email }}</dd>
+    <dt>Joined on</dt>
+    <dd>{{ account.date_joined|date }}</dd>
+  </dl>
+  <h3>GitHub Repositories</h3>
+  <ul>
+    {% for repo in repos %}
+      <li class="repo">
+        {{ repo.full_name }}
+      </li>
+    {% endfor %}
+  </ul>
+  <h3>Heroku Apps</h3>
+  <ul>
+    {% for app in apps %}
+      <li class="app">{{ app.name }}</li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}

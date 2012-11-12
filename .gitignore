@@ -1,7 +1,7 @@
 *.log
 *.pot
 *.pyc
-venv
+.DS_Store
 .env
-local_settings.py
+venv
 docs/_build

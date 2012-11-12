@@ -5,6 +5,7 @@ from rauth.service import OAuth2Service
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -86,4 +87,4 @@ def oauth_authenticated(request):
     if token.content.get('error'):
         logger.debug(token.content['error'])
     print token.content
-    return HttpResponseRedirect('/settings/')
+    return HttpResponseRedirect(reverse('settings'))

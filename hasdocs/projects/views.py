@@ -1,6 +1,11 @@
+import logging
+
 from django.views.generic import DetailView
 
 from hasdocs.projects.models import Project
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class ProjectDetailView(DetailView):

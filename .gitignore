@@ -2,4 +2,6 @@
 *.pot
 *.pyc
 venv
+.env
 local_settings.py
+docs/_build

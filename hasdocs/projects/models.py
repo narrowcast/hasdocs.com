@@ -30,7 +30,7 @@ class Project(models.Model):
     name = models.CharField(max_length=50)
     # Collaborators
     collaborators = models.ManyToManyField(
-        User, related_name="collaborating_project_set"
+        User, blank=True, null=True, related_name="collaborating_project_set"
     )
     # Description of the project
     description = models.TextField(blank=True)

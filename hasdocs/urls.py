@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserDetailView, UserUpdateView
-from hasdocs.projects.view import ProjectDetailView
+from hasdocs.projects.views import ProjectDetailView
 
 admin.autodiscover()
 

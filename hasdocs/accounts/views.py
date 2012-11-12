@@ -73,6 +73,7 @@ def oauth_authenticate(request):
     request.session['state'] = 'random'
     # the return URL is used to validate the request
     url = github.get_authorize_url(state=request.session['state'])
+    print url
     logger.debug('authorize_url: %s' % url)
     return HttpResponseRedirect(url)
 

@@ -177,8 +177,8 @@ AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 # GitHub
 GITHUB_CLIENT_ID = os.environ['GITHUB_CLIENT_ID']
 GITHUB_CLIENT_SECRET = os.environ['GITHUB_CLIENT_SECRET']
-GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/authorize'
-GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/access_token'
+GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 GITHUB_API_URL = 'https://api.github.com'
 
 # Heroku

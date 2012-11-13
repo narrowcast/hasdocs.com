@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from django.contrib import admin
 
-from hasdocs.accounts.views import UserCreateView, UserDetailView, UserUpdateView
+from hasdocs.accounts.views import UserCreateView, UserUpdateView
 from hasdocs.projects.views import ProjectDetailView, ProjectUpdateView
 
 admin.autodiscover()
@@ -33,8 +33,8 @@ urlpatterns = patterns('',
     # Pricing
     url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='how'),
     
-    # User detail
-    url(r'^(?P<slug>\w+)/$', UserDetailView.as_view(), name='user_detail'),
+    # User detail or project page if subdomain is set
+    url(r'^(?P<slug>\w+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),
     # Project detail
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
     # Project edit

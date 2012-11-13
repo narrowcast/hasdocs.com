@@ -37,6 +37,11 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=50, blank=True)
     # User ype (e.g., user or organization)
     user_type = models.ForeignKey(UserType)
+    # Current plan for this user
+    plan = models.ForeignKey(Plan)
+    # Organizations this user belongs to
+    organizations = models.ManyToManyField(User, blank=True, null=True,
+                                           related_name="organization_set")
     # GitHub access token
     github_access_token = models.CharField(max_length=255, blank=True)
     # Heroku API key

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Explore{% endblock %}
+
+{% block container %}
+  
+  <h1>Explore</h1>
+  <ul>
+    {% for project in project_list %}
+      <li class="project">
+        <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a> /
+        <a href="{{ project.get_absolute_url }}">{{ project }}</a>
+        <p class="description">{{ project.description }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+  
+{% endblock %}

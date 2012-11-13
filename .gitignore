@@ -5,3 +5,4 @@
 .env
 venv
 docs/_build
+celerybeat-schedule

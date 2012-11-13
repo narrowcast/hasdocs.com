@@ -119,9 +119,11 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     # Third-party apps
     'gunicorn',
-    'south',
+    'kombu.transport.django',
+    'djcelery',
     'storages',
-    'crispy_forms',
+    'south',
+    'crispy_forms',    
     # Hasdocs apps
     'hasdocs.accounts',
     'hasdocs.projects',
@@ -184,3 +186,9 @@ GITHUB_API_URL = 'https://api.github.com'
 
 # Heroku
 HEROKU_API_URL = 'https://api.heroku.com'
+
+# Celery
+BROKER_BACKEND = 'django'
+
+import djcelery
+djcelery.setup_loader()

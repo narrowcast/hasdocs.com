@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserUpdateView
-from hasdocs.projects.views import ProjectDetailView, ProjectUpdateView
+from hasdocs.projects.views import ProjectDetailView, ProjectListView, ProjectUpdateView
 
 admin.autodiscover()
 
@@ -28,10 +28,12 @@ urlpatterns = patterns('',
     url(r'^oauth2/$', 'hasdocs.accounts.views.oauth_authenticate', name='oauth_authenticate'),
     url(r'^oauth2/authenticated/$', 'hasdocs.accounts.views.oauth_authenticated', name='oauth_authenticated'),
 
+    # Explore
+    url(r'^explore/$', ProjectListView.as_view(), name='explore'),
     # How it works
     url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
     # Pricing
-    url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='how'),
+    url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='pricing'),
     
     # User detail or project page if subdomain is set
     url(r'^(?P<slug>\w+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),

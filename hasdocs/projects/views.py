@@ -4,6 +4,7 @@ import requests
 from django.conf import settings
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
+from django.views.generic.list import ListView
 
 from hasdocs.projects.models import Project
 
@@ -15,12 +16,15 @@ class ProjectUpdateView(UpdateView):
     model = Project
     slug_field = 'name'
 
+class ProjectListView(ListView):
+    """View for viewing the list of projects."""
+    model = Project
+
 class ProjectDetailView(DetailView):
     """View for showing the project details."""
     model = Project
     slug_field = 'name'
     context_object_name = 'project'
-    template_name='projects/project_detail.html'
     
 def import_from_github(request):
     """Imports a project from GitHub repository."""

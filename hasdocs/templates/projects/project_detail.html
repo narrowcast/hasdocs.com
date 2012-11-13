@@ -12,7 +12,7 @@
   {% endif %}
   <p>{{ project.git_url }}</p>
   <p>{{ project.description }}</p>
-  <a class="btn" href="{{ project.owner }}/{{ project }}">View Docs</a>
+  <a class="btn" href="{{ project.get_docs_url }}">View Docs</a>
   <a class="btn" href="edit/">Edit</a>
   
 {% endblock %}

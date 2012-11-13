@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -53,4 +54,10 @@ class Project(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
+        """Returns the url for this project."""
         return ('project_detail', [self.owner, self.name])
+    
+    def get_docs_url(self):
+        """Returns the url of the docs for this project."""
+        site = Site.objects.get_current().domain
+        return 'http://%s.%s/%s/' % (self.owner, site, self.name)

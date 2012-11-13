@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'crispy_forms',    
     # Hasdocs apps
     'hasdocs.accounts',
+    'hasdocs.core',
     'hasdocs.projects',
     'hasdocs',
 )

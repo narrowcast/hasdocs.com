@@ -38,6 +38,8 @@ class Project(models.Model):
     description = models.TextField(blank=True)
     # Whether this project is private or not
     private = models.BooleanField(default=False)
+    # Project's GitHub repo or Heroku app URL
+    url = models.CharField(max_length=200, blank=True)
     # URL of the git repository
     git_url = models.CharField(max_length=200, blank=True)
     # Programming language this project is in    

@@ -8,6 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'Plan'
+        db.create_table('accounts_plan', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('private_docs', self.gf('django.db.models.fields.PositiveIntegerField')()),
+            ('price', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=64, decimal_places=2)),
+            ('business', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('accounts', ['Plan'])
+
         # Adding model 'UserType'
         db.create_table('accounts_usertype', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -22,22 +32,45 @@ class Migration(SchemaMigration):
             ('url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
             ('company', self.gf('django.db.models.fields.CharField')(max_length=50, blank=True)),
             ('location', self.gf('django.db.models.fields.CharField')(max_length=50, blank=True)),
-            ('user_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.UserType'])),
+            ('user_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.UserType'], null=True, blank=True)),
+            ('plan', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.Plan'], null=True, blank=True)),
             ('github_access_token', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('heroku_api_key', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
         ))
         db.send_create_signal('accounts', ['UserProfile'])
 
+        # Adding M2M table for field organizations on 'UserProfile'
+        db.create_table('accounts_userprofile_organizations', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('userprofile', models.ForeignKey(orm['accounts.userprofile'], null=False)),
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
+        ))
+        db.create_unique('accounts_userprofile_organizations', ['userprofile_id', 'user_id'])
+
 
     def backwards(self, orm):
+        # Deleting model 'Plan'
+        db.delete_table('accounts_plan')
+
         # Deleting model 'UserType'
         db.delete_table('accounts_usertype')
 
         # Deleting model 'UserProfile'
         db.delete_table('accounts_userprofile')
 
+        # Removing M2M table for field organizations on 'UserProfile'
+        db.delete_table('accounts_userprofile_organizations')
+
 
     models = {
+        'accounts.plan': {
+            'Meta': {'object_name': 'Plan'},
+            'business': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'price': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '64', 'decimal_places': '2'}),
+            'private_docs': ('django.db.models.fields.PositiveIntegerField', [], {})
+        },
         'accounts.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'company': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
@@ -45,9 +78,11 @@ class Migration(SchemaMigration):
             'heroku_api_key': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
+            'organizations': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'organization_set'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.User']"}),
+            'plan': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.Plan']", 'null': 'True', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'}),
-            'user_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.UserType']"})
+            'user_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.UserType']", 'null': 'True', 'blank': 'True'})
         },
         'accounts.usertype': {
             'Meta': {'object_name': 'UserType'},

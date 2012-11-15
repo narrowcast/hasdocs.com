@@ -39,7 +39,6 @@ class UserDetailView(DetailView):
     context_object_name = 'account'
     template_name='accounts/user_detail.html'
     
-    '''
     def get_context_data(self, **kwargs):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         # Retrieves the list of GitHub repos
@@ -54,7 +53,6 @@ class UserDetailView(DetailView):
                      auth=('', self.request.user.get_profile().heroku_api_key))
         context['apps'] = r.json
         return context
-    '''
         
 class UserUpdateView(UpdateView):
     """View for updating user settings."""

@@ -29,9 +29,10 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('private', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('git_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
-            ('language', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Language'])),
-            ('generator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Generator'])),
+            ('url', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('git_url', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('language', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Language'], null=True, blank=True)),
+            ('generator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Generator'], null=True, blank=True)),
             ('pub_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('mod_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
@@ -109,17 +110,18 @@ class Migration(SchemaMigration):
         },
         'projects.project': {
             'Meta': {'object_name': 'Project'},
-            'collaborators': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'collaborating_project_set'", 'symmetrical': 'False', 'to': "orm['auth.User']"}),
+            'collaborators': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'collaborating_project_set'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.User']"}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'generator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['projects.Generator']"}),
-            'git_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'generator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['projects.Generator']", 'null': 'True', 'blank': 'True'}),
+            'git_url': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['projects.Language']"}),
+            'language': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['projects.Language']", 'null': 'True', 'blank': 'True'}),
             'mod_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
             'private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'pub_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
+            'pub_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'url': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
         }
     }
 

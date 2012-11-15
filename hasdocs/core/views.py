@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from hasdocs.accounts.views import UserDetailView
 from hasdocs.projects.models import Project
-from hasdocs.core.tasks import build_docs
+from hasdocs.core.tasks import update_docs
 
 logger = logging.getLogger(__name__)
 
@@ -45,9 +45,13 @@ def post_receive_github(request):
         payload = json.loads(request.POST['payload'])
         repo_url = payload['repository']['url']        
         logger.info('GitHub post-receive hook triggered for %s' % repo_url)
-        print payload
-        #project = Project.objects.get(git_url=repo_url)
-        #build_docs.delay(project)
+        project = get_object_or_404(Project, url=repo_url)        
+        result = update_docs.delay(project)
         return HttpResponse('Thanks')
     else:
         return HttpResponseNotFound()
+    
+@csrf_exempt
+def post_receive_heroku(request):
+    """Post-receive hook to be hit by Heroku."""
+    pass

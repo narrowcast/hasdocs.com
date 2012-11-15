@@ -36,9 +36,9 @@ class UserProfile(models.Model):
     # Location
     location = models.CharField(max_length=50, blank=True)
     # User ype (e.g., user or organization)
-    user_type = models.ForeignKey(UserType)
+    user_type = models.ForeignKey(UserType, blank=True, null=True)
     # Current plan for this user
-    plan = models.ForeignKey(Plan)
+    plan = models.ForeignKey(Plan, blank=True, null=True)
     # Organizations this user belongs to
     organizations = models.ManyToManyField(User, blank=True, null=True,
                                            related_name="organization_set")

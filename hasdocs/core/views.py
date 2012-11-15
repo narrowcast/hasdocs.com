@@ -54,4 +54,8 @@ def post_receive_github(request):
 @csrf_exempt
 def post_receive_heroku(request):
     """Post-receive hook to be hit by Heroku."""
-    pass
+    if request.method == 'POST':
+        print request.POST
+        return HttpResponse('Thanks')
+    else:
+        return HttpResponseNotFound()

@@ -26,7 +26,7 @@ def update_docs(project):
 @task
 def fetch_source(project):
     """Fetchs the source from git repository."""
-    logger.info('Fetching source for %s from GitHub' % project)    
+    logger.info('Fetching source for %s from GitHub' % project)
     r = requests.get('%s/repos/%s/%s/tarball' % (
         settings.GITHUB_API_URL, project.owner, project.name
     ))

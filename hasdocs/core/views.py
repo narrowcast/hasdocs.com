@@ -43,9 +43,9 @@ def post_receive_github(request):
     """Post-receive hook to be hit by GitHub."""
     if request.method == 'POST':
         payload = json.loads(request.POST['payload'])
-        repo_url = payload['repository']['url']        
+        repo_url = payload['repository']['url']
         logger.info('GitHub post-receive hook triggered for %s' % repo_url)
-        project = get_object_or_404(Project, url=repo_url)        
+        project = get_object_or_404(Project, url=repo_url)
         result = update_docs.delay(project)
         return HttpResponse('Thanks')
     else:

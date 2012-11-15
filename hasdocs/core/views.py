@@ -45,6 +45,7 @@ def post_receive_github(request):
         payload = json.loads(request.POST['payload'])
         repo_url = payload['repository']['url']        
         logger.info('GitHub post-receive hook triggered for %s' % repo_url)
+        print payload
         #project = Project.objects.get(git_url=repo_url)
         #build_docs.delay(project)
         return HttpResponse('Thanks')

@@ -34,6 +34,9 @@ urlpatterns = patterns('',
     url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
     # Pricing
     url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='pricing'),
+ 
+    # GitHub post-receive hook
+    url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github'),    
     
     # User detail or project page if subdomain is set
     url(r'^(?P<slug>\w+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),

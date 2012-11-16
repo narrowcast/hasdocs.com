@@ -2,8 +2,8 @@
 
 {% block container %}
   
-  <h1>{{ account }}</h1>
-  <a href="/settings/" class="btn">
+  <h1 class="page-header">{{ account }}</h1>
+  <a href="{% url settings %}" class="btn">
     <i class="icon-edit"></i> Edit Your Profile
   </a>
   <dl>
@@ -13,7 +13,10 @@
     <dd>{{ account.email }}</dd>
     <dt>Joined on</dt>
     <dd>{{ account.date_joined|date }}</dd>
-  </dl>  
+  </dl>
+  <ul class="stats">
+    <li>{{ account.project_set.count }} projects</li>
+  </ul>
   <h2>Projects</h3>
   <ul>
     {% for project in account.project_set.all %}

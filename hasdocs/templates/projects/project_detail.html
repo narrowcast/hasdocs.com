@@ -13,7 +13,8 @@
   <p>{{ project.git_url }}</p>
   <p>{{ project.description }}</p>
   <a class="btn" href="{{ project.get_docs_url }}">View Docs</a>
-  <a class="btn" href="edit/">Edit</a>
-  <a class="btn" href="build/">Build</a>
+  <a class="btn" href="{% url project_update project.owner project.name %}">Edit</a>
+  <a class="btn" href="#">Build</a>
+  <a class="btn btn-danger" href="#">Delete</a>
   
 {% endblock %}

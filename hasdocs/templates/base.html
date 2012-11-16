@@ -24,19 +24,19 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/">HasDocs</a>          
+          <a class="brand" href="{% url home %}">HasDocs</a>
           <div class="nav-collapse collapse">
             <ul class="nav">              
-              <li class="active"><a href="/">Home</a></li>
-              <li><a href="/how/">How it Works</a></li>
-              <li><a href="/explore/">Explore</a></li>
-              <li><a href="/pricing/">Pricing</a></li>
-              <li><a href="/contact/">Contact</a></li>
+              <li class=""><a href="{% url home %}">Home</a></li>
+              <li class=""><a href="{% url how %}">How it Works</a></li>
+              <li class=""><a href="{% url explore %}">Explore</a></li>
+              <li class=""><a href="{% url pricing %}">Pricing</a></li>
+              <li class=""><a href="{% url contact %}">Contact</a></li>
               <li class="divider-vertical"></li>
               {% if user.is_authenticated %}
-                <li><a href="/{{ user }}/">{{ user }}</a></li>
+                <li><a href="{{ user.get_absolute_url }}">{{ user }}</a></li>
               {% else %}
-                <li><a href="/login/">Login</a></li>
+                <li><a href="{% url login %}">Login</a></li>
               {% endif %}
             </ul>
           </div><!--/.nav-collapse -->
@@ -60,6 +60,10 @@
     
     <footer class="footer">
       <div class="container">
+        <ul>
+          <li><a href="{% url terms %}">Terms of Service</a></li>
+          <li><a href="{% url privacy %}">Privacy</a></li>
+        </ul>
         © 2012 Narrowcast, Inc. All rights reserved.
       </div>
     </footer>

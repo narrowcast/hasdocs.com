@@ -1,14 +1,18 @@
+import base64
 import logging
+import os
 import requests
 from rauth.service import OAuth2Service
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView
@@ -60,6 +64,10 @@ class UserUpdateView(UpdateView):
     template_name = "accounts/user_form.html"
     success_url = "."
     
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(UserUpdateView, self).dispatch(*args, **kwargs)
+    
     def get_object(self, queryset=None):
         return self.request.user
     
@@ -69,7 +77,7 @@ class UserUpdateView(UpdateView):
 
 def oauth_authenticate(request):
     """Request authorization usnig OAuth2 protocol."""
-    request.session['state'] = 'random'
+    request.session['state'] = base64.b64encode(os.urandom(40))
     # the return URL is used to validate the request
     url = github.get_authorize_url(state=request.session['state'])
     logger.debug('authorize_url: %s' % url)
@@ -79,7 +87,7 @@ def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
-        logger.info('Possible CSRF attack was attempted.' % url)
+        logger.warning('Possible CSRF attack was attempted.' % url)
         return HttpResponse('You may be a victim of CSRF attack.')
     data = dict(code = request.GET['code'], state = request.GET['state'])
     token = github.get_access_token('POST', data=data)

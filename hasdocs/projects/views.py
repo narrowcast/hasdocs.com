@@ -30,10 +30,21 @@ def import_from_github(request):
     """Imports a project from GitHub repository."""
     access_token = request.user.get_profile().github_access_token
     payload = {'access_token': access_token }
-    r = requests.get('%s/repos/%s' % (settings.GITHUB_API_URL,
-                                      request.POST['full_name']), params=payload)
+    r = requests.get('%s/repos/%s' % (
+        settings.GITHUB_API_URL, request.POST['full_name']), params=payload)
     repo = r.json
     # Creates a new project based on the GitHub repo
     project = Project(name=repo['name'], description=repo['description'],
                       private=repo['private'])
+    project.save()
+    
+def import_from_heroku(request):
+    """Imports a project from Heroku app."""
+    api_key = request.user.get_profile().heroku_api_key
+    r = requests.get('%s/apps/%s' % (
+        settings.HEROKU_API_URL, request.POST['app_name']), auth=('', api_key))
+    app = r.json
+    # Creates a new project based on the Heroku app
+    project = Project(name=app['name'], url=app['web_url'],
+                      git_url=app['git_url'], private=True)
     project.save()

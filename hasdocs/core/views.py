@@ -6,9 +6,11 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.edit import FormView
 
 from hasdocs.accounts.views import UserDetailView
 from hasdocs.projects.models import Project
+from hasdocs.core.forms import ContactForm
 from hasdocs.core.tasks import update_docs
 
 logger = logging.getLogger(__name__)
@@ -55,7 +57,21 @@ def post_receive_github(request):
 def post_receive_heroku(request):
     """Post-receive hook to be hit by Heroku."""
     if request.method == 'POST':
-        print request.POST
+        app_url = request.POST['url']
+        logger.info('Heroku deploy hook triggered for %s' % repo_url)
+        project = get_object_or_404(Project, url=app_url)
+        result = update_docs.delay(project)
         return HttpResponse('Thanks')
     else:
         return HttpResponseNotFound()
+    
+class ContactView(FormView):
+    """Shows the contact form and sends email to admin on a valid submission."""
+    form_class = ContactForm
+    template_name = 'core/contact.html'
+    success_url = '/thanks/'
+    
+    def form_valid(self, form):
+        """Sends emails to the admins on form validation."""
+        #form.send_email()
+        return super(ContactView, self).form_valid(form)

@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserUpdateView
+from hasdocs.core.views import ContactView
 from hasdocs.projects.views import ProjectDetailView, ProjectListView, ProjectUpdateView
 
 admin.autodiscover()
@@ -34,6 +35,12 @@ urlpatterns = patterns('',
     url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
     # Pricing
     url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='pricing'),
+    # Terms of service
+    url(r'^terms/$', TemplateView.as_view(template_name="content/terms.html"), name='terms'),
+    # Privacy policy
+    url(r'^privacy/$', TemplateView.as_view(template_name="content/privacy.html"), name='privacy'),
+    # Contact form
+    url(r'^contact/$', ContactView.as_view(), name='contact'),
  
     # GitHub post-receive hook
     url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github'),

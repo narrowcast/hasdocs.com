@@ -1,7 +1,12 @@
 # Django settings for hasdocs project.
+import os
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+if os.environ['DEVELOPMENT']:
+    DEBUG = True
+    TEMPLATE_DEBUG = DEBUG
+else:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
 
 ADMINS = (
     ('Chee-Hyung Yoon', 'yoonchee@gmail.com'),
@@ -9,7 +14,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-import os
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
 import dj_database_url

@@ -1,7 +1,7 @@
 # Django settings for hasdocs project.
 import os
 
-if os.environ['DEVELOPMENT']:
+if os.environ.get('DEVELOPMENT'):
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
 else:

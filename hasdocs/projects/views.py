@@ -2,8 +2,12 @@ import logging
 import requests
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from hasdocs.projects.models import Project
@@ -11,20 +15,48 @@ from hasdocs.projects.models import Project
 logger = logging.getLogger(__name__)
 
 
-class ProjectUpdateView(UpdateView):
-    """View for updating project details."""
-    model = Project
-    slug_field = 'name'
-
 class ProjectListView(ListView):
     """View for viewing the list of projects."""
-    model = Project
+    def get_queryset(self):
+        """Limits the list to public projects."""
+        return Project.objects.filter(private=False)
 
 class ProjectDetailView(DetailView):
     """View for showing the project details."""
     model = Project
     slug_field = 'name'
     context_object_name = 'project'
+    
+    def dispatch(self, request, *args, **kwargs):
+        project = get_object_or_404(Project, name=kwargs['slug'])
+        if project.private and request.user != project.owner:
+            # Then just raise 404
+            raise Http404
+        return super(ProjectDetailView, self).dispatch(request, *args, **kwargs)
+
+class ProjectUpdateView(UpdateView):
+    """View for updating project details."""
+    model = Project
+    slug_field = 'name'
+    
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        project = get_object_or_404(Project, name=kwargs['slug'])
+        if request.user != project.owner:
+            raise Http404
+        return super(ProjectUpdateView, self).dispatch(request, *args, **kwargs)
+
+class ProjectDeleteView(DeleteView):
+    """View for delting a project."""
+    model = Project
+    slug_field = 'name'
+    
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        project = get_object_or_404(Project, name=kwargs['slug'])
+        if request.user != project.owner:
+            raise Http404
+        return super(ProjectDeleteView, self).dispatch(request, *args, **kwargs)
     
 def import_from_github(request):
     """Imports a project from GitHub repository."""

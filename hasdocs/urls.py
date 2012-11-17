@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, include, url
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DeleteView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserUpdateView
 from hasdocs.core.views import ContactView
-from hasdocs.projects.views import ProjectDetailView, ProjectListView, ProjectUpdateView
+from hasdocs.projects.models import Project
+from hasdocs.projects.views import ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView
 
 admin.autodiscover()
 
@@ -51,6 +52,8 @@ urlpatterns = patterns('',
     url(r'^(?P<slug>\w+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),
     # Project detail
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
-    # Project edit
+    # Project update
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
+    # Project delete
+    url(r'^(?P<username>\w+)/(?P<slug>\w+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
 )

@@ -4,12 +4,13 @@
 
 {% block container %}
   
-  <h1>Login</h1>
-  <form action="/login/" method="post">
+  <h1 class="page-header">Login</h1>
+  <form action="{% url login %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
     <input class="btn" type="submit" value="Login" />
     <input type="hidden" name="next" value="{{ next }}" />
   </form>
+  <a class="btn btn-success" href="{% url signup %}">Sign Up</a>
 
 {% endblock %}

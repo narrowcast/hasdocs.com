@@ -5,7 +5,7 @@
 {% block container %}
   
   <h1>{{ project }}</h1>
-  <form action="{{ project.get_absolute_url}}edit/" method="post">
+  <form action="{% url project_update project.owner project %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
     <input class="btn" type="submit" value="Save" />

@@ -76,6 +76,10 @@ Credits
 -------
 * `Read the Docs <http://readthedocs.org/>`_
 
+TODO
+----
+* :doc:`TODO <todo>`
+
 Indices and tables
 ------------------
 

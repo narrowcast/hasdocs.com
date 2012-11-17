@@ -123,7 +123,7 @@ INSTALLED_APPS = (
     'djcelery',
     'storages',
     'south',
-    'crispy_forms',    
+    'crispy_forms',
     # Hasdocs apps
     'hasdocs.accounts',
     'hasdocs.core',

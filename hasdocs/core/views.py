@@ -2,13 +2,13 @@ import json
 import logging
 
 from django.contrib.auth.models import User
+from django.contrib.staticfiles.views import serve
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import FormView
 
-from hasdocs.accounts.views import UserDetailView
 from hasdocs.projects.models import Project
 from hasdocs.core.forms import ContactForm
 from hasdocs.core.tasks import update_docs
@@ -21,7 +21,7 @@ def home(request):
     if request.subdomain:
         # Then serve the page for the given user, if any
         user = get_object_or_404(User, username=request.subdomain)
-        return HttpResponse('Found a matching user.')
+        return serve(request, 'docs/hasdocs/index.html')
     else:
         return render_to_response('core/index.html', {
         }, context_instance=RequestContext(request))
@@ -36,8 +36,12 @@ def user_or_page(request, slug):
     else:
         # Then server the user detail for the given user
         user = get_object_or_404(User, username=slug)
+        projects = Project.objects.filter(owner=user)
+        if user != request.user:
+            # Then limit access to the public projects
+            projects = projects.filter(private=False)
         return render_to_response('accounts/user_detail.html', {
-            'account': user
+            'account': user, 'projects': projects,
         }, context_instance=RequestContext(request))
     
 @csrf_exempt

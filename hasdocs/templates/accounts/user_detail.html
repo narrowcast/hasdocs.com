@@ -15,13 +15,14 @@
     <dd>{{ account.date_joined|date }}</dd>
   </dl>
   <ul class="stats">
-    <li>{{ account.project_set.count }} projects</li>
+    <li>{{ projects.count }} projects</li>
   </ul>
   <h2>Projects</h3>
   <ul>
-    {% for project in account.project_set.all %}
+    {% for project in projects %}
       <li class="project">
         <ul class="unstyled">
+          <li>{% if project.private %}Private{% else %}Public{% endif %}</li>
           <li>{{ project.language }}</li>
           <li>{{ project.generator }}</li>
         </ul>

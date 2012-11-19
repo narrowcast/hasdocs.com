@@ -222,3 +222,6 @@ BROKER_BACKEND = 'django'
 
 import djcelery
 djcelery.setup_loader()
+
+# URL prefix for documentation files
+DOCS_URL = '/docs/'

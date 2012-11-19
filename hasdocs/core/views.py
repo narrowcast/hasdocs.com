@@ -1,9 +1,11 @@
 import json
 import logging
+import mimetypes
 
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.views import serve
-from django.http import HttpResponse, HttpResponseNotFound
+from django.core.files.storage import default_storage
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
@@ -21,18 +23,36 @@ def home(request):
     if request.subdomain:
         # Then serve the page for the given user, if any
         user = get_object_or_404(User, username=request.subdomain)
-        return serve(request, 'docs/hasdocs/index.html')
+        file = default_storage.open('docs/%s/index.html' % user, 'r')
+        return HttpResponse(file, content_type='text/html')
     else:
         return render_to_response('core/index.html', {
         }, context_instance=RequestContext(request))
-    
+
+def has_permission(user, project):
+    """Returns whether the user has permission to access the project."""
+    if project.private:
+        if not user.is_authenticated():
+            return False
+        else:
+            return user == project.owner or project.collaborators.filter(
+                pk=user.pk).exists()
+    else:
+        # Then everyone has access to the project
+        return True
+
 def user_or_page(request, slug):
     """Shows the project page if subdomain is set or the user detail."""
     if request.subdomain:
         # Then serve the project page for the given user and project, if any
         user = get_object_or_404(User, username=request.subdomain)
         project = get_object_or_404(Project, name=slug)
-        return HttpResponse('Found a matching user and project combo.')
+        # Check permissions
+        if not has_permission(request.user, project):
+            raise Http404
+        path = 'docs/%s/%s/index.html' % (user, project)
+        file = default_storage.open(path, 'r')
+        return HttpResponse(file, content_type='text/html')
     else:
         # Then server the user detail for the given user
         user = get_object_or_404(User, username=slug)
@@ -43,7 +63,17 @@ def user_or_page(request, slug):
         return render_to_response('accounts/user_detail.html', {
             'account': user, 'projects': projects,
         }, context_instance=RequestContext(request))
-    
+
+def serve_static(request, path):
+    """Returns the requested static file from S3, inefficiently."""
+    if request.subdomain:
+        # Then serve the page for the given user, if any
+        user = get_object_or_404(User, username=request.subdomain)
+        file = default_storage.open('docs/%s/%s' % (user, path), 'r')
+        return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    else:
+        raise Http404
+
 @csrf_exempt
 def post_receive_github(request):
     """Post-receive hook to be hit by GitHub."""
@@ -55,7 +85,7 @@ def post_receive_github(request):
         result = update_docs.delay(project)
         return HttpResponse('Thanks')
     else:
-        return HttpResponseNotFound()
+        raise Http404
     
 @csrf_exempt
 def post_receive_heroku(request):
@@ -67,7 +97,7 @@ def post_receive_heroku(request):
         result = update_docs.delay(project)
         return HttpResponse('Thanks')
     else:
-        return HttpResponseNotFound()
+        raise Http404
     
 class ContactView(FormView):
     """Shows the contact form and sends email to admin on a valid submission."""

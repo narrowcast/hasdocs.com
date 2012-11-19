@@ -186,6 +186,9 @@ LOGGING = {
     }
 }
 
+# Enables session cookies in subdomains
+SESSION_COOKIE_DOMAIN = '.hasdocs.com'
+
 # User profile
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 LOGIN_URL = '/login/'

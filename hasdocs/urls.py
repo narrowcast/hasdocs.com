@@ -56,4 +56,7 @@ urlpatterns = patterns('',
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
     # Project delete
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
+    
+    # Static files
+    url(r'^(?P<path>.*)$', 'hasdocs.core.views.serve_static', name='serve_static'),
 )

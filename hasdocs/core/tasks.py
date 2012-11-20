@@ -29,7 +29,7 @@ def update_docs(project):
 def fetch_source(project):
     """Fetchs the source from git repository."""
     logger.info('Fetching source for %s from GitHub' % project)
-    payload = {'access_token': '7e427d2761a94514af800a6c5bc7f33d4326656f'}
+    payload = {'access_token': 'cfd52a4b13e7c9f34e0d7853fd670740cf48d55a'}
     r = requests.get('%s/repos/%s/%s/tarball' % (
         settings.GITHUB_API_URL, project.owner, project.name,
     ), params=payload)
@@ -43,11 +43,13 @@ def fetch_source(project):
 def extract(filename, project):
     """Extracts the given tarball and returns its resulting path."""
     logger.debug('Extracting %s', filename)
-    print filename
-    tar = tarfile.open(filename)
-    path = tar.next().path
-    tar.extractall()
-    tar.close()
+    try:
+        tar = tarfile.open(filename)
+        path = tar.next().path
+        tar.extractall()
+        tar.close()
+    except ReadError:
+        logger.error('Error opening file %s' % filename)
     os.remove(filename)
     return path
 

@@ -199,7 +199,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Enables session cookies in subdomains
-SESSION_COOKIE_DOMAIN = '.test.com'
+if os.environ.get('DEVELOPMENT'):
+    SESSION_COOKIE_DOMAIN = '.test.com'
+else:
+    SESSION_COOKIE_DOMAIN = '.hasdocs.com'
 
 # User profile
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'

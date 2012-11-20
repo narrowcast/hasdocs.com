@@ -79,7 +79,7 @@ def oauth_authenticate(request):
     """Request authorization usnig OAuth2 protocol."""
     request.session['state'] = base64.b64encode(os.urandom(40))
     # the return URL is used to validate the request
-    url = github.get_authorize_url(state=request.session['state'])
+    url = github.get_authorize_url(state=request.session['state'], scope='repo')
     logger.debug('authorize_url: %s' % url)
     return HttpResponseRedirect(url)
 

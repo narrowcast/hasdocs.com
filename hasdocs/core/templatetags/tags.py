@@ -1,11 +1,12 @@
 from django import template
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 
 register = template.Library()
 
 
 @register.simple_tag
-def active(request, urls):
-    if request.path in (reverse(url) in urls.split()):
+def active(path, url):
+    if path == reverse_lazy(url):
         return 'active'
-    return ''
+    else:
+        return ''

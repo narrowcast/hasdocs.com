@@ -2,43 +2,53 @@
 
 {% block container %}
   
-  <h1 class="page-header">{{ account }}</h1>
-  <a href="{% url settings %}" class="btn">
-    <i class="icon-edit"></i> Edit Your Profile
-  </a>
-  <dl>
-    <dt>Location</dt>
-    <dd>{{ account.get_profile.location }}</dd>
-    <dt>Email</dt>
-    <dd>{{ account.email }}</dd>
-    <dt>Joined on</dt>
-    <dd>{{ account.date_joined|date }}</dd>
-  </dl>
-  <ul class="stats">
-    <li>{{ projects.count }} projects</li>
-  </ul>
-  <h2>Projects</h3>
-  <ul>
-    {% for project in projects %}
-      <li class="project">
-        <ul class="unstyled">
-          <li>{% if project.private %}Private{% else %}Public{% endif %}</li>
-          <li>{{ project.language }}</li>
-          <li>{{ project.generator }}</li>
-        </ul>
-        <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
-        <p class="description">{{ project.description }}</p>
-        <p class="mod_date">Last modified {{ project.mod_date|timesince }} ago</p>
-      </li>
-    {% endfor %}
-  </ul>
-  {% if account.get_profile.github_access_token %}
-    <h3>GitHub</h3>
-    <a class="btn" href="">Refresh</a>    
-  {% endif %}
-  {% if account.get_profile.heroku_api_key %}
-    <h3>Heroku</h3>
-    <a class="btn" href="">Refresh</a>
-  {% endif %}
+  <h1 class="page-header">{{ account }} </h1>  
+  <div class="row">
+    <div class="span3">
+      <a href="{% url settings %}" class="btn">
+        <i class="icon-edit"></i> Edit Your Profile
+      </a>
+      <dl>
+        <dt>Name</dt>
+        <dd>{{ account.first_name }}</dd>
+        <dt>Username</dt>
+        <dd>{{ account.username }}</dd>
+        <dt>Location</dt>
+        <dd>{{ account.get_profile.location }}</dd>
+        <dt>Email</dt>
+        <dd>{{ account.email }}</dd>
+        <dt>Joined on</dt>
+        <dd>{{ account.date_joined|date }}</dd>
+      </dl>
+      <ul class="stats">
+        <li>{{ projects.count }} projects</li>
+      </ul>
+    </div>
+    <div class="span9">
+      <h2>Projects</h3>
+      <ul>
+        {% for project in projects %}
+          <li class="project">
+            <ul class="unstyled">
+              <li>{% if project.private %}Private{% else %}Public{% endif %}</li>
+              <li>{{ project.language }}</li>
+              <li>{{ project.generator }}</li>
+            </ul>
+            <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
+            <p class="description">{{ project.description }}</p>
+            <p class="mod_date">Last modified {{ project.mod_date|timesince }} ago</p>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if account.get_profile.github_access_token %}
+        <h3>GitHub</h3>
+        <a class="btn" href="">Refresh</a>    
+      {% endif %}
+      {% if account.get_profile.heroku_api_key %}
+        <h3>Heroku</h3>
+        <a class="btn" href="">Refresh</a>
+      {% endif %}
+    </div>
+  </div>
 
 {% endblock %}

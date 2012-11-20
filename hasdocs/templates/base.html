@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,16 +28,16 @@
           <a class="brand" href="{% url home %}">HasDocs</a>
           <div class="nav-collapse collapse">
             <ul class="nav">              
-              <li class=""><a href="{% url home %}">Home</a></li>
-              <li class=""><a href="{% url how %}">How it Works</a></li>
-              <li class=""><a href="{% url explore %}">Explore</a></li>
-              <li class=""><a href="{% url pricing %}">Pricing</a></li>
-              <li class=""><a href="{% url contact %}">Contact</a></li>
+              <li class="{% active request.path 'home' %}"><a href="{% url home %}">Home</a></li>
+              <li class="{% active request.path 'how' %}"><a href="{% url how %}">How it Works</a></li>
+              <li class="{% active request.path 'explore' %}"><a href="{% url explore %}">Explore</a></li>
+              <li class="{% active request.path 'pricing' %}"><a href="{% url pricing %}">Pricing</a></li>
+              <li class="{% active request.path 'contact' %}"><a href="{% url contact %}">Contact</a></li>
               <li class="divider-vertical"></li>
               {% if user.is_authenticated %}
-                <li><a href="{{ user.get_absolute_url }}">{{ user }}</a></li>
+                <li class=""><a href="{{ user.get_absolute_url }}">{{ user }}</a></li>
               {% else %}
-                <li><a href="{% url login %}">Login</a></li>
+                <li class=""><a href="{% url login %}">Login</a></li>
               {% endif %}
             </ul>
           </div><!--/.nav-collapse -->

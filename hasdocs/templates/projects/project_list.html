@@ -5,6 +5,7 @@
 {% block container %}
   
   <h1 class="page-header">Explore</h1>
+  <h2>Recent Projects</h2>
   <ul>
     {% for project in project_list %}
       <li class="project">
@@ -13,6 +14,10 @@
         <p class="description">{{ project.description }}</p>
       </li>
     {% endfor %}
+  </ul>
+  <h2>Featured Projects</h2>
+  <ul>
+    
   </ul>
   
 {% endblock %}

@@ -186,8 +186,20 @@ LOGGING = {
     }
 }
 
+# Added to enable request context processor
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages'
+)
+
 # Enables session cookies in subdomains
-SESSION_COOKIE_DOMAIN = '.hasdocs.com'
+SESSION_COOKIE_DOMAIN = '.test.com'
 
 # User profile
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'

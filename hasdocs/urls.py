@@ -49,7 +49,7 @@ urlpatterns = patterns('',
     url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku'),
     
     # User detail or project page if subdomain is set
-    url(r'^(?P<slug>\w+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),
+    url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),
     # Project detail
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
     # Project update
@@ -58,5 +58,5 @@ urlpatterns = patterns('',
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
     
     # Static documentation files
-    url(r'^(?P<slug>\w+)/(?P<path>.*)$', 'hasdocs.core.views.serve_static', name='serve_static'),
+    url(r'^(?P<slug>[\w.-]+)/(?P<path>.*)$', 'hasdocs.core.views.serve_static', name='serve_static'),
 )

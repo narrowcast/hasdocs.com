@@ -54,9 +54,12 @@ def user_or_page(request, slug):
         project = get_object_or_404(Project, name=slug)
         # Check permissions
         if not has_permission(request.user, project):
-            raise Http404        
+            raise Http404
         path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
-        file = default_storage.open(path, 'r')
+        try:
+            file = default_storage.open(path, 'r')
+        except IOError:
+            raise Http404
         return HttpResponse(file, content_type='text/html')
     else:
         # Then server the user detail for the given user

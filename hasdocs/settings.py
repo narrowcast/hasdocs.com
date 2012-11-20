@@ -187,7 +187,7 @@ LOGGING = {
 }
 
 # Enables session cookies in subdomains
-SESSION_COOKIE_DOMAIN = '.hasdocs.com'
+SESSION_COOKIE_DOMAIN = '.test.com'
 
 # User profile
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'

@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import subprocess
 import tarfile
 
@@ -13,6 +14,7 @@ from django.core.files.storage import default_storage
 from hasdocs.projects.models import Project
 
 logger = logging.getLogger(__name__)
+
 
 @task
 def update_docs(project):
@@ -29,7 +31,8 @@ def update_docs(project):
 def fetch_source(project):
     """Fetchs the source from git repository."""
     logger.info('Fetching source for %s from GitHub' % project)
-    payload = {'access_token': 'cfd52a4b13e7c9f34e0d7853fd670740cf48d55a'}
+    # TODO: This cannot just be the project owner's token
+    payload = {'access_token': project.owner.get_profile().github_access_token}
     r = requests.get('%s/repos/%s/%s/tarball' % (
         settings.GITHUB_API_URL, project.owner, project.name,
     ), params=payload)
@@ -63,20 +66,26 @@ def build_docs(path, project):
         args = ['-b', 'html', '%s/docs/' % path, '%s/docs/_build/html/' % path]
     result = subprocess.check_output(builder + args)
     logger.info(result)
-    return result
+    return path
 
 @task
-def upload_docs(result, project):
+def upload_docs(path, project):
     """Uploads the built docs to the appropriate storage."""
     logger.info('Uploading docs for %s' % project)
-    #count = 0
-    #for root, dirs, names in os.walk('docs/_build/html'):
-    #    for idx, name in enumerate(names):
-    #        with open(os.path.join(root, name), 'rb') as f:
-    #            file = File(f)
-                #default_storage.save('/docs/%s/%s' % project.owner, project,
-                #                     file.name, file)
-                # Deletes the file after uploading
-    #            file.delete()
-    #    count += idx
-    #logger.info('Finished uploading %s files' % count)
+    count = 0
+    dest_base = '%s%s/%s/' % (settings.DOCS_URL, project.owner, project)
+    local_base = '%s/docs/_build/html/' % path
+    # Walks through the built doc files and uploads them
+    for root, dirs, names in os.walk(local_base):        
+        for idx, name in enumerate(names):
+            with open(os.path.join(root, name), 'rb') as f:
+                file = File(f)
+                dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
+                default_storage.save(dest, file)
+                # Deletes the file from local after uploading
+                file.close()
+                os.remove(os.path.join(root, name))
+        count += idx
+    shutil.rmtree(path)
+    logger.info('Finished uploading %s files' % count)
+    return count

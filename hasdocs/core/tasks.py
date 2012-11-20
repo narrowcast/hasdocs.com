@@ -7,6 +7,8 @@ import requests
 from celery import chain, task
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.storage import default_storage
 
 from hasdocs.projects.models import Project
 
@@ -37,9 +39,8 @@ def fetch_source(project):
     return filename
 
 @task
-def extract(bytes_written, project):
+def extract(filename, project):
     """Extracts the given tarball and returns its resulting path."""
-    filename = '%s.tar.gz' % project
     logger.debug('Extracting %s', filename)
     tar = tarfile.open(filename)
     path = tar.next().path
@@ -52,10 +53,11 @@ def extract(bytes_written, project):
 def build_docs(path, project):
     """Builds new docs using the appropriate autodoc module."""
     logger.info('Building docs for %s' % project)
-    result = subprocess.check_output(
-        # This is ghetto, should fix asap
-        ['sphinx-build', '-b', 'html', '%s/docs/' % path, '%s/docs/_build/html' % path]
-    )
+    builder = None
+    if project.generator.name == 'Sphinx':
+        builder = ['sphinx-build']
+        args = ['-b', 'html', '%s/docs/' % path, '%s/docs/_build/html/' % path]
+    result = subprocess.check_output(builder + args)
     logger.info(result)
     return result
 
@@ -63,3 +65,14 @@ def build_docs(path, project):
 def upload_docs(result, project):
     """Uploads the built docs to the appropriate storage."""
     logger.info('Uploading docs for %s' % project)
+    #count = 0
+    #for root, dirs, names in os.walk('docs/_build/html'):
+    #    for idx, name in enumerate(names):
+    #        with open(os.path.join(root, name), 'rb') as f:
+    #            file = File(f)
+                #default_storage.save('/docs/%s/%s' % project.owner, project,
+                #                     file.name, file)
+                # Deletes the file after uploading
+    #            file.delete()
+    #    count += idx
+    #logger.info('Finished uploading %s files' % count)

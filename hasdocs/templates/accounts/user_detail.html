@@ -32,5 +32,13 @@
       </li>
     {% endfor %}
   </ul>
+  {% if account.get_profile.github_access_token %}
+    <h3>GitHub</h3>
+    <a class="btn" href="">Refresh</a>    
+  {% endif %}
+  {% if account.get_profile.heroku_api_key %}
+    <h3>Heroku</h3>
+    <a class="btn" href="">Refresh</a>
+  {% endif %}
 
 {% endblock %}

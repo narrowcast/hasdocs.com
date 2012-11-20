@@ -2,6 +2,7 @@ import json
 import logging
 import mimetypes
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.views import serve
 from django.core.files.storage import default_storage
@@ -23,7 +24,11 @@ def home(request):
     if request.subdomain:
         # Then serve the page for the given user, if any
         user = get_object_or_404(User, username=request.subdomain)
-        file = default_storage.open('docs/%s/index.html' % user, 'r')
+        try:
+            path = '%s%s/index.html' % (settings.DOCS_URL, user)
+            file = default_storage.open(path, 'r')
+        except IOError:
+            raise Http404
         return HttpResponse(file, content_type='text/html')
     else:
         return render_to_response('core/index.html', {
@@ -49,8 +54,8 @@ def user_or_page(request, slug):
         project = get_object_or_404(Project, name=slug)
         # Check permissions
         if not has_permission(request.user, project):
-            raise Http404
-        path = 'docs/%s/%s/index.html' % (user, project)
+            raise Http404        
+        path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
         file = default_storage.open(path, 'r')
         return HttpResponse(file, content_type='text/html')
     else:
@@ -64,12 +69,16 @@ def user_or_page(request, slug):
             'account': user, 'projects': projects,
         }, context_instance=RequestContext(request))
 
-def serve_static(request, path):
+def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
     if request.subdomain:
         # Then serve the page for the given user, if any
         user = get_object_or_404(User, username=request.subdomain)
-        file = default_storage.open('docs/%s/%s' % (user, path), 'r')
+        try:
+            path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
+            file = default_storage.open(path, 'r')
+        except IOError:
+            raise Http404
         return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
     else:
         raise Http404

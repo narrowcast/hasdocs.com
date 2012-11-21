@@ -6,7 +6,7 @@
     
   <h1 class="page-header">Plans and Pricing</h1>
   <p>Join today and start writing and sharing your documents right away.</p>
-  <div class="row">
+  <div class="row">    
     <div class="plan span12">
       <h3>Free for open source</h3>
       <p>Unlimited public projects and unlimited public collaborators.</p>
@@ -14,18 +14,32 @@
     </div>
   </div>
   <div class="row">
-    <div class="plan span4">
-      <h3>Micro</h3>
-      <p>5 Private Repositories</p>
-    </div>
-    <div class="plan span4">
-      <h3>Small</h3>
-      <p>10 Private Repositories</p>
-    </div>
-    <div class="plan span4">
-      <h3>Medium</h3>
-      <p>20 Private Repositories</p>
-    </div>
+    <h2 class="span12">Individual Plans</h2>
+    {% for plan in individual_plans %}
+      <div class="plan span4">
+        <h3>{{ plan.name }}</h3>
+        <div class="price">
+          <span class="symbol">$</span>
+          <span class="amount">{{ plan.price }}</span>
+          <span class="duration">/ month</span>
+        </div>
+        <p>{{ plan.private_docs}} Private Documentations</p>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="row">
+    <h2 class="span12">Business Plans</h2>
+    {% for plan in business_plans %}
+      <div class="plan span3">
+        <h3>{{ plan.name }}</h3>
+        <div class="price">
+          <span class="symbol">$</span>
+          <span class="amount">{{ plan.price }}</span>
+          <span class="duration">/ month</span>
+        </div>
+        <p>{{ plan.private_docs}} Private Documentations</p>
+      </div>
+    {% endfor %}
   </div>
   
 {% endblock %}

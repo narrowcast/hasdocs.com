@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, DeleteView
 from django.contrib import admin
 
 from hasdocs.accounts.views import UserCreateView, UserUpdateView
-from hasdocs.core.views import ContactView
+from hasdocs.core.views import ContactView, PlansView
 from hasdocs.projects.models import Project
 from hasdocs.projects.views import ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView
 
@@ -35,7 +35,7 @@ urlpatterns = patterns('',
     # How it works
     url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
     # Pricing
-    url(r'^pricing/$', TemplateView.as_view(template_name="content/pricing.html"), name='pricing'),
+    url(r'^pricing/$', PlansView.as_view(), name='pricing'),
     # Terms of service
     url(r'^terms/$', TemplateView.as_view(template_name="content/terms.html"), name='terms'),
     # Privacy policy

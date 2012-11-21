@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 HasDocs documentation
-===================
+=====================
 
 HasDocs is Heroku for documentation. This documentation is to share important
 design decisions.

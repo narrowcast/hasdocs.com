@@ -10,11 +10,13 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
-from hasdocs.projects.models import Project
+from hasdocs.accounts.models import Plan
 from hasdocs.core.forms import ContactForm
 from hasdocs.core.tasks import update_docs
+from hasdocs.projects.models import Project
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +112,16 @@ def post_receive_heroku(request):
         return HttpResponse('Thanks')
     else:
         raise Http404
+
+class PlansView(TemplateView):
+    """View for showting the plans and pricing."""
+    template_name="content/pricing.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super(PlansView, self).get_context_data(**kwargs)
+        context['individual_plans'] = Plan.objects.filter(business=False).exclude(price=0)
+        context['business_plans'] = Plan.objects.filter(business=True)
+        return context
     
 class ContactView(FormView):
     """Shows the contact form and sends email to admin on a valid submission."""

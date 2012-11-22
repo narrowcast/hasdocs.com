@@ -11,7 +11,10 @@ logger = logging.getLogger(__name__)
 class Domain(models.Model):
     """Model for representing a domain name."""
     # URL of the domain
-    name = models.URLField()
+    name = models.CharField(max_length=200)
+    
+    def __unicode__(self):
+        return self.name
     
 class Generator(models.Model):
     """Model for representing a documentation generator."""

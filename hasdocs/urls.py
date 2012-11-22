@@ -12,7 +12,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Home
-    url(r'^$', 'hasdocs.core.views.home', name='home'),    
+    url(r'^$', 'hasdocs.core.views.home', name='home'),
     # Admin
     url(r'^admin/', include(admin.site.urls)),
     
@@ -56,15 +56,12 @@ urlpatterns = patterns('',
     # List of Heroku projects
     url(r'^import/heroku/$', HerokuProjectListView.as_view(), name='project_list_heroku'),
     
-    # User detail or project page if subdomain is set
-    url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),
+    # User detail
+    url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_detail', name='user_detail'),
     # Project detail
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
     # Project update
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
     # Project delete
     url(r'^(?P<username>\w+)/(?P<slug>\w+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
-    
-    # Static documentation files
-    url(r'^(?P<slug>[\w.-]+)/(?P<path>.*)$', 'hasdocs.core.views.serve_static', name='serve_static'),
 )

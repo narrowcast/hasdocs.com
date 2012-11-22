@@ -22,19 +22,19 @@ logger = logging.getLogger(__name__)
 
 
 def home(request):
-    """Shows the home page or user page."""
-    if request.subdomain:
-        # Then serve the page for the given user, if any
-        user = get_object_or_404(User, username=request.subdomain)
-        try:
-            path = '%s%s/index.html' % (settings.DOCS_URL, user)
-            file = default_storage.open(path, 'r')
-        except IOError:
-            raise Http404
-        return HttpResponse(file, content_type='text/html')
-    else:
-        return render_to_response('core/index.html', {
+    """Shows the home page."""
+    return render_to_response('core/index.html', {
         }, context_instance=RequestContext(request))
+
+def user_page(request):
+    """Returns the page for the user, if any."""
+    user = get_object_or_404(User, username=request.subdomain)
+    try:
+        path = '%s%s/index.html' % (settings.DOCS_URL, user)
+        file = default_storage.open(path, 'r')
+    except IOError:
+        raise Http404
+    return HttpResponse(file, content_type='text/html')
 
 def has_permission(user, project):
     """Returns whether the user has permission to access the project."""
@@ -48,45 +48,42 @@ def has_permission(user, project):
         # Then everyone has access to the project
         return True
 
-def user_or_page(request, slug):
-    """Shows the project page if subdomain is set or the user detail."""
-    if request.subdomain:
-        # Then serve the project page for the given user and project, if any
-        user = get_object_or_404(User, username=request.subdomain)
-        project = get_object_or_404(Project, name=slug)
-        # Check permissions
-        if not has_permission(request.user, project):
-            raise Http404
-        path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
-        try:
-            file = default_storage.open(path, 'r')
-        except IOError:
-            raise Http404
-        return HttpResponse(file, content_type='text/html')
-    else:
-        # Then server the user detail for the given user
-        user = get_object_or_404(User, username=slug)
-        projects = Project.objects.filter(owner=user)
-        if user != request.user:
-            # Then limit access to the public projects
-            projects = projects.filter(private=False)
-        return render_to_response('accounts/user_detail.html', {
-            'account': user, 'projects': projects,
-        }, context_instance=RequestContext(request))
+def user_detail(request, slug):
+    """Shows the user detail page."""
+    # Then server the user detail for the given user
+    user = get_object_or_404(User, username=slug)
+    projects = Project.objects.filter(owner=user)
+    if user != request.user:
+        # Then limit access to the public projects
+        projects = projects.filter(private=False)
+    return render_to_response('accounts/user_detail.html', {
+        'account': user, 'projects': projects,
+    }, context_instance=RequestContext(request))
+
+def project_page(request, slug):
+    """Returns the project page for the given user and project, if any."""
+    user = get_object_or_404(User, username=request.subdomain)
+    project = get_object_or_404(Project, name=slug)
+    # Check permissions
+    if not has_permission(request.user, project):
+        raise Http404
+    path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
+    try:
+        file = default_storage.open(path, 'r')
+    except IOError:
+        raise Http404
+    return HttpResponse(file, content_type='text/html')
 
 def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
-    if request.subdomain:
-        # Then serve the page for the given user, if any
-        user = get_object_or_404(User, username=request.subdomain)
-        try:
-            path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
-            file = default_storage.open(path, 'r')
-        except IOError:
-            raise Http404
-        return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
-    else:
+    # Then serve the page for the given user, if any
+    user = get_object_or_404(User, username=request.subdomain)
+    try:
+        path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
+        file = default_storage.open(path, 'r')
+    except IOError:
         raise Http404
+    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
 
 @csrf_exempt
 def post_receive_github(request):

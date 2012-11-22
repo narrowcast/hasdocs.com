@@ -118,6 +118,7 @@ class PlansView(TemplateView):
     template_name="content/pricing.html"
     
     def get_context_data(self, **kwargs):
+        """Sets the individual and business plans as context for the view."""
         context = super(PlansView, self).get_context_data(**kwargs)
         context['individual_plans'] = Plan.objects.filter(business=False).exclude(price=0)
         context['business_plans'] = Plan.objects.filter(business=True)

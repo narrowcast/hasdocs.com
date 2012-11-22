@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}GitHub Projects{% endblock %}
+
+{% block container %}
+  
+  <h1 class="page-header">Projects</h1>
+  <h2>GitHub Repositories</h2>
+  <ul>
+    {% for repo in repos %}
+      <li class="repo">
+        <h3>{{ repo.name }}</h3>
+        <p class="description">{{ repo.description }}</p>
+        <p class="mod_date">Last modified {{ repo.updated_at }}</p>
+        <a class="btn btn-success">Import</a>
+      </li>
+    {% endfor %}
+  </ul>
+  
+{% endblock %}

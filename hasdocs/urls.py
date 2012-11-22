@@ -5,6 +5,7 @@ from django.contrib import admin
 from hasdocs.accounts.views import UserCreateView, UserUpdateView
 from hasdocs.core.views import ContactView, PlansView
 from hasdocs.projects.models import Project
+from hasdocs.projects.views import GitHubProjectListView, HerokuProjectListView
 from hasdocs.projects.views import ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView
 
 admin.autodiscover()
@@ -33,20 +34,27 @@ urlpatterns = patterns('',
     # Explore
     url(r'^explore/$', ProjectListView.as_view(), name='explore'),
     # How it works
-    url(r'^how/$', TemplateView.as_view(template_name="content/how.html"), name='how'),
+    url(r'^how/$', TemplateView.as_view(template_name='content/how.html'), name='how'),
     # Pricing
     url(r'^pricing/$', PlansView.as_view(), name='pricing'),
-    # Terms of service
-    url(r'^terms/$', TemplateView.as_view(template_name="content/terms.html"), name='terms'),
-    # Privacy policy
-    url(r'^privacy/$', TemplateView.as_view(template_name="content/privacy.html"), name='privacy'),
+    # Help
+    url(r'^help/$', TemplateView.as_view(template_name='content/help.html'), name='help'),
     # Contact form
     url(r'^contact/$', ContactView.as_view(), name='contact'),
+    # Terms of service
+    url(r'^terms/$', TemplateView.as_view(template_name='content/terms.html'), name='terms'),
+    # Privacy policy
+    url(r'^privacy/$', TemplateView.as_view(template_name='content/privacy.html'), name='privacy'),    
  
     # GitHub post-receive hook
     url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github'),
     # Heroku deploy hook
     url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku'),
+    
+    # List of GitHub projects
+    url(r'^import/github/$', GitHubProjectListView.as_view(), name='project_list_github'),
+    # List of Heroku projects
+    url(r'^import/heroku/$', HerokuProjectListView.as_view(), name='project_list_heroku'),
     
     # User detail or project page if subdomain is set
     url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_or_page', name='user_or_page'),

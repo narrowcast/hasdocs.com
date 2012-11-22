@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Heroku Projects{% endblock %}
+
+{% block container %}
+  
+  <h1 class="page-header">Projects</h1>
+  <h2>Heroku Apps</h2>
+  <ul>
+    {% for app in apps %}
+      <li class="app">
+        <h3>{{ app.name }}</h3>
+        <p class="mod_date">Last modified {{ app.updated_at }}</p>
+        <a class="btn btn-success">Import</a>
+      </li>
+    {% endfor %}
+  </ul>
+  
+{% endblock %}

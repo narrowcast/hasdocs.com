@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
@@ -57,6 +57,33 @@ class ProjectDeleteView(DeleteView):
         if request.user != project.owner:
             raise Http404
         return super(ProjectDeleteView, self).dispatch(request, *args, **kwargs)
+
+class GitHubProjectListView(TemplateView):
+    """View for viewing the list of GitHub projects."""
+    template_name = 'projects/project_list_github.html'
+    
+    def get_context_data(self, **kwargs):
+        """Sets the list of GitHub repositories as context."""
+        context = super(GitHubProjectListView, self).get_context_data(**kwargs)        
+        access_token = self.request.user.get_profile().github_access_token
+        payload = {'access_token': access_token }
+        r = requests.get('%s/user/repos' % settings.GITHUB_API_URL,
+                         params=payload)
+        context['repos'] = r.json
+        return context
+
+class HerokuProjectListView(TemplateView):
+    """View for viewing the list of Heroku projects."""
+    template_name = 'projects/project_list_heroku.html'
+    
+    def get_context_data(self, **kwargs):
+        """Sets the list of Heroku apps as context."""
+        context = super(HerokuProjectListView, self).get_context_data(**kwargs)
+        api_key = self.request.user.get_profile().heroku_api_key
+        r = requests.get('%s/apps' % settings.HEROKU_API_URL,
+                         auth=('', api_key))
+        context['apps'] = r.json
+        return context
     
 def import_from_github(request):
     """Imports a project from GitHub repository."""

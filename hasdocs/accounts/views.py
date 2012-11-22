@@ -61,8 +61,8 @@ class UserDetailView(DetailView):
 class UserUpdateView(UpdateView):
     """View for updating user settings."""
     form_class = UserUpdateForm
-    template_name = "accounts/user_form.html"
-    success_url = "."
+    template_name = 'accounts/user_form.html'
+    success_url = '.'
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

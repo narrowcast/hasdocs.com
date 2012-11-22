@@ -6,7 +6,6 @@ from hasdocs.projects.models import Domain, Project
 class SubdomainMiddleware:
     """Middleware for handling subdomains."""
     def process_request(self, request):
-        print request
         host = request.get_host()
         subdomain = host.split('.')[0]
         request.slug = None
@@ -16,7 +15,7 @@ class SubdomainMiddleware:
             request.subdomain = subdomain
             request.urlconf = settings.SUBDOMAIN_URLCONF
         # Handle custom domains
-        if 'hasdocs.com' not in host:
+        if 'test.com' not in host:
             try:
                 # WTF redis or similar for cname lookup may speed up things
                 domain = Domain.objects.get(name=host)

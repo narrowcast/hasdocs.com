@@ -3,7 +3,8 @@ import requests
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, TemplateView
@@ -62,6 +63,14 @@ class GitHubProjectListView(TemplateView):
     """View for viewing the list of GitHub projects."""
     template_name = 'projects/project_list_github.html'
     
+    def dispatch(self, request, *args, **kwargs):
+        """Checks whether user has GitHub access token and redirects if not."""
+        access_token = request.user.get_profile().github_access_token
+        if not access_token:
+            # Then redirect to GitHub OAuth view
+            return HttpResponseRedirect(reverse('oauth_authenticate'))
+        return super(GitHubProjectListView, self).dispatch(request, args,**kwargs)
+    
     def get_context_data(self, **kwargs):
         """Sets the list of GitHub repositories as context."""
         context = super(GitHubProjectListView, self).get_context_data(**kwargs)        
@@ -76,6 +85,14 @@ class HerokuProjectListView(TemplateView):
     """View for viewing the list of Heroku projects."""
     template_name = 'projects/project_list_heroku.html'
     
+    def dispatch(self, request, *args, **kwargs):
+        """Checks whether user has Heroku api key and redirects if not."""
+        api_key = request.user.get_profile().heroku_api_key
+        if not api_key:
+            # Then redirect to Heroku OAuth view
+            return HttpResponseRedirect('')
+        return super(HerokuProjectListView, self).dispatch(request, args,**kwargs)
+
     def get_context_data(self, **kwargs):
         """Sets the list of Heroku apps as context."""
         context = super(HerokuProjectListView, self).get_context_data(**kwargs)

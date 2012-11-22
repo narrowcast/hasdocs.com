@@ -15,7 +15,7 @@ class SubdomainMiddleware:
             request.subdomain = subdomain
             request.urlconf = settings.SUBDOMAIN_URLCONF
         # Handle custom domains
-        if 'test.com' not in host:
+        if 'hasdocs.com' not in host:
             try:
                 # WTF redis or similar for cname lookup may speed up things
                 domain = Domain.objects.get(name=host)

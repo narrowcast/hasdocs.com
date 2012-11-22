@@ -12,7 +12,7 @@
         <h3>{{ repo.name }}</h3>
         <p class="description">{{ repo.description }}</p>
         <p class="mod_date">Last modified {{ repo.updated_at }}</p>
-        <a class="btn btn-success">Import</a>
+        <a class="btn btn-success" href="{% url import_from_github repo.id %}">Import</a>
       </li>
     {% endfor %}
   </ul>

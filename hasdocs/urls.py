@@ -51,10 +51,15 @@ urlpatterns = patterns('',
     # Heroku deploy hook
     url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku'),
     
-    # List of GitHub projects
-    url(r'^import/github/$', GitHubProjectListView.as_view(), name='project_list_github'),
-    # List of Heroku projects
-    url(r'^import/heroku/$', HerokuProjectListView.as_view(), name='project_list_heroku'),
+    # List of GitHub repositories
+    url(r'^github/$', GitHubProjectListView.as_view(), name='project_list_github'),
+    # List of Heroku apps
+    url(r'^heroku/$', HerokuProjectListView.as_view(), name='project_list_heroku'),
+    
+    # Import from a GitHub project
+    url(r'^github/import/(?P<id>[\d]+)/$', 'hasdocs.projects.views.import_from_github', name='import_from_github'),
+    # Import from a Heroku project
+    url(r'^heroku/import/(?P<id>[\d]+)/$', 'hasdocs.projects.views.import_from_heroku', name='import_from_heroku'),
     
     # User detail
     url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_detail', name='user_detail'),

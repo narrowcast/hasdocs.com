@@ -47,17 +47,17 @@
             <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
             <p class="description">{{ project.description }}</p>
             <p class="mod_date">Last modified {{ project.mod_date|timesince }} ago</p>
-            <a class="btn">View Docs</a>
+            <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
           </li>
         {% endfor %}
       </ul>
       {% if account.get_profile.github_access_token %}
         <h3>GitHub</h3>
-        <a class="btn" href="">Refresh</a>    
+        <a class="btn" href="{% url project_list_github %}">View Repositories</a>    
       {% endif %}
       {% if account.get_profile.heroku_api_key %}
         <h3>Heroku</h3>
-        <a class="btn" href="">Refresh</a>
+        <a class="btn" href="{% url project_list_heroku %}">View Apps</a>
       {% endif %}
     </div>
   </div>

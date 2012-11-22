@@ -11,7 +11,7 @@
       <li class="app">
         <h3>{{ app.name }}</h3>
         <p class="mod_date">Last modified {{ app.updated_at }}</p>
-        <a class="btn btn-success">Import</a>
+        <a class="btn btn-success" href="{% url import_from_heroku app.id %}">Import</a>
       </li>
     {% endfor %}
   </ul>

@@ -88,7 +88,7 @@ def serve_static(request, slug, path):
     # Then serve the page for the given user, if any
     user = get_object_or_404(User, username=request.subdomain)
     if request.slug:
-        # Then manually prepend project name to the slug
+        # WTF Then manually prepend project name to the slug
         slug = '%s/%s' % (request.slug, slug)
     try:
         path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)

@@ -8,6 +8,11 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 
+class Domain(models.Model):
+    """Model for representing a domain name."""
+    # URL of the domain
+    name = models.URLField()
+    
 class Generator(models.Model):
     """Model for representing a documentation generator."""
     # Name of the documentation generator
@@ -46,6 +51,8 @@ class Project(models.Model):
     language = models.ForeignKey(Language, blank=True, null=True)
     # Documentation generator to be used for this project
     generator = models.ForeignKey(Generator, blank=True, null=True)
+    # Custom domains for this project
+    custom_domains = models.ManyToManyField(Domain, blank=True, null=True)
     # Published date
     pub_date = models.DateTimeField(auto_now_add=True)
     # Last modified date

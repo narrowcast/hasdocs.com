@@ -29,8 +29,17 @@ def home(request):
 def user_page(request):
     """Returns the page for the user, if any."""
     user = get_object_or_404(User, username=request.subdomain)
-    try:
+    if request.slug:
+        # Then we need to serve the project page instead of user page
+        project = get_object_or_404(Project, name=request.slug)
+        # Check permissions
+        if not has_permission(request.user, project):
+            raise Http404
+        path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
+    else:
+        # Then serve the user page
         path = '%s%s/index.html' % (settings.DOCS_URL, user)
+    try:
         file = default_storage.open(path, 'r')
     except IOError:
         raise Http404
@@ -78,6 +87,9 @@ def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
     # Then serve the page for the given user, if any
     user = get_object_or_404(User, username=request.subdomain)
+    if request.slug:
+        # Then manually prepend project name to the slug
+        slug = '%s/%s' % (request.slug, slug)
     try:
         path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
         file = default_storage.open(path, 'r')

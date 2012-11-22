@@ -7,6 +7,7 @@ class SubdomainMiddleware:
     def process_request(self, request):
         host = request.get_host()
         subdomain = host.split('.')[0]
+        request.slug = None
         if subdomain == 'www':
             request.subdomain = None
         else:
@@ -15,10 +16,13 @@ class SubdomainMiddleware:
         # Handle custom domains
         if 'test.com' not in host:
             try:
+                # WTF redis or similar for cname lookup may speed up things
                 domain = Domain.objects.get(name=host)
                 project = Project.objects.get(custom_domains=domain)
-                #request.subdomain = project.owner
-                #request.slug = project
+                # WTF this part is somewhat ghetto, need to clean up
+                request.subdomain = project.owner
+                request.slug = project
+                request.urlconf = 'hasdocs.core.urls'
             except Domain.DoesNotExist:
                 # Then CNAME points to our domain, but no record on our side
                 raise Http404

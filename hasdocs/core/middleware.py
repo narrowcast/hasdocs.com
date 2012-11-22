@@ -11,14 +11,12 @@ class SubdomainMiddleware:
         subdomain = host.split('.')[0]
         request.slug = None
         request.subdomain = subdomain
-        print host
-        print subdomain
-        print Site.objects.get_current().domain
         if subdomain != 'www':
             # Then handle subdomain urls
             request.urlconf = settings.SUBDOMAIN_URLCONF
         # Handle custom domains
         if Site.objects.get_current().domain not in host:
+            logger.info('Handling cnamed request from %s' % host)
             try:
                 # WTF redis or similar for cname lookup may speed up things
                 domain = Domain.objects.get(name=host)
@@ -28,5 +26,6 @@ class SubdomainMiddleware:
                 request.slug = project
                 request.urlconf = settings.SUBDOMAIN_URLCONF
             except Domain.DoesNotExist:
+                logger.warning('Request from %s found no match' % host)
                 # Then CNAME points to our domain, but no record on our side
                 raise Http404

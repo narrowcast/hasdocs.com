@@ -43,6 +43,7 @@ def user_page(request):
         file = default_storage.open(path, 'r')
     except IOError:
         raise Http404
+    logger.info('Serving page at %s' % path)
     return HttpResponse(file, content_type='text/html')
 
 def has_permission(user, project):
@@ -81,6 +82,7 @@ def project_page(request, slug):
         file = default_storage.open(path, 'r')
     except IOError:
         raise Http404
+    logger.info('Serving page at %s' % path)
     return HttpResponse(file, content_type='text/html')
 
 def serve_static(request, slug, path):
@@ -141,5 +143,6 @@ class ContactView(FormView):
     
     def form_valid(self, form):
         """Sends emails to the admins on form validation."""
+        logger.info('Emailing admins of new contact form')
         #form.send_email()
         return super(ContactView, self).form_valid(form)

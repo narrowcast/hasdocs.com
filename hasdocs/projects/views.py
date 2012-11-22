@@ -104,6 +104,7 @@ class HerokuProjectListView(TemplateView):
     
 def import_from_github(request):
     """Imports a project from GitHub repository."""
+    logger.info('Importing a repository from GitHub')
     access_token = request.user.get_profile().github_access_token
     payload = {'access_token': access_token }
     r = requests.get('%s/repos/%s' % (
@@ -116,6 +117,7 @@ def import_from_github(request):
     
 def import_from_heroku(request):
     """Imports a project from Heroku app."""
+    logger.info('Importing an app from Heroku.')
     api_key = request.user.get_profile().heroku_api_key
     r = requests.get('%s/apps/%s' % (
         settings.HEROKU_API_URL, request.POST['app_name']), auth=('', api_key))

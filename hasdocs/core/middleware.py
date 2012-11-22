@@ -10,10 +10,9 @@ class SubdomainMiddleware:
         host = request.get_host()
         subdomain = host.split('.')[0]
         request.slug = None
-        if subdomain == 'www':
-            request.subdomain = None
-        else:
-            request.subdomain = subdomain
+        request.subdomain = subdomain
+        if subdomain != 'www':
+            # Then handle subdomain urls
             request.urlconf = settings.SUBDOMAIN_URLCONF
         # Handle custom domains
         if Site.objects.get_current().domain not in host:

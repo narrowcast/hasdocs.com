@@ -1,8 +1,13 @@
+import logging
+
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.http import Http404
 
 from hasdocs.projects.models import Domain, Project
+
+logger = logging.getLogger(__name__)
+
 
 class SubdomainMiddleware:
     """Middleware for handling subdomains."""

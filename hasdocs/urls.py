@@ -13,6 +13,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Home
     url(r'^$', 'hasdocs.core.views.home', name='home'),
+    # Admin documentations
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Admin
     url(r'^admin/', include(admin.site.urls)),
     

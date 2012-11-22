@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.http import Http404
 
 from hasdocs.projects.models import Domain, Project
@@ -15,7 +16,7 @@ class SubdomainMiddleware:
             request.subdomain = subdomain
             request.urlconf = settings.SUBDOMAIN_URLCONF
         # Handle custom domains
-        if 'hasdocs.com' not in host:
+        if Site.objects.get_current().domain not in host:
             try:
                 # WTF redis or similar for cname lookup may speed up things
                 domain = Domain.objects.get(name=host)

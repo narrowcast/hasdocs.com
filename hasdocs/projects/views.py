@@ -3,6 +3,7 @@ import requests
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -90,7 +91,7 @@ class HerokuProjectListView(TemplateView):
         api_key = request.user.get_profile().heroku_api_key
         if not api_key:
             # Then redirect to Heroku OAuth view
-            return HttpResponseRedirect('')
+            pass
         return super(HerokuProjectListView, self).dispatch(request, args,**kwargs)
 
     def get_context_data(self, **kwargs):
@@ -104,16 +105,25 @@ class HerokuProjectListView(TemplateView):
     
 def import_from_github(request):
     """Imports a project from GitHub repository."""
-    logger.info('Importing a repository from GitHub')
-    access_token = request.user.get_profile().github_access_token
-    payload = {'access_token': access_token }
-    r = requests.get('%s/repos/%s' % (
-        settings.GITHUB_API_URL, request.POST['full_name']), params=payload)
-    repo = r.json
-    # Creates a new project based on the GitHub repo
-    project = Project(name=repo['name'], description=repo['description'],
-                      private=repo['private'])
-    project.save()
+    if request.method == 'POST':
+        logger.info('Importing a repository from GitHub')
+        access_token = request.user.get_profile().github_access_token
+        payload = {'access_token': access_token }
+        r = requests.get(
+            '%s/repos/%s/%s' % (settings.GITHUB_API_URL,request.POST['owner'],
+                                request.POST['repo']), params=payload)
+        repo = r.json
+        owner = User.objects.get(username=repo['owner']['login'])
+        # Creates a new project based on the GitHub repo
+        project = Project(owner=owner, name=repo['name'], url=repo['html_url'],
+                          git_url=repo['git_url'], private=repo['private'],
+                          language=repo['language'],
+                          description=repo['description'])
+        project.save()
+        return HttpResponseRedirect(
+            reverse('project_detail', args=[owner, project]))
+    else:
+        raise Http404
     
 def import_from_heroku(request):
     """Imports a project from Heroku app."""

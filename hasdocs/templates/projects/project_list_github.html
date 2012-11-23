@@ -12,7 +12,12 @@
         <h3>{{ repo.name }}</h3>
         <p class="description">{{ repo.description }}</p>
         <p class="mod_date">Last modified {{ repo.updated_at }}</p>
-        <a class="btn btn-success" href="{% url import_from_github repo.id %}">Import</a>
+        <form action="{% url import_from_github %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="owner" value="{{ repo.owner.login }}">
+          <input type="hidden" name="repo" value="{{ repo.name }}">
+          <button type="submit" class="btn btn-success">Import</button>
+        </form>
       </li>
     {% endfor %}
   </ul>

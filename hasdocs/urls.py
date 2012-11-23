@@ -59,16 +59,16 @@ urlpatterns = patterns('',
     url(r'^heroku/$', HerokuProjectListView.as_view(), name='project_list_heroku'),
     
     # Import from a GitHub project
-    url(r'^github/import/(?P<id>[\d]+)/$', 'hasdocs.projects.views.import_from_github', name='import_from_github'),
+    url(r'^github/import/$', 'hasdocs.projects.views.import_from_github', name='import_from_github'),
     # Import from a Heroku project
-    url(r'^heroku/import/(?P<id>[\d]+)/$', 'hasdocs.projects.views.import_from_heroku', name='import_from_heroku'),
+    url(r'^heroku/import/$', 'hasdocs.projects.views.import_from_heroku', name='import_from_heroku'),
     
     # User detail
     url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_detail', name='user_detail'),
     # Project detail
-    url(r'^(?P<username>\w+)/(?P<slug>\w+)/$', ProjectDetailView.as_view(), name='project_detail'),
+    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/$', ProjectDetailView.as_view(), name='project_detail'),
     # Project update
-    url(r'^(?P<username>\w+)/(?P<slug>\w+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
+    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
     # Project delete
-    url(r'^(?P<username>\w+)/(?P<slug>\w+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
+    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
 )

@@ -4,7 +4,7 @@
 
 {% block container %}
   
-  <h1>{{ user }}</h1>
+  <h1 class="page-header">{{ user }}</h1>
   <form action="{% url settings %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
@@ -20,7 +20,7 @@
   {% if user.get_profile.heroku_api_key %}
     <a class="btn disabled">Connected</a>
   {% else %}
-    <a class="btn" href="#heroku">Connect with Heroku</a>
+    <a href="#heroku" role="button" class="btn" data-toggle="modal">Connect with Heroku</a>
   {% endif %}
 
 {% endblock %}

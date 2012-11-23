@@ -9,14 +9,19 @@
   <ul>
     {% for repo in repos %}
       <li class="repo">
-        <h3>{{ repo.name }}</h3>
+        <h3><a href="{{ repo.html_url }}">{{ repo.name }}</a></h3>
+        <p class="language">{{ repo.language }}</p>
         <p class="description">{{ repo.description }}</p>
         <p class="mod_date">Last modified {{ repo.updated_at }}</p>
         <form action="{% url import_from_github %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="owner" value="{{ repo.owner.login }}">
           <input type="hidden" name="repo" value="{{ repo.name }}">
-          <button type="submit" class="btn btn-success">Import</button>
+          {% if repo.exists %}
+            <button class="btn btn-success disabled">Imported</button>
+          {% else %}
+            <button type="submit" class="btn btn-success">Import</button>
+          {% endif %}
         </form>
       </li>
     {% endfor %}

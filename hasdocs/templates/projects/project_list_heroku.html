@@ -9,9 +9,18 @@
   <ul>
     {% for app in apps %}
       <li class="app">
-        <h3>{{ app.name }}</h3>
+        <h3><a href="{{ app.web_url }}">{{ app.name }}</a></h3>
+        <p class="language">{{ app.buildpack_provided_description }}</p>
         <p class="mod_date">Last modified {{ app.updated_at }}</p>
-        <a class="btn btn-success" href="{% url import_from_heroku app.id %}">Import</a>
+        <form action="{% url import_from_heroku %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="app_name" value="{{ app.name }}">
+          {% if app.exists %}
+            <button class="btn btn-success disabled">Already imported</button>
+          {% else %}
+            <button type="submit" class="btn btn-success">Import</button>
+          {% endif %}
+        </form>
       </li>
     {% endfor %}
   </ul>

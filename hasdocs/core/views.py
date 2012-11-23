@@ -16,7 +16,7 @@ from django.views.generic.edit import FormView
 from hasdocs.accounts.models import Plan
 from hasdocs.core.forms import ContactForm
 from hasdocs.core.tasks import update_docs
-from hasdocs.projects.models import Project
+from hasdocs.projects.models import Domain, Project
 
 logger = logging.getLogger(__name__)
 
@@ -25,26 +25,6 @@ def home(request):
     """Shows the home page."""
     return render_to_response('core/index.html', {
         }, context_instance=RequestContext(request))
-
-def user_page(request):
-    """Returns the page for the user, if any."""
-    user = get_object_or_404(User, username=request.subdomain)
-    if request.slug:
-        # Then we need to serve the project page instead of user page
-        project = get_object_or_404(Project, name=request.slug)
-        # Check permissions
-        if not has_permission(request.user, project):
-            raise Http404
-        path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
-    else:
-        # Then serve the user page
-        path = '%s%s/index.html' % (settings.DOCS_URL, user)
-    try:
-        file = default_storage.open(path, 'r')
-    except IOError:
-        raise Http404
-    logger.info('Serving page at %s' % path)
-    return HttpResponse(file, content_type='text/html')
 
 def has_permission(user, project):
     """Returns whether the user has permission to access the project."""
@@ -69,6 +49,17 @@ def user_detail(request, slug):
     return render_to_response('accounts/user_detail.html', {
         'account': user, 'projects': projects,
     }, context_instance=RequestContext(request))
+    
+def user_page(request):
+    """Returns the page for the user, if any."""
+    user = get_object_or_404(User, username=request.subdomain)
+    path = '%s%s/index.html' % (settings.DOCS_URL, user)
+    try:
+        file = default_storage.open(path, 'r')
+    except IOError:
+        raise Http404
+    logger.info('Serving user page at %s' % path)
+    return HttpResponse(file, content_type='text/html')
 
 def project_page(request, slug):
     """Returns the project page for the given user and project, if any."""
@@ -82,18 +73,45 @@ def project_page(request, slug):
         file = default_storage.open(path, 'r')
     except IOError:
         raise Http404
-    logger.info('Serving page at %s' % path)
+    logger.info('Serving project page at %s' % path)
+    return HttpResponse(file, content_type='text/html')
+
+def custom_domain_page(request):
+    """Returns the project page for cnamed requests."""
+    host = request.get_host()
+    domain = get_object_or_404(Domain, name=host)
+    project = get_object_or_404(Project, custom_domains=domain)
+    # Check permissions
+    if not has_permission(request.user, project):
+        raise Http404
+    path = '%s%s/%s/index.html' % (settings.DOCS_URL, project.owner, project)
+    try:
+        file = default_storage.open(path, 'r')
+    except IOError:
+        raise Http404
+    logger.info('Serving custom domain page at %s from %s' % (path, host))
     return HttpResponse(file, content_type='text/html')
 
 def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
     # Then serve the page for the given user, if any
     user = get_object_or_404(User, username=request.subdomain)
-    if request.slug:
-        # WTF Then manually prepend project name to the slug
-        slug = '%s/%s' % (request.slug, slug)
     try:
         path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
+        logger.debug('Serving static file at %s' % path)
+        file = default_storage.open(path, 'r')
+    except IOError:
+        raise Http404
+    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+
+def serve_static_cname(request, path):
+    """Returns the requested static file using cname from S3, inefficiently."""
+    host = request.get_host()
+    domain = get_object_or_404(Domain, name=host)
+    project = get_object_or_404(Project, custom_domains=domain)
+    try:
+        path = '%s%s/%s/%s' % (settings.DOCS_URL, project.owner, project, path)
+        logger.debug('Serving static file at %s' % path)
         file = default_storage.open(path, 'r')
     except IOError:
         raise Http404

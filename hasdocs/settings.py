@@ -99,7 +99,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'hasdocs.urls'
-SUBDOMAIN_URLCONF = 'hasdocs.core.urls'
+SUBDOMAIN_URLCONF = 'hasdocs.core.subdomain_urls'
+CNAME_URLCONF = 'hasdocs.core.cname_urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'hasdocs.wsgi.application'

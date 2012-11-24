@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block container %}
+  
+  <div class="row">
+    <div class="settings-menu span3">
+      <h3>{{ request.user }}</h3>
+      <ul class="nav nav-tabs nav-stacked">
+        <li class=""><a href="{% url profile_settings %}">Profile</a></li>
+        <li class=""><a href="{% url billing_settings %}">Billing</a></li>
+        <li class=""><a href="{% url connections_settings %}">Connections</a></li>
+        <li class=""><a href="{% url organizations_settings %}">Organizations</a></li>
+      </ul>
+    </div>
+    <div class="settings-content span9">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+
+{% endblock %}

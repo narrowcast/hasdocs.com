@@ -1,15 +1,10 @@
-{% extends "base.html" %}
+{% extends "accounts/base_settings.html" %}
 
 {% load crispy_forms_tags %}
 
-{% block container %}
+{% block content %}
   
-  <h1 class="page-header">{{ user }}</h1>
-  <form action="{% url settings %}" method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input class="btn" type="submit" value="Save" />
-  </form>
+  <h1 class="page-header">Connections</h1>
   <h3>GitHub</h3>
   {% if user.get_profile.github_access_token %}
     <a class="btn disabled">Connected</a>

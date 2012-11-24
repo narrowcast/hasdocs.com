@@ -2,11 +2,12 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView, DeleteView
 from django.contrib import admin
 
-from hasdocs.accounts.views import UserCreateView, UserUpdateView
+from hasdocs.accounts.views import (BillingUpdateView, ConnectionsUpdateView,
+    OrganizationsUpdateView, ProfileUpdateView, UserCreateView)
 from hasdocs.core.views import ContactView, PlansView
 from hasdocs.projects.models import Project
-from hasdocs.projects.views import GitHubProjectListView, HerokuProjectListView
-from hasdocs.projects.views import ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView
+from hasdocs.projects.views import (GitHubProjectListView, HerokuProjectListView,
+    ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView)
 
 admin.autodiscover()
 
@@ -26,8 +27,14 @@ urlpatterns = patterns('',
     # Signup
     url(r'^signup/$', UserCreateView.as_view(), name='signup'),
 
-    # User settings
-    url(r'^settings/$', UserUpdateView.as_view(), name='settings'),
+    # Profile settings
+    url(r'^settings/profile/$', ProfileUpdateView.as_view(), name='profile_settings'),
+    # Billing settings
+    url(r'^settings/billing/$', BillingUpdateView.as_view(), name='billing_settings'),
+    # Connections settings
+    url(r'^settings/connections/$', ConnectionsUpdateView.as_view(), name='connections_settings'),
+    # Organizations settings
+    url(r'^settings/organizations/$', OrganizationsUpdateView.as_view(), name='organizations_settings'),
 
     # OAuth
     url(r'^oauth2/$', 'hasdocs.accounts.views.oauth_authenticate', name='oauth_authenticate'),
@@ -49,9 +56,9 @@ urlpatterns = patterns('',
     url(r'^privacy/$', TemplateView.as_view(template_name='content/privacy.html'), name='privacy'),    
  
     # GitHub post-receive hook
-    url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github'),
+    url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github_hook'),
     # Heroku deploy hook
-    url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku'),
+    url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku_hook'),
     
     # List of GitHub repositories
     url(r'^github/$', GitHubProjectListView.as_view(), name='project_list_github'),

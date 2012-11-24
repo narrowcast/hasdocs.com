@@ -1,8 +1,10 @@
 from django import forms
+from django.contrib import messages
 from django.contrib.auth.models import User
+from django.forms.fields import CharField, EmailField
 from django.forms.widgets import PasswordInput
 
-from hasdocs.accounts.models import UserProfile
+from hasdocs.accounts.models import Plan, UserProfile, UserType
 
 
 class SignupForm(forms.ModelForm):
@@ -12,14 +14,58 @@ class SignupForm(forms.ModelForm):
         fields = ('username', 'email', 'password')
         widgets = {'password': PasswordInput}
         
-class UserUpdateForm(forms.ModelForm):
+class ProfileUpdateForm(forms.ModelForm):
     """Form for updating user settings."""
+    name = CharField(required=False)
+    email = EmailField(required=False)
+    
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email')
+        model = UserProfile
+        fields = ('name', 'email', 'url', 'company', 'location')
+        
+    def __init__(self, *args, **kwargs):
+        """Initializes the fields from values in the User model."""
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['name'].initial = self.instance.user.first_name
+        self.fields['email'].initial = self.instance.user.email
+        
+    def save(self, *args, **kwargs):
+        """Saves the name and email fields into the user model."""
+        profile = super(ProfileUpdateForm, self).save(*args, **kwargs)
+        name = self.cleaned_data['name']
+        email = self.cleaned_data['email']
+        profile.user.first_name = name
+        profile.user.email = email
+        profile.user.save()
+        return profile
 
-class HerokuConnectForm(forms.ModelForm):
+class BillingUpdateForm(forms.ModelForm):
+    """Form for updating billing information."""
+    class Meta:
+        model = UserProfile
+        fields = ('plan', )
+    
+    def __init__(self, *args, **kwargs):
+        super(BillingUpdateForm, self).__init__(*args, **kwargs)
+        user_type = kwargs['instance'].user_type
+        organization = UserType.objects.get(name='Organization')
+        self.fields['plan'].queryset = Plan.objects.filter(
+            business=(user_type==organization))
+    
+class ConnectionsUpdateForm(forms.ModelForm):
     """Form for setting Heroku api key."""
     class Meta:
         model = UserProfile
-        fields = ('heroku_api_key', )
+        fields = ('github_access_token', 'heroku_api_key')
+        
+class OrganizationsUpdateForm(forms.ModelForm):
+    """Form for updating a user's organizations."""
+    class Meta:
+        model = UserProfile
+        fields = ('organizations', )
+        
+    def __init__(self, *args, **kwargs):
+        super(OrganizationsUpdateForm, self).__init__(*args, **kwargs)
+        organization = UserType.objects.get(name='Organization')
+        self.fields['organizations'].queryset = User.objects.filter(
+            userprofile__user_type=organization)

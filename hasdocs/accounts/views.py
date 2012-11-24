@@ -17,7 +17,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
-from hasdocs.accounts.forms import SignupForm, UserUpdateForm
+from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
+from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm, SignupForm
 
 logger = logging.getLogger(__name__)
 
@@ -58,22 +59,35 @@ class UserDetailView(DetailView):
         context['apps'] = r.json
         return context
         
-class UserUpdateView(UpdateView):
-    """View for updating user settings."""
-    form_class = UserUpdateForm
-    template_name = 'accounts/user_form.html'
+class SettingsUpdateView(UpdateView):
+    """View for updating various settings."""
     success_url = '.'
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(UserUpdateView, self).dispatch(*args, **kwargs)
+        return super(SettingsUpdateView, self).dispatch(*args, **kwargs)
     
     def get_object(self, queryset=None):
-        return self.request.user
+        return self.request.user.get_profile()
     
     def form_valid(self, form):
         messages.success(self.request, _("Thanks, your settings have been saved."))
-        return super(UserUpdateView, self).form_valid(form)
+        return super(SettingsUpdateView, self).form_valid(form)
+
+class ProfileUpdateView(SettingsUpdateView):
+    """View for updating profile settings."""
+    form_class = ProfileUpdateForm
+
+class BillingUpdateView(SettingsUpdateView):
+    form_class = BillingUpdateForm
+
+class ConnectionsUpdateView(SettingsUpdateView):
+    """View for updating connections settings."""
+    form_class = ConnectionsUpdateForm
+
+class OrganizationsUpdateView(SettingsUpdateView):
+    """View for updating organizations settings."""
+    form_class = OrganizationsUpdateForm
 
 def oauth_authenticate(request):
     """Request authorization usnig OAuth2 protocol."""

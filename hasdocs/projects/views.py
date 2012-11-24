@@ -139,6 +139,8 @@ def import_from_github(request):
                           language=repo['language'])
         project.save()
         logger.info('Imported %s repo from GitHub.' % project.name)
+        # Creates a post-receive webhook at GitHub
+        create_hook_github(request)
         return HttpResponseRedirect(
             reverse('project_detail', args=[request.user, project]))
     else:
@@ -159,6 +161,8 @@ def import_from_heroku(request):
                           private=True)
         project.save()
         logger.info('Imported %s app from Heroku.' % project.name)
+        # Creates a post-receive webhook at GitHub
+        create_hook_heroku(request)
         return HttpResponseRedirect(
             reverse('project_detail', args=[request.user, project]))
     else:
@@ -168,13 +172,23 @@ def create_hook_github(request):
     """Creates a post-receive hook for the given project at the GitHub repo."""
     logger.info('Creating a post-receive hook at GitHub')
     access_token = request.user.get_profile().github_access_token
-    config = {'url': 'http://www.hasdocs.com/post-receive/github/',
-              'content_type': 'json'}
-    payload = {'access_token': access_token, 'name': 'web', 'config': config}
+    url = request.build_absolute_uri(reverse('github_hook'))
+    config = {'url': url, 'content_type': 'json'}
+    payload = {'name': 'web', 'config': config}
     r = requests.post('%s/repos/%s/%s/hooks' % (
         settings.GITHUB_API_URL, request.POST['owner'], request.POST['repo']
-    ), data=json.dumps(payload))
+    ), data=json.dumps(payload), params={'access_token': access_token})
+    logger.info('Received %s from GitHub for %s' % (r, request.POST['repo']))
+    return r
 
 def create_hook_heroku(request):
     """Creates a post-receive hook for the given project at the Heroku repo."""
     logger.info('Creating a post-receive hook at Heroku')
+    api_key = request.user.get_profile().heroku_api_key
+    url = request.build_absolute_uri(reverse('heroku_hook'))
+    headers = {'Accept': 'application/json'}
+    r = requests.post('%s/apps/%s/addons/deployhooks:http' % (
+        settings.HEROKU_API_URL, request.POST['app_name']
+    ), data=({'url': url}), auth=('', api_key), headers=headers)
+    logger.info('Received %s from Heroku for %s' % (r, request.POST['app_name']))
+    return r

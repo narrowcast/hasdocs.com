@@ -49,12 +49,14 @@
     </div>
     
     <div class="messages">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-          <a class="close" data-dismiss="alert">×</a>
-          {{ message }}
-        </div>
-      {% endfor %}
+      <div class="container">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            <a class="close" data-dismiss="alert">×</a>
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
     </div>
     
     <div class="container">

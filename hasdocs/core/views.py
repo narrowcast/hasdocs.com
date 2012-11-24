@@ -121,7 +121,7 @@ def serve_static_cname(request, path):
 def post_receive_github(request):
     """Post-receive hook to be hit by GitHub."""
     if request.method == 'POST':
-        logger.debug('Paylaod from GitHub: %s' % request.POST['payload'])
+        logger.info('Paylaod from GitHub: %s' % request.POST['payload'])
         payload = json.loads(request.POST['payload'])
         repo_url = payload['repository']['url']
         logger.info('GitHub post-receive hook triggered for %s' % repo_url)

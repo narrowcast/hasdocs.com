@@ -133,11 +133,9 @@ def import_from_github(request):
         ), params=payload)
         repo = r.json
         # Creates a new project based on the GitHub repo
-        language = Language.objects.get(name=repo['language'])
         project = Project(owner=request.user, name=repo['name'],
                           description=repo['description'], url=repo['html_url'],
-                          git_url=repo['git_url'], private=repo['private'],
-                          language=language)
+                          git_url=repo['git_url'], private=repo['private'])
         project.save()
         logger.info('Imported %s repo from GitHub.' % project.name)
         # Creates a post-receive webhook at GitHub

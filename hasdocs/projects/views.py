@@ -13,7 +13,7 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from hasdocs.projects.models import Project
+from hasdocs.projects.models import Language, Project
 
 logger = logging.getLogger(__name__)
 
@@ -133,10 +133,11 @@ def import_from_github(request):
         ), params=payload)
         repo = r.json
         # Creates a new project based on the GitHub repo
+        language = Language.objects.get(name=repo['language'])
         project = Project(owner=request.user, name=repo['name'],
                           description=repo['description'], url=repo['html_url'],
                           git_url=repo['git_url'], private=repo['private'],
-                          language=repo['language'])
+                          language=language)
         project.save()
         logger.info('Imported %s repo from GitHub.' % project.name)
         # Creates a post-receive webhook at GitHub

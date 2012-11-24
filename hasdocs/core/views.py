@@ -119,6 +119,7 @@ def serve_static_cname(request, path):
 
 @csrf_exempt
 def post_receive_github(request):
+    print request
     """Post-receive hook to be hit by GitHub."""
     if request.method == 'POST':
         logger.info('Paylaod from GitHub: %s' % request.POST['payload'])

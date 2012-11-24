@@ -57,7 +57,7 @@ urlpatterns = patterns('',
  
     # GitHub post-receive hook
     url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github_hook'),
-    # Heroku deploy hook
+    # Heroku http deploy hook
     url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku_hook'),
     
     # List of GitHub repositories

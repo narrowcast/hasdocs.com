@@ -6,6 +6,7 @@ from rauth.service import OAuth2Service
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -36,6 +37,14 @@ class UserCreateView(CreateView):
     """View for creating a user."""
     model = User
     form_class = SignupForm
+    
+    def form_valid(self, form):
+        """Authenticates and logs in the user."""
+        redirect = super(UserCreateView, self).form_valid(form)
+        user = authenticate(username=form.cleaned_data['username'],
+                            password=form.cleaned_data['password'])
+        login(self.request, user)
+        return redirect
 
 class UserDetailView(DetailView):
     """View for showing user detail."""

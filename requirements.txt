@@ -18,6 +18,7 @@ gunicorn==0.15.0
 kombu==2.4.8
 mock==1.0.1
 psycopg2==2.4.5
+py-bcrypt==0.2
 python-dateutil==1.5
 pytz==2012h
 rauth==0.4.16

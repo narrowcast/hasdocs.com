@@ -13,6 +13,14 @@ class SignupForm(forms.ModelForm):
         model = User
         fields = ('username', 'email', 'password')
         widgets = {'password': PasswordInput}
+    
+    def save(self, commit=True):
+        """Creates a new user."""
+        user = super(SignupForm, self).save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user
         
 class ProfileUpdateForm(forms.ModelForm):
     """Form for updating user settings."""
@@ -29,14 +37,15 @@ class ProfileUpdateForm(forms.ModelForm):
         self.fields['name'].initial = self.instance.user.first_name
         self.fields['email'].initial = self.instance.user.email
         
-    def save(self, *args, **kwargs):
+    def save(self, commit=True):
         """Saves the name and email fields into the user model."""
-        profile = super(ProfileUpdateForm, self).save(*args, **kwargs)
+        profile = super(ProfileUpdateForm, self).save(commit=False)
         name = self.cleaned_data['name']
         email = self.cleaned_data['email']
         profile.user.first_name = name
         profile.user.email = email
-        profile.user.save()
+        if commit:
+            profile.user.save()
         return profile
 
 class BillingUpdateForm(forms.ModelForm):

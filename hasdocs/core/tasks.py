@@ -72,14 +72,16 @@ def upload_docs(path, project):
     logger.info('Uploading docs for %s' % project)
     count = 0
     dest_base = '%s%s/%s/' % (settings.DOCS_URL, project.owner, project)
-    local_base = '%s/docs/_build/html/' % path
+    local_base = '%s/docs/_build/html/' % path    
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):        
         for idx, name in enumerate(names):
             with open(os.path.join(root, name), 'rb') as f:
                 file = File(f)
                 dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
-                default_storage.save(dest, file)
+                #default_storage.save(dest, file)
+                dest = boto.storage_uri('hasdocs.com/%s' % dest, 'gs')
+                dest.new_key().set_contents_from_file(f)
                 # Deletes the file from local after uploading
                 file.close()
                 os.remove(os.path.join(root, name))

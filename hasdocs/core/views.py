@@ -2,6 +2,8 @@ import json
 import logging
 import mimetypes
 
+from gunicorn.http.wsgi import FileWrapper
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
@@ -99,9 +101,10 @@ def serve_static(request, slug, path):
         path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
         logger.debug('Serving static file at %s' % path)
         file = default_storage.open(path, 'r')
+        wrapper = FileWrapper(file)
     except IOError:
         raise Http404
-    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    return HttpResponse(wrapper, content_type=mimetypes.guess_type(path)[0])
 
 def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3, inefficiently."""
@@ -112,9 +115,10 @@ def serve_static_cname(request, path):
         path = '%s%s/%s/%s' % (settings.DOCS_URL, project.owner, project, path)
         logger.debug('Serving static file at %s' % path)
         file = default_storage.open(path, 'r')
+        wrapper = FileWrapper(file)
     except IOError:
         raise Http404
-    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    return HttpResponse(wrapper, content_type=mimetypes.guess_type(path)[0])
 
 @csrf_exempt
 def post_receive_github(request):

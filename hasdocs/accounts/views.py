@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+
 import requests
 from rauth.service import OAuth2Service
 

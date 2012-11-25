@@ -12,7 +12,7 @@ distribute==0.6.24
 dj-database-url==0.2.1
 django-celery==3.0.11
 django-crispy-forms==1.2.0
-pip install https://bitbucket.org/david/django-storages/get/1574890d87be.zip
+https://bitbucket.org/david/django-storages/get/1574890d87be.zip
 docutils==0.9.1
 gunicorn==0.15.0
 kombu==2.4.8

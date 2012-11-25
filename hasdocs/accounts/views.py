@@ -11,8 +11,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
@@ -110,7 +108,7 @@ def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
-        logger.warning('Possible CSRF attack was attempted.' % url)
+        logger.warning('Possible CSRF attack was attempted: %s' % request)
         return HttpResponse('You may be a victim of CSRF attack.')
     data = dict(code = request.GET['code'], state = request.GET['state'])
     token = github.get_access_token('POST', data=data)

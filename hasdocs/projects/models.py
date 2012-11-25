@@ -2,7 +2,6 @@ import logging
 
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import reverse
 from django.db import models
 
 logger = logging.getLogger(__name__)

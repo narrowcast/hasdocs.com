@@ -1,11 +1,10 @@
 from django.conf.urls import patterns, include, url
-from django.views.generic import TemplateView, DeleteView
+from django.views.generic import TemplateView
 from django.contrib import admin
 
 from hasdocs.accounts.views import (BillingUpdateView, ConnectionsUpdateView,
     OrganizationsUpdateView, ProfileUpdateView, UserCreateView)
 from hasdocs.core.views import ContactView, PlansView
-from hasdocs.projects.models import Project
 from hasdocs.projects.views import (GitHubProjectListView, HerokuProjectListView,
     ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView)
 

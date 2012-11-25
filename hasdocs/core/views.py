@@ -4,7 +4,6 @@ import mimetypes
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.staticfiles.views import serve
 from django.core.files.storage import default_storage
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
@@ -135,7 +134,7 @@ def post_receive_heroku(request):
     """Post-receive hook to be hit by Heroku."""
     if request.method == 'POST':
         app_url = request.POST['url']
-        logger.info('Heroku deploy hook triggered for %s' % repo_url)
+        logger.info('Heroku deploy hook triggered for %s' % app_url)
         project = get_object_or_404(Project, url=app_url)
         result = update_docs.delay(project)
         return HttpResponse('Thanks')

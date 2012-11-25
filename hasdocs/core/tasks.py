@@ -11,8 +11,6 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import default_storage
 
-from hasdocs.projects.models import Project
-
 logger = logging.getLogger(__name__)
 
 
@@ -51,7 +49,7 @@ def extract(filename, project):
         path = tar.next().path
         tar.extractall()
         tar.close()
-    except ReadError:
+    except tarfile.ReadError:
         logger.error('Error opening file %s' % filename)
     os.remove(filename)
     return path

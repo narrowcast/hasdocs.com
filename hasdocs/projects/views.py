@@ -4,7 +4,6 @@ import requests
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -13,7 +12,7 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from hasdocs.projects.models import Language, Project
+from hasdocs.projects.models import Project
 
 logger = logging.getLogger(__name__)
 

@@ -2,6 +2,7 @@ import json
 import logging
 import mimetypes
 
+import boto
 from gunicorn.http.wsgi import FileWrapper
 
 from django.conf import settings
@@ -101,6 +102,7 @@ def serve_static(request, slug, path):
         path = '%s%s/%s/%s' % (settings.DOCS_URL, user, slug, path)
         logger.debug('Serving static file at %s' % path)
         file = default_storage.open(path, 'r')
+        dest = boto.storage_uri('hasdocs.com/%s' % dest, 'gs')
         wrapper = FileWrapper(file)
     except IOError:
         raise Http404

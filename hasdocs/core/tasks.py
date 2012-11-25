@@ -7,12 +7,14 @@ import tarfile
 import boto
 import requests
 from celery import chain, task
+from storages.backends.gs import GSBotoStorage
 
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
+gs_storage = GSBotoStorage()
 
 
 @task
@@ -81,8 +83,7 @@ def upload_docs(path, project):
                 file = File(f)
                 dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
                 #default_storage.save(dest, file)
-                dest = boto.storage_uri('hasdocs.com/%s' % dest, 'gs')
-                dest.new_key().set_contents_from_file(f)
+                gs_storage(dest, file)
                 # Deletes the file from local after uploading
                 file.close()
                 os.remove(os.path.join(root, name))

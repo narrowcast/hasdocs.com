@@ -12,7 +12,7 @@ distribute==0.6.24
 dj-database-url==0.2.1
 django-celery==3.0.11
 django-crispy-forms==1.2.0
-django-storages==1.1.5
+django-storages==1.1.6a1
 docutils==0.9.1
 gunicorn==0.15.0
 kombu==2.4.8

@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import tarfile
 
+import boto
 import requests
 from celery import chain, task
 

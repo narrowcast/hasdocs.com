@@ -83,7 +83,7 @@ def upload_docs(path, project):
                 file = File(f)
                 dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
                 #default_storage.save(dest, file)
-                gs_storage(dest, file)
+                gs_storage.save(dest, file)
                 # Deletes the file from local after uploading
                 file.close()
                 os.remove(os.path.join(root, name))

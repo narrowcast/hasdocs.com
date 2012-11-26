@@ -84,7 +84,10 @@ def upload_docs(path, project):
                 file = File(f)
                 dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
                 #default_storage.save(dest, file)
-                gs_storage.save(dest, file)
+                #gs_storage.save(dest, file)
+                dest_uri = boto.storage_uri(
+                    '%s/%s' % (settings.GS_BUCKET_NAME, dest), 'gs')
+                dest_uri.new_key().set_contents_from_file(file)
                 # Deletes the file from local after uploading
                 file.close()
                 os.remove(os.path.join(root, name))

@@ -14,6 +14,8 @@ django-celery==3.0.11
 django-crispy-forms==1.2.0
 https://bitbucket.org/david/django-storages/get/1574890d87be.zip
 docutils==0.9.1
+gevent==0.13.8
+greenlet==0.4.0
 gunicorn==0.15.0
 kombu==2.4.8
 mock==1.0.1

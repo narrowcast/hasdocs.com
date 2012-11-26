@@ -22,7 +22,9 @@ from hasdocs.core.tasks import update_docs
 from hasdocs.projects.models import Domain, Project
 
 logger = logging.getLogger(__name__)
-gs_storage = GSBotoStorage()
+gs_storage = GSBotoStorage(access_key=settings.GS_ACCESS_KEY_ID,
+                           secret_key=settings.GS_SECRET_ACCESS_KEY)
+
 
 def home(request):
     """Shows the home page."""

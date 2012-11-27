@@ -12,6 +12,7 @@ from django.core.files.storage import default_storage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
@@ -107,6 +108,7 @@ def custom_domain_page(request):
     logger.info('Serving custom domain page at %s from %s' % (path, host))
     return HttpResponse(content, content_type='text/html')
 
+@cache_control(must_revalidate, max_age=3600)
 def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
     # Then serve the page for the given user, if any
@@ -119,6 +121,7 @@ def serve_static(request, slug, path):
         raise Http404
     return HttpResponse(content, content_type=mimetypes.guess_type(path)[0])
 
+@cache_control(must_revalidate=True, max_age=3600)
 def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3, inefficiently."""
     host = request.get_host()

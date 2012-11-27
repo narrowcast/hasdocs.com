@@ -24,7 +24,6 @@ logger = logging.getLogger(__name__)
 gs_storage = GSBotoStorage(access_key=settings.GS_ACCESS_KEY_ID,
                            secret_key=settings.GS_SECRET_ACCESS_KEY)
 
-
 def home(request):
     """Shows the home page."""
     return render_to_response('core/index.html', {
@@ -53,17 +52,28 @@ def user_detail(request, slug):
     return render_to_response('accounts/user_detail.html', {
         'account': user, 'projects': projects,
     }, context_instance=RequestContext(request))
-    
+
+def get_cached_file_or_fetch(path):
+    """Returns cached content for the given path or fetches and caches it."""
+    if cache.has_key(path):
+        return cache.get(path)
+    else:
+        #file = gs_storage.open(path, 'r')
+        file = default_storage.open(path, 'r')
+        content = file.read()
+        cache.set(path, content)
+        return content
+
 def user_page(request):
     """Returns the page for the user, if any."""
     user = get_object_or_404(User, username=request.subdomain)
     path = '%s%s/index.html' % (settings.DOCS_URL, user)
     try:
-        file = default_storage.open(path, 'r')
+        content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
     logger.info('Serving user page at %s' % path)
-    return HttpResponse(file, content_type='text/html')
+    return HttpResponse(content, content_type='text/html')
 
 def project_page(request, slug):
     """Returns the project page for the given user and project, if any."""
@@ -74,11 +84,11 @@ def project_page(request, slug):
         raise Http404
     path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
     try:
-        file = default_storage.open(path, 'r')
+        content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
     logger.info('Serving project page at %s' % path)
-    return HttpResponse(file, content_type='text/html')
+    return HttpResponse(content, content_type='text/html')
 
 def custom_domain_page(request):
     """Returns the project page for cnamed requests."""
@@ -90,11 +100,11 @@ def custom_domain_page(request):
         raise Http404
     path = '%s%s/%s/index.html' % (settings.DOCS_URL, project.owner, project)
     try:
-        file = default_storage.open(path, 'r')
+        content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
     logger.info('Serving custom domain page at %s from %s' % (path, host))
-    return HttpResponse(file, content_type='text/html')
+    return HttpResponse(content, content_type='text/html')
 
 def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
@@ -102,12 +112,11 @@ def serve_static(request, slug, path):
     user = get_object_or_404(User, username=request.subdomain)
     try:
         path = 'docs/%s/%s/%s' % (user, slug, path)
-        logger.debug('Serving static file at %s' % path)
-        file = default_storage.open(path, 'r')
-        #file = gs_storage.open(path, 'r')
+        logger.debug('Serving static file at %s' % path)        
+        content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
-    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    return HttpResponse(content, content_type=mimetypes.guess_type(path)[0])
 
 def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3, inefficiently."""
@@ -117,11 +126,10 @@ def serve_static_cname(request, path):
     try:
         path = '%s%s/%s/%s' % (settings.DOCS_URL, project.owner, project, path)
         logger.debug('Serving static file at %s' % path)
-        file = default_storage.open(path, 'r')
-        #file = gs_storage.open(path, 'r')
+        content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
-    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    return HttpResponse(content, content_type=mimetypes.guess_type(path)[0])
 
 @csrf_exempt
 def post_receive_github(request):

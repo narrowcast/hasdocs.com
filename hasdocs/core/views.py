@@ -108,7 +108,7 @@ def custom_domain_page(request):
     logger.info('Serving custom domain page at %s from %s' % (path, host))
     return HttpResponse(content, content_type='text/html')
 
-@cache_control(must_revalidate, max_age=3600)
+@cache_control(must_revalidate=True, max_age=3600)
 def serve_static(request, slug, path):
     """Returns the requested static file from S3, inefficiently."""
     # Then serve the page for the given user, if any

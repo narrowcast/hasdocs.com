@@ -3,13 +3,12 @@ import logging
 import mimetypes
 import os
 
-from gunicorn.http.wsgi import FileWrapper
 from storages.backends.gs import GSBotoStorage
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
@@ -104,12 +103,15 @@ def serve_static(request, slug, path):
     try:
         path = 'docs/%s/%s/%s' % (user, slug, path)
         logger.debug('Serving static file at %s' % path)
-        file = default_storage.open(path, 'r')
+        #file = default_storage.open(path, 'r')
         #file = gs_storage.open(path, 'r')
-        wrapper = FileWrapper(file)
     except IOError:
         raise Http404
-    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    #return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
+    response =  HttpResponse()
+    response['X-Accel-Redirect'] = '%s/%s' % (settings.AWS_S3_CUSTOM_DOMAIN,
+                                              path)
+    return response
 
 def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3, inefficiently."""
@@ -121,7 +123,6 @@ def serve_static_cname(request, path):
         logger.debug('Serving static file at %s' % path)
         file = default_storage.open(path, 'r')
         #file = gs_storage.open(path, 'r')
-        wrapper = FileWrapper(file)
     except IOError:
         raise Http404
     return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])

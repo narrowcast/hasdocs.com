@@ -187,6 +187,6 @@ def create_hook_heroku(request):
     headers = {'Accept': 'application/json'}
     r = requests.post('%s/apps/%s/addons/deployhooks:http' % (
         settings.HEROKU_API_URL, request.POST['app_name']
-    ), data=({'url': url}), auth=('', api_key), headers=headers)
+    ), data=({'config[url]': url}), auth=('', api_key), headers=headers)
     logger.info('Received %s from Heroku for %s' % (r, request.POST['app_name']))
     return r

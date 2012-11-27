@@ -16,7 +16,7 @@ https://bitbucket.org/david/django-storages/get/1574890d87be.zip
 docutils==0.9.1
 gevent==0.13.8
 greenlet==0.4.0
-gunicorn==0.15.0
+gunicorn==0.16.1
 kombu==2.4.8
 mock==1.0.1
 psycopg2==2.4.5

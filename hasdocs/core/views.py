@@ -103,15 +103,11 @@ def serve_static(request, slug, path):
     try:
         path = 'docs/%s/%s/%s' % (user, slug, path)
         logger.debug('Serving static file at %s' % path)
-        #file = default_storage.open(path, 'r')
+        file = default_storage.open(path, 'r')
         #file = gs_storage.open(path, 'r')
     except IOError:
         raise Http404
-    #return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
-    response =  HttpResponse()
-    response['X-Accel-Redirect'] = '%s/%s' % (settings.AWS_S3_CUSTOM_DOMAIN,
-                                              path)
-    return response
+    return HttpResponse(file, content_type=mimetypes.guess_type(path)[0])
 
 def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3, inefficiently."""

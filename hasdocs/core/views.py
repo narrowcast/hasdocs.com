@@ -57,10 +57,8 @@ def user_detail(request, slug):
 def get_cached_file_or_fetch(path):
     """Returns cached content for the given path or fetches and caches it."""
     if cache.has_key(path):
-        print 'cache hit'
         return cache.get(path)
     else:
-        print 'cache miss'
         #file = gs_storage.open(path, 'r')
         file = default_storage.open(path, 'r')
         content = file.read()
@@ -115,7 +113,7 @@ def serve_static(request, slug, path):
     user = get_object_or_404(User, username=request.subdomain)
     try:
         path = 'docs/%s/%s/%s' % (user, slug, path)
-        logger.debug('Serving static file at %s' % path)        
+        logger.debug('Serving static file at %s' % path)
         content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404

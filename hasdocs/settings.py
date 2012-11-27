@@ -87,6 +87,16 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+# Cache
+CACHES = {
+  'default': {
+    'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+    'LOCATION': os.environ['MEMCACHIER_SERVERS'],
+    'TIMEOUT': 500,
+    'BINARY': True,
+  }
+}
+
 MIDDLEWARE_CLASSES = (
     'hasdocs.core.middleware.SubdomainMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -258,13 +268,3 @@ DOCS_URL = '/docs/'
 GS_ACCESS_KEY_ID = os.environ['GS_ACCESS_KEY_ID']
 GS_SECRET_ACCESS_KEY = os.environ['GS_SECRET_ACCESS_KEY']
 GS_BUCKET_NAME = os.environ['GS_BUCKET_NAME']
-
-# Cache
-CACHES = {
-  'default': {
-    'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-    'LOCATION': os.environ['MEMCACHIER_SERVERS'],
-    'TIMEOUT': 500,
-    'BINARY': True,
-  }
-}

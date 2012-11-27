@@ -44,10 +44,10 @@
               <li>{{ project.language }}</li>
               <li>{{ project.generator }}</li>
             </ul>
+            <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
             <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
             <p class="description">{{ project.description }}</p>
             <p class="mod_date">Last modified {{ project.mod_date|timesince }} ago</p>
-            <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
           </li>
         {% endfor %}
       </ul>

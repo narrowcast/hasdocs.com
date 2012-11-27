@@ -9,6 +9,7 @@
   <ul class="unstyled">
     {% for project in project_list %}
       <li class="project">
+        <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
         <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a> /
         <a href="{{ project.get_absolute_url }}">{{ project }}</a>
         <p class="description">{{ project.description }}</p>

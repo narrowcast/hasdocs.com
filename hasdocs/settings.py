@@ -220,7 +220,7 @@ PASSWORD_HASHERS = (
 )
 
 # Enables session cookies in subdomains
-if os.environ.get('DEVELOPMENT'):
+if DEBUG:
     SESSION_COOKIE_DOMAIN = '.test.com'
 else:
     SESSION_COOKIE_DOMAIN = '.hasdocs.com'
@@ -235,8 +235,9 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 # Django storages
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+if not DEBUG:
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']

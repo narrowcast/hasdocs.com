@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from hasdocs.accounts.views import (BillingUpdateView, ConnectionsUpdateView,
     OrganizationsUpdateView, ProfileUpdateView, UserCreateView)
@@ -78,3 +80,6 @@ urlpatterns = patterns('',
     # Project delete
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/delete/$', ProjectDeleteView.as_view(), name='project_delete'),
 )
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

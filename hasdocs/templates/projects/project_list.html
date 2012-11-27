@@ -6,7 +6,7 @@
   
   <h1 class="page-header">Explore</h1>
   <h2>Recent Projects</h2>
-  <ul>
+  <ul class="unstyled">
     {% for project in project_list %}
       <li class="project">
         <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a> /

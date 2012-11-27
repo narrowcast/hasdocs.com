@@ -20,6 +20,7 @@ greenlet==0.4.0
 gunicorn==0.16.1
 kombu==2.4.8
 mock==1.0.1
+newrelic==1.8.0.13
 psycopg2==2.4.5
 py-bcrypt==0.2
 pylibmc==1.2.3
@@ -28,4 +29,3 @@ pytz==2012h
 rauth==0.4.16
 requests==0.14.2
 wsgiref==0.1.2
-newrelic

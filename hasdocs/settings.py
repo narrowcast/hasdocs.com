@@ -91,7 +91,7 @@ TEMPLATE_LOADERS = (
 CACHES = {
   'default': {
     'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-    'LOCATION': os.environ['MEMCACHIER_SERVERS'],
+    'LOCATION': os.environ['MEMCACHE_SERVERS'],
     'TIMEOUT': 500,
     'BINARY': True,
   }

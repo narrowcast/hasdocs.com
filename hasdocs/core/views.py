@@ -57,8 +57,10 @@ def user_detail(request, slug):
 def get_cached_file_or_fetch(path):
     """Returns cached content for the given path or fetches and caches it."""
     if cache.has_key(path):
+        print 'cache hit'
         return cache.get(path)
     else:
+        print 'cache miss'
         #file = gs_storage.open(path, 'r')
         file = default_storage.open(path, 'r')
         content = file.read()

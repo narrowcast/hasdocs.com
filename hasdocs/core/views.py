@@ -7,6 +7,7 @@ from storages.backends.gs import GSBotoStorage
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response

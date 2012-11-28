@@ -98,6 +98,7 @@ CACHES = {
 }
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.http.ConditionalGetMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'hasdocs.core.middleware.SubdomainMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -235,17 +236,15 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 # Django storages
-if not DEBUG:
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 AWS_S3_CUSTOM_DOMAIN = os.environ['AWS_S3_CUSTOM_DOMAIN']
-AWS_DEFAULT_ACL = 'private'
-AWS_REDUCED_REDUNDANCY = True
+AWS_DOCS_BUCKET_NAME = os.environ['AWS_DOCS_BUCKET_NAME']
 
 # GitHub
 GITHUB_CLIENT_ID = os.environ['GITHUB_CLIENT_ID']

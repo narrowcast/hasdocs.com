@@ -1,15 +1,13 @@
 import json
 import logging
 import mimetypes
-import os
 
-from storages.backends.gs import GSBotoStorage
+from storages.backends.s3boto import S3BotoStorage
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.core.files.storage import default_storage
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import cache_control
@@ -23,8 +21,8 @@ from hasdocs.core.tasks import update_docs
 from hasdocs.projects.models import Domain, Project
 
 logger = logging.getLogger(__name__)
-gs_storage = GSBotoStorage(access_key=settings.GS_ACCESS_KEY_ID,
-                           secret_key=settings.GS_SECRET_ACCESS_KEY)
+docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
+                             reduced_redundancy=True, secure_urls=False)
 
 def home(request):
     """Shows the home page."""
@@ -56,12 +54,11 @@ def user_detail(request, slug):
     }, context_instance=RequestContext(request))
 
 def get_cached_file_or_fetch(path):
-    """Returns cached content for the given path or fetches and caches it."""
+    """Returns cached content for the given path or fetches and caches it."""    
     if cache.has_key(path):
         return cache.get(path)
     else:
-        #file = gs_storage.open(path, 'r')
-        file = default_storage.open(path, 'r')
+        file = docs_storage.open(path, 'r')
         content = file.read()
         cache.set(path, content)
         return content
@@ -119,7 +116,11 @@ def serve_static(request, slug, path):
         content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
-    return HttpResponse(content, content_type=mimetypes.guess_type(path)[0])
+    content_type, encoding = mimetypes.guess_type(path)
+    response = HttpResponse(content, content_type=content_type)
+    if encoding:
+        response['Content-Encoding'] = encoding
+    return response
 
 @cache_control(must_revalidate=True, max_age=3600)
 def serve_static_cname(request, path):
@@ -133,7 +134,11 @@ def serve_static_cname(request, path):
         content = get_cached_file_or_fetch(path)
     except IOError:
         raise Http404
-    return HttpResponse(content, content_type=mimetypes.guess_type(path)[0])
+    content_type, encoding = mimetypes.guess_type(path)
+    response = HttpResponse(content, content_type=content_type)
+    if encoding:
+        response['Content-Encoding'] = encoding
+    return response
 
 @csrf_exempt
 def post_receive_github(request):

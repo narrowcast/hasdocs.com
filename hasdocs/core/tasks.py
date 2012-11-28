@@ -4,19 +4,16 @@ import shutil
 import subprocess
 import tarfile
 
-import boto
 import requests
 from celery import chain, task
-from storages.backends.gs import GSBotoStorage
+from storages.backends.s3boto import S3BotoStorage
 
 from django.conf import settings
 from django.core.files import File
-from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
-gs_storage = GSBotoStorage(access_key=settings.GS_ACCESS_KEY_ID,
-                           secret_key=settings.GS_SECRET_ACCESS_KEY)
-
+docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
+                             reduced_redundancy=True, secure_urls=False)
 
 @task
 def update_docs(project):
@@ -78,16 +75,13 @@ def upload_docs(path, project):
     dest_base = '%s%s/%s/' % (settings.DOCS_URL, project.owner, project)
     local_base = '%s/docs/_build/html/' % path    
     # Walks through the built doc files and uploads them
-    for root, dirs, names in os.walk(local_base):        
+    for root, dirs, names in os.walk(local_base):
         for idx, name in enumerate(names):
-            with open(os.path.join(root, name), 'rb') as f:
-                file = File(f)
+            with open(os.path.join(root, name), 'rb') as fp:
+                file = File(fp)
                 dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
-                #default_storage.save(dest, file)
-                #gs_storage.save(dest, file)
-                dest_uri = boto.storage_uri(
-                    '%s/%s' % (settings.GS_BUCKET_NAME, dest), 'gs')
-                dest_uri.new_key().set_contents_from_file(file)
+                docs_storage.save(dest, file)
+                #cache.set(dest, file)
                 # Deletes the file from local after uploading
                 file.close()
                 os.remove(os.path.join(root, name))

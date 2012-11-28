@@ -10,6 +10,7 @@ from celery import chain, task
 from storages.backends.s3boto import S3BotoStorage
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files import File
 
 logger = logging.getLogger(__name__)

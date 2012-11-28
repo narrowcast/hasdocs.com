@@ -2,7 +2,6 @@ import hashlib
 import json
 import logging
 import mimetypes
-import os.path
 
 from storages.backends.s3boto import S3BotoStorage
 

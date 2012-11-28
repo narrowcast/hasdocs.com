@@ -53,7 +53,7 @@ def last_modified(request, path):
 @condition(last_modified_func=last_modified)
 def serve(request, path):
     """Returns the requested static file from cache or S3."""
-    logger.info('Serving static file at %s' % path)
+    logger.debug('Serving static file at %s' % path)
     try:
         content = cache.get(path, docs_storage.open(path, 'r').read())
         cache.add(path, content)

@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import shutil
@@ -72,20 +73,23 @@ def upload_docs(path, project):
     """Uploads the built docs to the appropriate storage."""
     logger.info('Uploading docs for %s' % project)
     count = 0
-    dest_base = '%s/%s/' % (project.owner, project)
+    dest_base = '%s/%s' % (project.owner, project)
     local_base = '%s/docs/_build/html/' % path    
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):
         for idx, name in enumerate(names):
             with open(os.path.join(root, name), 'rb') as fp:
                 file = File(fp)
-                dest = '%s%s' % (dest_base, os.path.relpath(file.name, local_base))
+                dest = '%s/%s' % (dest_base, os.path.relpath(file.name, local_base))
                 docs_storage.save(dest, file)
-                #cache.set(dest, file)
+                # Invalidates cache
+                cache.delete(dest)
                 # Deletes the file from local after uploading
                 file.close()
                 os.remove(os.path.join(root, name))
         count += idx
     shutil.rmtree(path)
+    # Updates the project's modified date
+    project.save()
     logger.info('Finished uploading %s files' % count)
     return count

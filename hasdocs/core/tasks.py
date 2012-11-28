@@ -6,6 +6,7 @@ import subprocess
 import tarfile
 
 import requests
+import virtualenv
 from celery import chain, task
 from storages.backends.s3boto import S3BotoStorage
 
@@ -27,6 +28,31 @@ def update_docs(project):
         upload_docs.s(project)
     )()
     return result
+
+@task
+def create_virtualenv(project):
+    logger.info('Creating virtualenv for %s/%s' % project.owner, project.name)
+    # Check if the virtualenv is stored in S3
+    path = '%s/%s/venv.tar.gz' % (project.owner, project.name)
+    try:
+        # If there is, retrieve it and extract it
+        file = docs_storage.open(path, 'r')
+        tar = tarfile.open(fileobj=file)
+        tar.extractall()
+        tar.close()
+        file.close()
+    except IOError:
+        # If not, create one by installing the dependencies
+        virtualenv.create_environment('venv', use_distribute=True)
+        subprocess.check_output(['python', 'setup.py', 'develop'])
+        subprocess.check_output(['pip', 'install', 'sphinx'])
+    # Install additional dependencies, if any
+    subprocess.check_output(['pip', 'install', '-r', 'requirements.txt'])
+    tar = tarfile.open('venv.tar.gz', 'w:gz')
+    tar.add('venv')
+    tar.close()
+    file = open('venv.tar.gz')
+    docs_storage.save(path, tar)
 
 @task
 def fetch_source(project):

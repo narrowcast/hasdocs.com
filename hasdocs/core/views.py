@@ -53,7 +53,7 @@ def last_modified(request, path):
 @condition(last_modified_func=last_modified)
 def serve(request, path):
     """Returns the requested static file from cache or S3."""
-    logger.debug('Serving static file at %s' % path)
+    logger.info('Serving static file at %s' % path)
     try:
         content = cache.get(path, docs_storage.open(path, 'r').read())
         cache.add(path, content)
@@ -110,7 +110,7 @@ def serve_static(request, slug, path):
     """Returns the requested static file from S3."""
     # Then serve the page for the given user, if any
     user = get_object_or_404(User, username=request.subdomain)
-    path = 'docs/%s/%s/%s' % (user, slug, path)
+    path = '%s/%s/%s' % (user, slug, path)
     return serve(request, path)
 
 def serve_static_cname(request, path):

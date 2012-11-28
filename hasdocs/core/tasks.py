@@ -72,7 +72,7 @@ def upload_docs(path, project):
     """Uploads the built docs to the appropriate storage."""
     logger.info('Uploading docs for %s' % project)
     count = 0
-    dest_base = '%s%s/%s/' % (settings.DOCS_URL, project.owner, project)
+    dest_base = '%s/%s/' % (project.owner, project)
     local_base = '%s/docs/_build/html/' % path    
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):

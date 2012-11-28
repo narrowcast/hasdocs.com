@@ -1,6 +1,8 @@
+import hashlib
 import json
 import logging
 import mimetypes
+import os.path
 
 from storages.backends.s3boto import S3BotoStorage
 
@@ -10,8 +12,8 @@ from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
-from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import condition
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
@@ -29,18 +31,6 @@ def home(request):
     return render_to_response('core/index.html', {
         }, context_instance=RequestContext(request))
 
-def has_permission(user, project):
-    """Returns whether the user has permission to access the project."""
-    if project.private:
-        if not user.is_authenticated():
-            return False
-        else:
-            return user == project.owner or project.collaborators.filter(
-                pk=user.pk).exists()
-    else:
-        # Then everyone has access to the project
-        return True
-
 def user_detail(request, slug):
     """Shows the user detail page."""
     # Then server the user detail for the given user
@@ -53,26 +43,46 @@ def user_detail(request, slug):
         'account': user, 'projects': projects,
     }, context_instance=RequestContext(request))
 
-def get_cached_file_or_fetch(path):
-    """Returns cached content for the given path or fetches and caches it."""    
-    if cache.has_key(path):
-        return cache.get(path)
+def last_modified(request, path):
+    """Returns the last modified time of the given static file."""
+    docs, username, project, rest = path.split('/', 3)
+    owner = User.objects.get(username=username)
+    project = Project.objects.filter(owner=owner).get(name=project)
+    return project.mod_date
+
+@condition(last_modified_func=last_modified)
+def serve(request, path):
+    """Returns the requested static file from cache or S3."""
+    logger.debug('Serving static file at %s' % path)
+    try:
+        content = cache.get(path, docs_storage.open(path, 'r').read())
+        cache.add(path, content)
+    except IOError:
+        raise Http404
+    content_type, encoding = mimetypes.guess_type(path)
+    response = HttpResponse(content, content_type=content_type)
+    if encoding:
+        response['Content-Encoding'] = encoding
+    return response
+
+def has_permission(user, project):
+    """Returns whether the user has permission to access the project."""
+    if project.private:
+        if not user.is_authenticated():
+            return False
+        else:
+            return user == project.owner or project.collaborators.filter(
+                pk=user.pk).exists()
     else:
-        file = docs_storage.open(path, 'r')
-        content = file.read()
-        cache.set(path, content)
-        return content
+        # Then everyone has access to the project
+        return True
 
 def user_page(request):
     """Returns the page for the user, if any."""
     user = get_object_or_404(User, username=request.subdomain)
-    path = '%s%s/index.html' % (settings.DOCS_URL, user)
-    try:
-        content = get_cached_file_or_fetch(path)
-    except IOError:
-        raise Http404
+    path = '%s/index.html' % user
     logger.info('Serving user page at %s' % path)
-    return HttpResponse(content, content_type='text/html')
+    return serve(request, path)
 
 def project_page(request, slug):
     """Returns the project page for the given user and project, if any."""
@@ -81,13 +91,8 @@ def project_page(request, slug):
     # Check permissions
     if not has_permission(request.user, project):
         raise Http404
-    path = '%s%s/%s/index.html' % (settings.DOCS_URL, user, project)
-    try:
-        content = get_cached_file_or_fetch(path)
-    except IOError:
-        raise Http404
-    logger.info('Serving project page at %s' % path)
-    return HttpResponse(content, content_type='text/html')
+    path = '%s/%s/index.html' % (user, project)
+    return serve(request, path)
 
 def custom_domain_page(request):
     """Returns the project page for cnamed requests."""
@@ -97,48 +102,24 @@ def custom_domain_page(request):
     # Check permissions
     if not has_permission(request.user, project):
         raise Http404
-    path = '%s%s/%s/index.html' % (settings.DOCS_URL, project.owner, project)
-    try:
-        content = get_cached_file_or_fetch(path)
-    except IOError:
-        raise Http404
+    path = '%s/%s/index.html' % (project.owner, project)
     logger.info('Serving custom domain page at %s from %s' % (path, host))
-    return HttpResponse(content, content_type='text/html')
+    return serve(request, path)    
 
-@cache_control(must_revalidate=True, max_age=3600)
 def serve_static(request, slug, path):
-    """Returns the requested static file from S3, inefficiently."""
+    """Returns the requested static file from S3."""
     # Then serve the page for the given user, if any
     user = get_object_or_404(User, username=request.subdomain)
-    try:
-        path = 'docs/%s/%s/%s' % (user, slug, path)
-        logger.debug('Serving static file at %s' % path)
-        content = get_cached_file_or_fetch(path)
-    except IOError:
-        raise Http404
-    content_type, encoding = mimetypes.guess_type(path)
-    response = HttpResponse(content, content_type=content_type)
-    if encoding:
-        response['Content-Encoding'] = encoding
-    return response
+    path = 'docs/%s/%s/%s' % (user, slug, path)
+    return serve(request, path)
 
-@cache_control(must_revalidate=True, max_age=3600)
 def serve_static_cname(request, path):
-    """Returns the requested static file using cname from S3, inefficiently."""
+    """Returns the requested static file using cname from S3."""
     host = request.get_host()
     domain = get_object_or_404(Domain, name=host)
     project = get_object_or_404(Project, custom_domains=domain)
-    try:
-        path = '%s%s/%s/%s' % (settings.DOCS_URL, project.owner, project, path)
-        logger.debug('Serving static file at %s' % path)
-        content = get_cached_file_or_fetch(path)
-    except IOError:
-        raise Http404
-    content_type, encoding = mimetypes.guess_type(path)
-    response = HttpResponse(content, content_type=content_type)
-    if encoding:
-        response['Content-Encoding'] = encoding
-    return response
+    path = '%s/%s/%s' % (project.owner, project, path)
+    return serve(request, path)
 
 @csrf_exempt
 def post_receive_github(request):

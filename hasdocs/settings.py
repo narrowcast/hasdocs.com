@@ -98,7 +98,6 @@ CACHES = {
 }
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.http.ConditionalGetMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'hasdocs.core.middleware.SubdomainMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -261,9 +260,6 @@ BROKER_BACKEND = 'django'
 
 import djcelery
 djcelery.setup_loader()
-
-# URL prefix for documentation files
-DOCS_URL = '/docs/'
 
 # Google Storages
 GS_ACCESS_KEY_ID = os.environ['GS_ACCESS_KEY_ID']

@@ -111,13 +111,12 @@ def oauth_authenticated(request):
         # Then this is possibily a forgery
         logger.warning('Possible CSRF attack was attempted: %s' % request)
         return HttpResponse('You may be a victim of CSRF attack.')
-    data = dict(code = request.GET['code'], state = request.GET['state'])
-    token = github.get_access_token('POST', data=data)
-    
+    data = dict(code=request.GET['code'], state=request.GET['state'])
+    token = github.get_access_token('POST', data=data)    
     if token.content.get('error'):
         logger.debug(token.content['error'])
     # Stores the access token in user profile
     profile = request.user.get_profile()
     profile.github_access_token = token.content['access_token']
     profile.save()
-    return HttpResponseRedirect(reverse('settings'))
+    return HttpResponseRedirect(reverse('profile_settings'))

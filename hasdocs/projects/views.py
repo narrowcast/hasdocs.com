@@ -9,7 +9,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
 from hasdocs.projects.models import Project

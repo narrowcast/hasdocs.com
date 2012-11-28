@@ -7,8 +7,10 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from hasdocs.accounts.views import (BillingUpdateView, ConnectionsUpdateView,
     OrganizationsUpdateView, ProfileUpdateView, UserCreateView)
 from hasdocs.core.views import ContactView, PlansView
-from hasdocs.projects.views import (GitHubProjectListView, HerokuProjectListView,
-    ProjectDeleteView, ProjectDetailView, ProjectListView, ProjectUpdateView)
+from hasdocs.projects.views import (
+    GitHubProjectListView, HerokuProjectListView, ProjectDetailView,
+    ProjectDeleteView, ProjectListView, ProjectUpdateView
+)
 
 admin.autodiscover()
 
@@ -67,9 +69,11 @@ urlpatterns = patterns('',
     url(r'^heroku/$', HerokuProjectListView.as_view(), name='project_list_heroku'),
     
     # Import from a GitHub project
-    url(r'^github/import/$', 'hasdocs.projects.views.import_from_github', name='import_from_github'),
+    url(r'^github/import/$',
+        'hasdocs.projects.views.import_from_github',name='import_from_github'),
     # Import from a Heroku project
-    url(r'^heroku/import/$', 'hasdocs.projects.views.import_from_heroku', name='import_from_heroku'),
+    url(r'^heroku/import/$',
+        'hasdocs.projects.views.import_from_heroku', name='import_from_heroku'),
     
     # User detail
     url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_detail', name='user_detail'),

@@ -79,6 +79,7 @@ def upload_docs(path, project):
             with open(os.path.join(root, name), 'rb') as fp:
                 file = File(fp)
                 dest = '%s/%s' % (dest_base, os.path.relpath(file.name, local_base))
+                logger.info('Uploading %s...' % dest)
                 docs_storage.save(dest, file)
                 # Invalidates cache
                 cache.delete(dest)

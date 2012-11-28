@@ -13,7 +13,7 @@ dj-database-url==0.2.1
 django-celery==3.0.11
 django-crispy-forms==1.2.0
 django-pylibmc-sasl==0.2.4
-https://bitbucket.org/david/django-storages/get/1574890d87be.zip
+django-storages==1.1.5
 docutils==0.9.1
 gevent==0.13.8
 greenlet==0.4.0
@@ -28,4 +28,5 @@ python-dateutil==1.5
 pytz==2012h
 rauth==0.4.16
 requests==0.14.2
+sphinx-http-domain==0.2
 wsgiref==0.1.2

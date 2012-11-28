@@ -61,12 +61,8 @@ def extract(filename, project):
 def build_docs(path, project):
     """Builds new docs using the appropriate autodoc module."""
     logger.info('Building docs for %s' % project)
-    builder = None
-    if project.generator.name == 'Sphinx':
-        builder = ['sphinx-build']
-        args = ['-b', 'html', '%s/docs/' % path, '%s/docs/_build/html/' % path]
-    result = subprocess.check_output(builder + args)
-    logger.info(result)
+    # TODO docs folder should not be hard-coded
+    result = subprocess.Popen(['make', 'html'], cwd='%s/docs' % path)
     return path
 
 @task

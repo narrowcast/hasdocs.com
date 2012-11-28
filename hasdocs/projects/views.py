@@ -12,7 +12,8 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from hasdocs.projects.models import Project
+from hasdocs.core.tasks import update_docs
+from hasdocs.projects.models import Generator, Language, Project
 
 logger = logging.getLogger(__name__)
 
@@ -132,13 +133,19 @@ def import_from_github(request):
         ), params=payload)
         repo = r.json
         # Creates a new project based on the GitHub repo
+        language = Language.objects.get(name=repo['language'])
+        # TODO: generator must be detected from project data
+        generator = Generator.objects.get(name='Sphinx')
         project = Project(owner=request.user, name=repo['name'],
                           description=repo['description'], url=repo['html_url'],
-                          git_url=repo['git_url'], private=repo['private'])
+                          git_url=repo['git_url'], private=repo['private'],
+                          language=language, generator=generator)
         project.save()
         logger.info('Imported %s repo from GitHub.' % project.name)
         # Creates a post-receive webhook at GitHub
         create_hook_github(request)
+        # Build docs for the first time
+        update_docs.delay(project)
         return HttpResponseRedirect(
             reverse('project_detail', args=[request.user, project]))
     else:
@@ -154,13 +161,19 @@ def import_from_heroku(request):
         ), auth=('', api_key))
         app = r.json
         # Creates a new project based on the Heroku app
+        language = Language.objects.get(
+            name=app['buildpack_provided_description'])
+        # TODO: generator must be detected from project data
+        generator = Generator.objects.get(name='Sphinx')
         project = Project(owner=request.user, name=app['name'],
                           url=app['web_url'], git_url=app['git_url'],
-                          private=True)
+                          private=True, language=language)
         project.save()
         logger.info('Imported %s app from Heroku.' % project.name)
         # Creates a post-receive webhook at GitHub
         create_hook_heroku(request)
+        # Build docs for the first time
+        update_docs.delay(project)
         return HttpResponseRedirect(
             reverse('project_detail', args=[request.user, project]))
     else:

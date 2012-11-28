@@ -45,7 +45,7 @@ def user_detail(request, slug):
 
 def last_modified(request, path):
     """Returns the last modified time of the given static file."""
-    username, project, rest = path.split('/', 3)
+    username, project, rest = path.split('/', 2)
     owner = User.objects.get(username=username)
     project = Project.objects.filter(owner=owner).get(name=project)
     return project.mod_date

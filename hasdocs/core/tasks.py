@@ -62,9 +62,12 @@ def create_virtualenv(path, project):
     logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
     # Check if the virtualenv is stored in S3
     dest = '%s/%s/venv.tar.gz' % (project.owner, project.name)
-    python = '/usr/local/bin/python'
+    # WTF: This is gross
+    python = '%s/venv/bin/python' % path
     pip = '%s/venv/bin/pip' % path
-    venv = 'venv.tar.gz'
+    # WTF: This may cause problems with multiple workers
+    pythonhome = os.environ.pop('PYTHONHOME')
+    os.environ['PYTHONHOME'] = '%s/venv/' % path
     try:
         # If there is, retrieve it and extract it
         with docs_storage.open(path, 'r') as fp:
@@ -72,13 +75,13 @@ def create_virtualenv(path, project):
                 tar.extractall(path)
     except IOError:
         # If not, create one by installing the dependencies
-        subprocess.check_call(['curl', '-O', settings.VIRTUALENV_URL])
-        subprocess.check_call([python, 'virtualenv.py', '%s/venv' % path])
+        virtualenv.create_environment('venv', use_distribute=True)
         subprocess.check_call([python, 'setup.py', 'develop'])
         subprocess.check_call([pip, 'install', 'sphinx'])
     # Install additional dependencies, if any
     requirements = '%s/%s' % (path, 'pip_requirements.txt')
     subprocess.check_call([pip, 'install', '-r', requirements])
+    os.environ['PYTHONHOME'] = pythonhome
     with tarfile.open('%s/%s' % (path, venv), 'w:gz') as tar:
         tar.add('%s/venv' % path)
     with open('%s/%s' % (path, venv), 'rb') as fp:

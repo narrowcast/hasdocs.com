@@ -219,6 +219,13 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.CryptPasswordHasher',
 )
 
+# Email settings
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 # Enables session cookies in subdomains
 if DEBUG:
     SESSION_COOKIE_DOMAIN = '.test.com'

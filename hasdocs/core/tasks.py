@@ -86,7 +86,7 @@ def create_virtualenv(path, project):
     with open('%s/%s' % (path, venv), 'rb') as fp:
         file = File(fp)
         docs_storage.save(dest, file)
-    os.remove('%s/%s' % (path, venv))
+    os.remove('%s/venv.tar.gz' % path)
     logger.info('Created virtualenv for %s/%s' % (project.owner, project.name))
     return path
 

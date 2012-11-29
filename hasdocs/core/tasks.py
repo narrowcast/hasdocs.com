@@ -61,10 +61,11 @@ def extract(filename, project):
 def create_virtualenv(path, project):
     logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
     # Check if the virtualenv is stored in S3
-    dest = '%s/%s/venv.tar.gz' % (project.owner, project.name)
     # WTF: This is gross
     python = '%s/venv/bin/python' % path
     pip = '%s/venv/bin/pip' % path
+    venv = 'venv.tar.gz'
+    dest = '%s/%s/%s' % (project.owner, project.name, venv)
     # WTF: This may cause problems with multiple workers
     pythonhome = os.environ.pop('PYTHONHOME')
     try:
@@ -86,7 +87,7 @@ def create_virtualenv(path, project):
     with open('%s/%s' % (path, venv), 'rb') as fp:
         file = File(fp)
         docs_storage.save(dest, file)
-    os.remove('%s/venv.tar.gz' % path)
+    os.remove('%s/%s' % (path, venv))
     logger.info('Created virtualenv for %s/%s' % (project.owner, project.name))
     return path
 

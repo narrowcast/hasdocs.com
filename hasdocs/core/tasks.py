@@ -74,8 +74,8 @@ def create_virtualenv(path, project):
                 tar.extractall(path)
     except IOError:
         # If not, create one by installing the dependencies
-        virtualenv.create_environment('venv', use_distribute=True)
-        subprocess.check_call([python, 'setup.py', 'develop'])
+        virtualenv.create_environment('%s/venv' % path, use_distribute=True)
+        subprocess.check_call([python, '%s/setup.py' % path, 'develop'])
         subprocess.check_call([pip, 'install', 'sphinx'])
     # Install additional dependencies, if any
     requirements = '%s/%s' % (path, 'pip_requirements.txt')

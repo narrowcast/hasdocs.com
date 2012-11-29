@@ -8,7 +8,7 @@ anyjson==0.3.3
 billiard==2.7.3.18
 boto==2.6.0
 celery==3.0.12
-distribute==0.6.24
+distribute==0.6.32
 dj-database-url==0.2.1
 django-celery==3.0.11
 django-crispy-forms==1.2.0
@@ -28,4 +28,4 @@ python-dateutil==1.5
 pytz==2012h
 rauth==0.4.16
 requests==0.14.2
-virtualenv==1.8.4
+wsgiref==0.1.2

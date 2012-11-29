@@ -67,7 +67,6 @@ def create_virtualenv(path, project):
     pip = '%s/venv/bin/pip' % path
     # WTF: This may cause problems with multiple workers
     pythonhome = os.environ.pop('PYTHONHOME')
-    os.environ['PYTHONHOME'] = '%s/venv/' % path
     try:
         # If there is, retrieve it and extract it
         with docs_storage.open(path, 'r') as fp:

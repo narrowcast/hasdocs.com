@@ -16,8 +16,11 @@ Overview
 --------
 
 1. User pushes to GitHub or Heroku triggering a post-commit hook.
-2. HasDocs pulls the documentation sources from the repository and builds them.
-3. HasDocs pushes the built documentation to Amazon S3.
+2. HasDocs pulls the source from the repository and pushes them to a custom
+buildpack.
+3. The custom buildpack installs the dependencies on virtualenv and builds the
+docs.
+4. The custom buildpack pushes the built documentation to Amazon S3.
 4. Documentations are served from Amazon S3 with appropriate access control.
 
 Connecting with other services
@@ -75,10 +78,6 @@ Copyright 2012 Narrowcast, Inc.
 Credits
 -------
 * `Read the Docs <http://readthedocs.org/>`_
-
-TODO
-----
-* :doc:`TODO <todo>`
 
 Indices and tables
 ------------------

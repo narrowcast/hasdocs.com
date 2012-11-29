@@ -33,6 +33,8 @@ def update_docs(project):
 def create_virtualenv(project):
     logger.info('Creating virtualenv for %s/%s' % project.owner, project.name)
     # Check if the virtualenv is stored in S3
+    python_home = os.environ.pop('PYTHONHOME')
+    os.environ['PATH'] = '/app/venv/bin:' + os.environ['PATH']
     path = '%s/%s/venv.tar.gz' % (project.owner, project.name)
     try:
         # If there is, retrieve it and extract it

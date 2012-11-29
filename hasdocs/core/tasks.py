@@ -24,37 +24,11 @@ def update_docs(project):
     result = chain(
         fetch_source.s(project),
         extract.s(project),
+        create_virtualenv.s(project),
         build_docs.s(project),
         upload_docs.s(project)
     )()
     return result
-
-@task
-def create_virtualenv(project):
-    logger.info('Creating virtualenv for %s/%s' % project.owner, project.name)
-    # Check if the virtualenv is stored in S3
-    python_home = os.environ.pop('PYTHONHOME')
-    os.environ['PATH'] = '/app/venv/bin:' + os.environ['PATH']
-    path = '%s/%s/venv.tar.gz' % (project.owner, project.name)
-    try:
-        # If there is, retrieve it and extract it
-        file = docs_storage.open(path, 'r')
-        tar = tarfile.open(fileobj=file)
-        tar.extractall()
-        tar.close()
-        file.close()
-    except IOError:
-        # If not, create one by installing the dependencies
-        virtualenv.create_environment('venv', use_distribute=True)
-        subprocess.check_output(['python', 'setup.py', 'develop'])
-        subprocess.check_output(['pip', 'install', 'sphinx'])
-    # Install additional dependencies, if any
-    subprocess.check_output(['pip', 'install', '-r', 'requirements.txt'])
-    tar = tarfile.open('venv.tar.gz', 'w:gz')
-    tar.add('venv')
-    tar.close()
-    file = open('venv.tar.gz')
-    docs_storage.save(path, tar)
 
 @task
 def fetch_source(project):
@@ -66,9 +40,8 @@ def fetch_source(project):
         settings.GITHUB_API_URL, project.owner, project.name,
     ), params=payload)
     filename = '%s.tar.gz' % project
-    file = open(filename, 'wb')
-    file.write(r.content)
-    file.close()
+    with open(filename, 'wb') as file:
+        file.write(r.content)
     return filename
 
 @task
@@ -76,13 +49,43 @@ def extract(filename, project):
     """Extracts the given tarball and returns its resulting path."""
     logger.debug('Extracting %s', filename)
     try:
-        tar = tarfile.open(filename)
-        path = tar.next().path
-        tar.extractall()
-        tar.close()
+        with tarfile.open(filename) as tar:
+            path = tar.next().path
+            tar.extractall()
     except tarfile.ReadError:
         logger.error('Error opening file %s' % filename)
     os.remove(filename)
+    return path
+
+@task
+def create_virtualenv(path, project):
+    logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
+    # Check if the virtualenv is stored in S3
+    dest = '%s/%s/venv.tar.gz' % (project.owner, project.name)
+    python = '/usr/local/bin/python'
+    pip = '%s/venv/bin/pip' % path
+    venv = 'venv.tar.gz'
+    try:
+        # If there is, retrieve it and extract it
+        with docs_storage.open(path, 'r') as fp:
+            with tarfile.open(fileobj=fp) as tar:
+                tar.extractall(path)
+    except IOError:
+        # If not, create one by installing the dependencies
+        subprocess.check_call(['curl', '-O', settings.VIRTUALENV_URL])
+        subprocess.check_call([python, 'virtualenv.py', '%s/venv' % path])
+        subprocess.check_call([python, 'setup.py', 'develop'])
+        subprocess.check_call([pip, 'install', 'sphinx'])
+    # Install additional dependencies, if any
+    requirements = '%s/%s' % (path, 'pip_requirements.txt')
+    subprocess.check_call([pip, 'install', '-r', requirements])
+    with tarfile.open('%s/%s' % (path, venv), 'w:gz') as tar:
+        tar.add('%s/venv' % path)
+    with open('%s/%s' % (path, venv), 'rb') as fp:
+        file = File(fp)
+        docs_storage.save(dest, file)
+    os.remove('%s/%s' % (path, venv))
+    logger.info('Created virtualenv for %s/%s' % (project.owner, project.name))
     return path
 
 @task
@@ -100,7 +103,7 @@ def upload_docs(path, project):
     logger.info('Uploading docs for %s' % project)
     count = 0
     dest_base = '%s/%s' % (project.owner, project)
-    local_base = '%s/docs/_build/html/' % path    
+    local_base = '%s/docs/_build/html/' % path
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):
         for idx, name in enumerate(names):

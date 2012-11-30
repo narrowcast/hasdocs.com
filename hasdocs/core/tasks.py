@@ -6,7 +6,6 @@ import subprocess
 import tarfile
 
 import requests
-import virtualenv
 from celery import chain, task
 from storages.backends.s3boto import S3BotoStorage
 

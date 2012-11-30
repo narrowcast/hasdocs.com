@@ -81,7 +81,8 @@ def create_virtualenv(path, project):
     if os.path.exists(requirements):
         subprocess.check_call([pip, 'install', '-r', requirements])
     else:
-        subprocess.check_call([python, '%s/setup.py' % path, 'develop'])
+        process = subprocess.Popen([python, 'setup.py', 'develop'], cwd=path)
+        stdoutdata, stderrdata = process.communicate()
     subprocess.check_call([pip, 'install', 'sphinx'])
     os.environ['PYTHONHOME'] = pythonhome
     with tarfile.open('%s/%s' % (path, venv), 'w:gz') as tar:

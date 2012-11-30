@@ -81,7 +81,7 @@ def create_virtualenv(path, project):
     if os.path.exists(requirements):
         subprocess.check_call([pip, 'install', '-r', requirements])
     else:
-        process = subprocess.Popen([python, 'setup.py', 'develop'], cwd=path)
+        process = subprocess.Popen(['../%s' % python, 'setup.py', 'develop'], cwd=path)
         stdoutdata, stderrdata = process.communicate()
     subprocess.check_call([pip, 'install', 'sphinx'])
     os.environ['PYTHONHOME'] = pythonhome

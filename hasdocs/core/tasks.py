@@ -25,7 +25,6 @@ def update_docs(project):
         fetch_source.s(project),
         extract.s(project),
         create_virtualenv.s(project),
-        build_docs.s(project),
         upload_docs.s(project)
     )()
     return result
@@ -83,15 +82,6 @@ def create_virtualenv(path, project):
     #    docs_storage.save(dest, file)
     #os.remove('%s/%s' % (path, venv))
     logger.info('Created virtualenv for %s/%s' % (project.owner, project.name))
-    return path
-
-@task
-def build_docs(path, project):
-    """Builds new docs using the appropriate autodoc module."""
-    logger.info('Building docs for %s' % project)
-    # TODO docs folder should not be hard-coded
-    process = subprocess.Popen(['make', 'html'], cwd='%s/docs' % path)
-    stdoutdata, stderrdata = process.communicate()
     return path
 
 @task

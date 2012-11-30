@@ -60,37 +60,28 @@ def extract(filename, project):
 @task
 def create_virtualenv(path, project):
     logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
-    # Check if the virtualenv is stored in S3
-    # WTF: This is gross
-    python = '%s/venv/bin/python' % path
-    pip = '%s/venv/bin/pip' % path
-    venv = 'venv.tar.gz'
-    dest = '%s/%s/%s' % (project.owner, project.name, venv)
-    # WTF: This may cause problems with multiple workers
-    pythonhome = os.environ.pop('PYTHONHOME')
     try:
-        # If there is, retrieve it and extract it
-        with docs_storage.open(path, 'r') as fp:
-            with tarfile.open(fileobj=fp) as tar:
-                tar.extractall(path)
-    except IOError:
-        # If not, create one by installing the dependencies
-        virtualenv.create_environment('%s/venv' % path, use_distribute=True)
-    # Install additional dependencies, if any    
-    requirements = '%s/%s' % (path, 'requirements.txt')
-    if os.path.exists(requirements):
-        subprocess.check_call([pip, 'install', '-r', requirements])
-    else:
-        process = subprocess.Popen(['../%s' % python, 'setup.py', 'develop'], cwd=path)
-        stdoutdata, stderrdata = process.communicate()
-    subprocess.check_call([pip, 'install', 'sphinx'])
-    os.environ['PYTHONHOME'] = pythonhome
-    with tarfile.open('%s/%s' % (path, venv), 'w:gz') as tar:
-        tar.add('%s/venv' % path)
-    with open('%s/%s' % (path, venv), 'rb') as fp:
-        file = File(fp)
-        docs_storage.save(dest, file)
-    os.remove('%s/%s' % (path, venv))
+        subprocess.check_call(['bash', 'bin/detect', path])
+    except subprocess.CalledProcessError:
+        logger.warning('Sphinx documentation could not be detected.')
+    # Check if the virtualenv is stored in S3    
+    #try:
+    #    venv = '%s/%s/venv.tar.gz' % (project.owner, project.name)
+    #    with docs_storage.open(venv, 'r') as fp:
+    #        with tarfile.open(fileobj=fp) as tar:
+    #            tar.extractall(path)
+    #except IOError:
+    #    pass
+    try:
+        subprocess.check_call(['bash', 'bin/compile', path])
+    except subprocess.CalledProcessError:
+        logger.warning('Compilation failed.')    
+    #with tarfile.open('%s/%s' % (path, venv), 'w:gz') as tar:
+    #    tar.add('%s/venv' % path)
+    #with open('%s/%s' % (path, venv), 'rb') as fp:
+    #    file = File(fp)
+    #    docs_storage.save(dest, file)
+    #os.remove('%s/%s' % (path, venv))
     logger.info('Created virtualenv for %s/%s' % (project.owner, project.name))
     return path
 

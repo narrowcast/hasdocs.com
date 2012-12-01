@@ -123,6 +123,8 @@ def serve_static_cname(request, path):
 @csrf_exempt
 def post_receive_github(request):
     """Post-receive hook to be hit by GitHub."""
+    print request.body
+    return HttpResponse('Done')
     if request.method == 'POST':
         payload = json.loads(request.POST['payload'])
         repo_url = payload['repository']['url']
@@ -135,7 +137,7 @@ def post_receive_github(request):
     
 @csrf_exempt
 def post_receive_heroku(request):
-    """Post-receive hook to be hit by Heroku."""
+    """Post-receive hook to be hit by Heroku."""    
     if request.method == 'POST':
         app_url = request.POST['url']
         logger.info('Heroku deploy hook triggered for %s' % app_url)

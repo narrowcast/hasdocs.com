@@ -23,7 +23,7 @@ def update_docs(project):
     result = chain(
         fetch_source.s(project),
         extract.s(project),
-        create_virtualenv.s(project),
+        build_docs.s(project),
         upload_docs.s(project)
     )()
     return result
@@ -56,8 +56,8 @@ def extract(filename, project):
     return path
 
 @task
-def create_virtualenv(path, project):
-    logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
+def build_docs(path, project):
+    logger.info('Building documentations for %s/%s' % (project.owner, project.name))
     try:
         subprocess.check_call(['bash', 'bin/detect', path])
     except subprocess.CalledProcessError:

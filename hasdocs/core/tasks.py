@@ -15,7 +15,7 @@ from django.core.files import File
 
 logger = logging.getLogger(__name__)
 docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
-                             reduced_redundancy=True, secure_urls=False, gzip=True)
+                             reduced_redundancy=True, secure_urls=False)
 
 @task
 def update_docs(project):

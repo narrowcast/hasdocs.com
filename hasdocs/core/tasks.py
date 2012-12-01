@@ -63,8 +63,9 @@ def build_docs(path, project):
     dest = '%s/%s/venv.tar.gz' % (project.owner, project.name)
     try:
         with docs_storage.open(dest, 'r') as fp:
+            logger.info('Detected a previously stored virtualenv.')
             with tarfile.open(fileobj=fp) as tar:
-                tar.extractall(path)
+                tar.extractall()
     except IOError:
         logger.info('No previously stored virtualenv was found.')
     try:

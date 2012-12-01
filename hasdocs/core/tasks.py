@@ -70,12 +70,13 @@ def build_docs(path, project):
     try:
         subprocess.check_call(['bash', 'bin/compile', path])
         # Store the virtualenv in S3
+        logger.info('Storing virtualenv in S3')
         with tarfile.open('%s/venv.tar.gz' % path, 'w:gz') as tar:
             tar.add('%s/venv' % path)
         with open('%s/venv.tar.gz' % path, 'rb') as fp:
             file = File(fp)
             docs_storage.save(dest, file)
-        os.remove('%s/venv.tar.gz')
+        os.remove('%s/venv.tar.gz' % path)
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
         # TODO: should revoke the task and return

@@ -9,8 +9,6 @@ logger = logging.getLogger(__name__)
 class SubdomainMiddleware:
     """Middleware for handling subdomains."""
     def process_request(self, request):
-        print 'SubdomainMiddleware'
-        print request.META['CONTENT_TYPE']        
         host = request.get_host()
         subdomain = host.split('.')[0]
         request.subdomain = subdomain

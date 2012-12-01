@@ -23,7 +23,7 @@ from hasdocs.projects.models import Domain, Project
 
 logger = logging.getLogger(__name__)
 docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
-                             reduced_redundancy=True, secure_urls=False, gzip=True)
+                             reduced_redundancy=True, secure_urls=False)
 
 def home(request):
     """Shows the home page."""

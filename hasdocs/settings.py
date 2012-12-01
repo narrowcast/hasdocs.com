@@ -251,6 +251,14 @@ AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 AWS_S3_CUSTOM_DOMAIN = os.environ['AWS_S3_CUSTOM_DOMAIN']
 AWS_DOCS_BUCKET_NAME = os.environ['AWS_DOCS_BUCKET_NAME']
+GZIP_CONTENT_TYPES = (
+    'text/html',
+    'text/css',
+    'text/plain',
+    'text/javascript',
+    'application/javascript',
+    'application/x-javascript',
+)
 
 # GitHub
 GITHUB_CLIENT_ID = os.environ['GITHUB_CLIENT_ID']

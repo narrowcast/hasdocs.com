@@ -60,7 +60,7 @@ def extract(filename, project):
 def build_docs(path, project):
     logger.info('Building documentations for %s/%s' % (project.owner, project.name))
     # Check if the virtualenv is stored in S3
-    dest = '%s/%s/venv.tar.gz' % (project.owner, project.name)
+    dest = '%s/%s/%s' % (project.owner, project.name, settings.VENV_FILENAME)
     try:
         with docs_storage.open(dest, 'r') as fp:
             logger.info('Detected a previously stored virtualenv.')
@@ -71,13 +71,14 @@ def build_docs(path, project):
     try:
         subprocess.check_call(['bash', 'bin/compile', path])
         # Store the virtualenv in S3
+        venv = '%s/%s' % (path, settings.VENV_FILENAME)
         logger.info('Storing virtualenv in S3')
-        with tarfile.open('%s/venv.tar.gz' % path, 'w:gz') as tar:
+        with tarfile.open(venv, 'w:gz') as tar:
             tar.add('%s/venv' % path)
-        with open('%s/venv.tar.gz' % path, 'rb') as fp:
+        with open(venv, 'rb') as fp:
             file = File(fp)
             docs_storage.save(dest, file)
-        os.remove('%s/venv.tar.gz' % path)
+        os.remove(venv)
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
         # TODO: should revoke the task and return
@@ -89,7 +90,8 @@ def upload_docs(path, project):
     """Uploads the built docs to the appropriate storage."""
     logger.info('Uploading docs for %s' % project)
     count = 0
-    dest_base = '%s/%s' % (project.owner, project)
+    dest_base = '%s/%s' % (project.owner, project.name)
+    # TODO: this should not be hardcoded, but detected from Makefile
     local_base = '%s/docs/_build/html/' % path
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):

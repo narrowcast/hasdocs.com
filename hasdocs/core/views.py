@@ -101,7 +101,7 @@ def custom_domain_page(request):
     # Check permissions
     if not has_permission(request.user, project):
         raise Http404
-    path = '%s/%s/index.html' % (project.owner, project)
+    path = '%s/%s/index.html' % (project.owner, project.name)
     logger.info('Serving custom domain page at %s from %s' % (path, host))
     return serve(request, path)    
 
@@ -117,7 +117,7 @@ def serve_static_cname(request, path):
     host = request.get_host()
     domain = get_object_or_404(Domain, name=host)
     project = get_object_or_404(Project, custom_domains=domain)
-    path = '%s/%s/%s' % (project.owner, project, path)
+    path = '%s/%s/%s' % (project.owner, project.name, path)
     return serve(request, path)
 
 @csrf_exempt

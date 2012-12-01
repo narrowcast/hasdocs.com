@@ -81,7 +81,7 @@ def build_docs(path, project):
         os.remove(venv)
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
-        # TODO: should revoke the task and return
+        raise
     logger.info('Built docs for %s/%s' % (project.owner, project.name))
     return path
 

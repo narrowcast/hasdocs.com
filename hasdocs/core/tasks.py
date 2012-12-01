@@ -52,35 +52,34 @@ def extract(filename, project):
             tar.extractall()
     except tarfile.ReadError:
         logger.error('Error opening file %s' % filename)
+        # TODO: should revoke the task, clean up, and return
     os.remove(filename)
     return path
 
 @task
 def build_docs(path, project):
     logger.info('Building documentations for %s/%s' % (project.owner, project.name))
+    # Check if the virtualenv is stored in S3
+    dest = '%s/%s/venv.tar.gz' % (project.owner, project.name)
     try:
-        subprocess.check_call(['bash', 'bin/detect', path])
-    except subprocess.CalledProcessError:
-        logger.warning('Sphinx documentation could not be detected.')
-    # Check if the virtualenv is stored in S3    
-    #try:
-    #    venv = '%s/%s/venv.tar.gz' % (project.owner, project.name)
-    #    with docs_storage.open(venv, 'r') as fp:
-    #        with tarfile.open(fileobj=fp) as tar:
-    #            tar.extractall(path)
-    #except IOError:
-    #    pass
+        with docs_storage.open(dest, 'r') as fp:
+            with tarfile.open(fileobj=fp) as tar:
+                tar.extractall(path)
+    except IOError:
+        logger.info('No previously stored virtualenv was found.')
     try:
         subprocess.check_call(['bash', 'bin/compile', path])
+        # Store the virtualenv in S3
+        with tarfile.open('%s/venv.tar.gz' % path, 'w:gz') as tar:
+            tar.add('%s/venv' % path)
+        with open('%s/venv.tar.gz' % path, 'rb') as fp:
+            file = File(fp)
+            docs_storage.save(dest, file)
+        os.remove('%s/venv.tar.gz')
     except subprocess.CalledProcessError:
-        logger.warning('Compilation failed.')    
-    #with tarfile.open('%s/%s' % (path, venv), 'w:gz') as tar:
-    #    tar.add('%s/venv' % path)
-    #with open('%s/%s' % (path, venv), 'rb') as fp:
-    #    file = File(fp)
-    #    docs_storage.save(dest, file)
-    #os.remove('%s/%s' % (path, venv))
-    logger.info('Created virtualenv for %s/%s' % (project.owner, project.name))
+        logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
+        # TODO: should revoke the task and return
+    logger.info('Built docs for %s/%s' % (project.owner, project.name))
     return path
 
 @task

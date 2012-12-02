@@ -74,7 +74,7 @@ def build_docs(path, project):
         venv = '%s/%s' % (path, settings.VENV_FILENAME)
         logger.info('Storing virtualenv in S3')
         with tarfile.open(venv, 'w:gz') as tar:
-            tar.add('%s/venv' % path)
+            tar.add('%s/%s' % (path, settings.VENV_NAME))
         with open(venv, 'rb') as fp:
             file = File(fp)
             docs_storage.save(dest, file)

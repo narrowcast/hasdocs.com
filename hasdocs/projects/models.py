@@ -90,3 +90,12 @@ class Project(models.Model):
                 return file.read()
         except IOError:
             return 'No logs were found.'
+        
+    def get_errs(self):
+        """Returns the error log for the latest build from S3."""
+        path = '%s/%s/errs.txt' % (self.owner, self.name)
+        try:
+            with docs_storage.open(path, 'r') as file:
+                return file.read()
+        except IOError:
+            return 'No logs were found.'

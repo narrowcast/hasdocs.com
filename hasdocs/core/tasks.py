@@ -55,12 +55,21 @@ def extract(filename, project):
             tar.extractall()
     except tarfile.ReadError:
         logger.error('Error opening file %s' % filename)
-        # TODO: should revoke the task, clean up, and return
+        # TODO: nicer handling of exception
+        raise
     os.remove(filename)
     return path
 
 @task
+def create_virtualenv(path, project):
+    """Retrives or creates the virtualenv for the project and stores it."""
+    logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
+    pass
+
+@task
 def build_docs(path, project):
+    """Builds the documentations for the projects."""
+    # TODO: This function is way too long, decompose
     logger.info('Building documentations for %s/%s' % (project.owner, project.name))
     # Check if the virtualenv is stored in S3
     dest = '%s/%s/%s' % (project.owner, project.name, settings.VENV_FILENAME)
@@ -72,25 +81,28 @@ def build_docs(path, project):
     except IOError:
         logger.info('No previously stored virtualenv was found.')
     try:
+        out_path = '%s/%s/logs.txt' % (project.owner, project.name)
+        err_path = '%s/%s/errs.txt' % (project.owner, project.name)
         args = ['bash', 'bin/compile', path, project.docs_path,
                 project.requirements_path]
-        output = subprocess.check_output(args)
-        # Store the virtualenv in S3
-        venv = '%s/%s' % (path, settings.VENV_FILENAME)
-        logs = '%s/logs.txt' % path
-        logger.info('Storing virtualenv in S3')
-        with tarfile.open(venv, 'w:gz') as tar:
-            tar.add('%s/%s' % (path, settings.VENV_NAME))
-        with open(venv, 'rb') as fp:
-            file = File(fp)
-            docs_storage.save(dest, file)
-        file = StringIO.StringIO(output)
-        docs_storage.save('%s/%s/logs.txt' % (project.owner, project.name), file)
-        os.remove(venv)
+        # Save the logs in S3
+        process = subprocess.Popen(args)
+        stdoutdata, stderrdata = process.communicate()
+        docs_storage.save(out_path, StringIO.StringIO(stdoutdata))
+        docs_storage.save(err_path, StringIO.StringIO(stderrdata))
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
-        # TODO: nicer handling of exception, closing of file descriptors
+        # TODO: nicer handling of exception
         raise
+    # Store the virtualenv in S3
+    venv = '%s/%s' % (path, settings.VENV_FILENAME)
+    logger.info('Storing virtualenv in S3')
+    with tarfile.open(venv, 'w:gz') as tar:
+        tar.add('%s/%s' % (path, settings.VENV_NAME))
+    with open(venv, 'rb') as fp:
+        file = File(fp)
+        docs_storage.save(dest, file)
+    os.remove(venv)
     logger.info('Built docs for %s/%s' % (project.owner, project.name))
     return path
 

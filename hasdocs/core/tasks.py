@@ -1,5 +1,3 @@
-import datetime
-import logging
 import os
 import shutil
 import subprocess
@@ -80,16 +78,18 @@ def build_docs(path, project):
                 tar.extractall()
     except IOError:
         logger.info('No previously stored virtualenv was found.')
-    try:
-        out_path = '%s/%s/logs.txt' % (project.owner, project.name)
-        err_path = '%s/%s/errs.txt' % (project.owner, project.name)
+    try:        
         args = ['bash', 'bin/compile', path, project.docs_path,
                 project.requirements_path]
-        # Save the logs in S3
-        process = subprocess.Popen(args)
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdoutdata, stderrdata = process.communicate()
-        docs_storage.save(out_path, StringIO.StringIO(stdoutdata))
-        docs_storage.save(err_path, StringIO.StringIO(stderrdata))
+        # Save the logs in S3
+        out_path = '%s/%s/logs.txt' % (project.owner, project.name)
+        err_path = '%s/%s/errs.txt' % (project.owner, project.name)
+        with docs_storage.open(out_path, 'w') as file:
+            file.write(stdoutdata)
+        with docs_storage.open(err_path, 'w') as file:
+            file.write(stderrdata)
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
         # TODO: nicer handling of exception

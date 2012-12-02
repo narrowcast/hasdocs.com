@@ -10,11 +10,8 @@
   </h1>
   <p>{{ project.mod_date }}</p>
   <h2>Standard Output</h2>
-  <code id="stdout">
-    {{ project.get_logs|linebreaks }}
-  </code>
+  <pre id="stdout" class="pre-scrollable">{{ project.get_logs }}</pre>
   <h2>Standard Error</h2>
-  <code id="stderr">    
-  </code>
+  <pre id="stderr" class="pre-scrollable"></pre>
   
 {% endblock %}

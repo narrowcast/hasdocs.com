@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This script builds documentations for a python application using Sphinx.
+#
+#     $ bin/compile <build-dir> <docs-dir>
+
 # Fail fast and hard
 set -eo pipefail
 
@@ -10,7 +14,7 @@ export PATH=/usr/local/bin:$PATH
 BIN_DIR=$(cd $(dirname $0); pwd)
 ROOT_DIR=$(dirname $BIN_DIR)
 BUILD_DIR=$1
-SPHINX_DIR=$(dirname $(find $BUILD_DIR -maxdepth 3 -type f -name 'conf.py' | head -1))
+DOCS_DIR=$2
 
 # Python version
 PYTHON_VERSION="2.7.2"
@@ -49,6 +53,7 @@ pip install --use-mirrors -r requirements.txt --exists-action=w
 pip install --use-mirrors sphinx
 
 # Build html docs
-cd ..
-cd $SPHINX_DIR
+cd $DOCS_DIR
 make html
+
+deactivate

@@ -69,7 +69,7 @@ def build_docs(path, project):
     except IOError:
         logger.info('No previously stored virtualenv was found.')
     try:
-        subprocess.check_call(['bash', 'bin/compile', path])
+        subprocess.check_call(['bash', 'bin/compile', path, 'docs'])
         # Store the virtualenv in S3
         venv = '%s/%s' % (path, settings.VENV_FILENAME)
         logger.info('Storing virtualenv in S3')
@@ -91,8 +91,8 @@ def upload_docs(path, project):
     logger.info('Uploading docs for %s' % project)
     count = 0
     dest_base = '%s/%s' % (project.owner, project.name)
-    # TODO: this should not be hardcoded, but detected from Makefile
-    local_base = '%s/docs/_build/html/' % path
+    target = subprocess.check_output(['bash', 'bin/target', path])
+    local_base = '%s/%s/html/' % (path, target)
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):
         for idx, name in enumerate(names):

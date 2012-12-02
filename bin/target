@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# This script detects a python application using Sphinx for documentation.
+#
+#     $ bin/target <build-dir> <docs-dir>
+
+BUILD_DIR=$1
+DOCS_DIR=$2
+
+# Detect Makefile for the docs
+MAKEFILE=$(find $DOCS_DIR -type f -maxdepth 2 -name 'Makefile' | head -1)
+
+# Detect source and output dirs from Makefile
+SOURCE_DIR=$(make -p -f $MAKEFILE | awk '/ALLSPHINXOPTS = .+/ {print $(NF);}') 
+OUTPUT_DIR=$(make -p -f $MAKEFILE | awk '/BUILDDIR = .+/ {print $(3);}')
+echo -ne $2/$OUTPUT_DIR

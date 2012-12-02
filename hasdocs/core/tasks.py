@@ -61,7 +61,14 @@ def extract(filename, project):
     return path
 
 @task
+def create_virtualenv(path, project):
+    """Retrives or creates the virtualenv for the project and stores it."""
+    logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
+    pass
+
+@task
 def build_docs(path, project):
+    """Builds the documentations for the projects."""
     # TODO: This function is way too long, decompose
     logger.info('Building documentations for %s/%s' % (project.owner, project.name))
     # Check if the virtualenv is stored in S3
@@ -76,14 +83,13 @@ def build_docs(path, project):
     try:
         out_path = '%s/%s/logs.txt' % (project.owner, project.name)
         err_path = '%s/%s/errs.txt' % (project.owner, project.name)
-        with open('%s/logs.txt' % path, 'w') as out, \
-             open('%s/errs.txt' % path, 'w') as err:
-            args = ['bash', 'bin/compile', path, project.docs_path,
-                    project.requirements_path]
-            # Save the logs in S3
-            subprocess.check_call(args, stdout=out, stderr=err)
-            docs_storage.save(out_path, out)
-            docs_storage.save(err_path, err)
+        args = ['bash', 'bin/compile', path, project.docs_path,
+                project.requirements_path]
+        # Save the logs in S3
+        process = subprocess.Popen(args)
+        stdoutdata, stderrdata = process.communicate()
+        docs_storage.save(out_path, StringIO.StringIO(stdoutdata))
+        docs_storage.save(err_path, StringIO.StringIO(stderrdata))
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
         # TODO: nicer handling of exception

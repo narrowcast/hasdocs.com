@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import tarfile
+import StringIO
 
 import requests
 from celery import chain, task
@@ -71,19 +72,24 @@ def build_docs(path, project):
     except IOError:
         logger.info('No previously stored virtualenv was found.')
     try:
-        subprocess.check_call(['bash', 'bin/compile', path, project.docs_path,
-                               project.requirements_path])
+        args = ['bash', 'bin/compile', path, project.docs_path,
+                project.requirements_path]
+        output = subprocess.check_output(args)
         # Store the virtualenv in S3
         venv = '%s/%s' % (path, settings.VENV_FILENAME)
+        logs = '%s/logs.txt' % path
         logger.info('Storing virtualenv in S3')
         with tarfile.open(venv, 'w:gz') as tar:
             tar.add('%s/%s' % (path, settings.VENV_NAME))
         with open(venv, 'rb') as fp:
             file = File(fp)
             docs_storage.save(dest, file)
+        file = StringIO.StringIO(output)
+        docs_storage.save('%s/%s/logs.txt' % (project.owner, project.name), file)
         os.remove(venv)
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
+        # TODO: nicer handling of exception, closing of file descriptors
         raise
     logger.info('Built docs for %s/%s' % (project.owner, project.name))
     return path

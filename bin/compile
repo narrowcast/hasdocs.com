@@ -2,7 +2,7 @@
 
 # This script builds documentations for a python application using Sphinx.
 #
-#     $ bin/compile <build-dir> <docs-dir>
+#     $ bin/compile <build-dir> <docs-dir> <requirements-path>
 
 # Fail fast and hard
 set -eo pipefail
@@ -15,6 +15,7 @@ BIN_DIR=$(cd $(dirname $0); pwd)
 ROOT_DIR=$(dirname $BIN_DIR)
 BUILD_DIR=$1
 DOCS_DIR=$2
+REQUIREMENTS=$3
 
 # Python version
 PYTHON_VERSION="2.7.2"
@@ -29,9 +30,12 @@ export BUILD_DIR BIN_DIR BIN_DIR
 cd $BUILD_DIR
 
 # Check whether to use pip or disutils
-if [ ! -f requirements.txt ]; then
+if [ -z $3 ]; then
   echo "No requirements.txt provided; assuming dist package."
   echo "-e ." > requirements.txt
+  REQUIREMENTS=requirements.txt
+else
+  echo "Requirements in $3"
 fi
 
 # Create virtualenv
@@ -47,7 +51,7 @@ echo "Activating virtualenv"
 source venv/bin/activate
 
 # Install dependencies with pip
-pip install --use-mirrors -r requirements.txt --exists-action=w
+pip install --use-mirrors -r $REQUIREMENTS --exists-action=w
 
 # Install Sphinx
 pip install --use-mirrors sphinx

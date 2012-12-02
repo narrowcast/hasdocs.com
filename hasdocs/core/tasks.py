@@ -69,7 +69,8 @@ def build_docs(path, project):
     except IOError:
         logger.info('No previously stored virtualenv was found.')
     try:
-        subprocess.check_call(['bash', 'bin/compile', path, 'docs'])
+        subprocess.check_call(['bash', 'bin/compile', path, project.docs_path,
+                               project.requirements_path])
         # Store the virtualenv in S3
         venv = '%s/%s' % (path, settings.VENV_FILENAME)
         logger.info('Storing virtualenv in S3')

@@ -55,6 +55,10 @@ class Project(models.Model):
     generator = models.ForeignKey(Generator, blank=True, null=True)
     # Custom domains for this project
     custom_domains = models.ManyToManyField(Domain, blank=True, null=True)
+    # Path to the requirements file
+    requirements_path = models.CharField(max_length=200, blank=True)
+    # Path to the directory containing Sphinx documentation
+    docs_path = models.CharField(max_length=200, default='docs')
     # Published date
     pub_date = models.DateTimeField(auto_now_add=True)
     # Last modified date

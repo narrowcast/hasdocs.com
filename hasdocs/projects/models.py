@@ -1,5 +1,6 @@
 import logging
 
+from pygments import highlight
 from storages.backends.s3boto import S3BotoStorage
 
 from django.conf import settings

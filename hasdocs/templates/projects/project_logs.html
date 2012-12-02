@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.owner }}/{{ project }}{% endblock %}
+
+{% block container %}
+  
+  <h1>
+    <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a> /
+    <a href="{{ project.get_absolute_url }}">{{ project }}</a>
+  </h1>
+  <p>{{ project.mod_date }}</p>
+  <h2>Standard Output</h2>
+  <code id="stdout">
+  </code>
+  <h2>Standard Error</h2>
+  <code id="stderr">    
+  </code>
+  
+{% endblock %}

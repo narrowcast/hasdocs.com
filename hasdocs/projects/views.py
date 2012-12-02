@@ -71,6 +71,12 @@ class ProjectDeleteView(DeleteView):
         logger.info('Deleted project %s' % self.kwargs['slug'])
         return self.request.user.get_absolute_url()
 
+class ProjectLogsView(DetailView):
+    """View for viewing the logs for a project."""
+    model = Project
+    slug_field = 'name'
+    template_name = 'projects/project_logs.html'
+
 class GitHubProjectListView(TemplateView):
     """View for viewing the list of GitHub projects."""
     template_name = 'projects/project_list_github.html'

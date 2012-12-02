@@ -9,7 +9,7 @@ from hasdocs.accounts.views import (BillingUpdateView, ConnectionsUpdateView,
 from hasdocs.core.views import ContactView, PlansView
 from hasdocs.projects.views import (
     GitHubProjectListView, HerokuProjectListView, ProjectDetailView,
-    ProjectDeleteView, ProjectListView, ProjectUpdateView
+    ProjectDeleteView, ProjectListView, ProjectLogsView, ProjectUpdateView
 )
 
 admin.autodiscover()
@@ -79,6 +79,8 @@ urlpatterns = patterns('',
     url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_detail', name='user_detail'),
     # Project detail
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/$', ProjectDetailView.as_view(), name='project_detail'),
+    # Project logs
+    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/logs/$', ProjectLogsView.as_view(), name='project_logs'),
     # Project update
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/edit/$', ProjectUpdateView.as_view(), name='project_update'),
     # Project delete

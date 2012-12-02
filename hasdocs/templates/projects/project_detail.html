@@ -17,6 +17,7 @@
   <p>{{ project.description }}</p>
   <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
   {% if user == project.owner %}
+    <a class="btn" href="{% url project_logs project.owner project %}">Logs</a>
     <a class="btn" href="{% url project_update project.owner project %}">Edit</a>
     <a class="btn btn-danger" href="{% url project_delete project.owner project %}">Delete</a>
   {% endif %}

@@ -59,9 +59,9 @@ urlpatterns = patterns('',
     url(r'^privacy/$', TemplateView.as_view(template_name='content/privacy.html'), name='privacy'),    
  
     # GitHub post-receive hook
-    url(r'^post-receive/github/?$', 'hasdocs.core.views.post_receive_github', name='github_hook'),
+    url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github', name='github_hook'),
     # Heroku http deploy hook
-    url(r'^post-receive/heroku/?$', 'hasdocs.core.views.post_receive_heroku', name='heroku_hook'),
+    url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku', name='heroku_hook'),
     
     # List of GitHub repositories
     url(r'^github/$', GitHubProjectListView.as_view(), name='project_list_github'),

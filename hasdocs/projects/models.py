@@ -1,11 +1,15 @@
 import logging
 
+from storages.backends.s3boto import S3BotoStorage
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.db import models
 
 logger = logging.getLogger(__name__)
-
+docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
+                             reduced_redundancy=True, secure_urls=False)
 
 class Domain(models.Model):
     """Model for representing a domain name."""
@@ -76,3 +80,12 @@ class Project(models.Model):
         """Returns the url of the docs for this project."""
         site = Site.objects.get_current().domain
         return 'http://%s.%s/%s/' % (self.owner, site, self.name)
+
+    def get_logs(self):
+        """Returns the log for the latest build from S3."""
+        path = '%s/%s/logs.txt' % (self.owner, self.name)
+        try:
+            with docs_storage.open(path, 'r') as file:
+                return file.read()
+        except IOError:
+            return 'No logs were found.'

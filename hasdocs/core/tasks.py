@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files import File
 
-logger = logging.get_task_logger(__name__)
+logger = get_task_logger(__name__)
 
 docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
                              reduced_redundancy=True, secure_urls=False)

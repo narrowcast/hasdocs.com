@@ -85,7 +85,7 @@ def build_docs(path, project):
             file = File(fp)
             docs_storage.save(dest, file)
         file = StringIO.StringIO(output)
-        docs_storage.save('%s/%s/logs.txt' % (project.owner), project.name, file)
+        docs_storage.save('%s/%s/logs.txt' % (project.owner, project.name), file)
         os.remove(venv)
     except subprocess.CalledProcessError:
         logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))

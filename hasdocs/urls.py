@@ -23,7 +23,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     
     # Login view
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    #url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^login/$', 'hasdocs.accounts.views.oauth_authenticate', name='login'),
     # Logout view
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 

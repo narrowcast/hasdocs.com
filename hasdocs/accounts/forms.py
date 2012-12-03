@@ -44,6 +44,7 @@ class ProfileUpdateForm(forms.ModelForm):
         profile.user.first_name = name
         profile.user.email = email
         if commit:
+            profile.save()
             profile.user.save()
         return profile
 

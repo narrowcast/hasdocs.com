@@ -242,6 +242,12 @@ ABSOLUTE_URL_OVERRIDES = {
     'auth.user': lambda o: "/%s/" % o.username,
 }
 
+# Authentication backends
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'hasdocs.accounts.backends.GithubBackend',
+)
+
 # Django storages
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

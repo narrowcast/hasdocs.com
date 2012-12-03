@@ -19,6 +19,7 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
 from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm, SignupForm
+from hasdocs.accounts.models import UserProfile
 
 logger = logging.getLogger(__name__)
 
@@ -97,26 +98,50 @@ class OrganizationsUpdateView(SettingsUpdateView):
     """View for updating organizations settings."""
     form_class = OrganizationsUpdateForm
 
+def create_user(access_token):
+    """Creates a new user based on GitHub's user data."""
+    logger.info('Creating a new user based on data from GitHub')
+    payload = {'access_token': access_token }
+    r = requests.get('%s/user' % settings.GITHUB_API_URL, params=payload)
+    data = r.json
+    user = User.objects.create_user(data['login'], data['email'])
+    user.first_name = data['name']
+    user.save()
+    # Update profile based on data from GitHub
+    profile = UserProfile.objects.create(user=user)
+    profile.url = data['blog']
+    profile.company = data['company']
+    profile.location = data['location']
+    profile.github_access_token = access_token
+    profile.save()
+    # Authenticate and sign in the user
+    user = authenticate(access_token=access_token)
+    return user
+
 def oauth_authenticate(request):
     """Request authorization usnig OAuth2 protocol."""
-    request.session['state'] = base64.b64encode(os.urandom(40))
+    state = base64.b64encode(os.urandom(40))
+    request.session['state'] = state
+    logger.info('Redirecting to GitHub for authentication: %s' % state)
     # the return URL is used to validate the request
-    url = github.get_authorize_url(state=request.session['state'], scope='repo')
-    logger.debug('authorize_url: %s' % url)
+    url = github.get_authorize_url(state=state, scope='repo')
     return HttpResponseRedirect(url)
 
 def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""
+    logger.info('Received redirect from GitHub: %s' % request.GET['state'])
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
         logger.warning('Possible CSRF attack was attempted: %s' % request)
         return HttpResponse('You may be a victim of CSRF attack.')
     data = dict(code=request.GET['code'], state=request.GET['state'])
-    token = github.get_access_token('POST', data=data)    
+    logger.info('Requesting access token from GitHub')
+    token = github.get_access_token('POST', data=data)
     if token.content.get('error'):
-        logger.debug(token.content['error'])
-    # Stores the access token in user profile
-    profile = request.user.get_profile()
-    profile.github_access_token = token.content['access_token']
-    profile.save()
-    return HttpResponseRedirect(reverse('profile_settings'))
+        logger.warning(token.content['error'])
+        return HttpResponse('Unknown error occored.')
+    user = authenticate(access_token=token.content['access_token'])
+    if user is None:
+        user = create_user(token.content['access_token'])
+    login(request, user)
+    return HttpResponseRedirect(reverse('home'))

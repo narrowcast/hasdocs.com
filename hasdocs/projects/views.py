@@ -9,7 +9,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import DeleteView, FormView, UpdateView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from hasdocs.core.tasks import update_docs
@@ -173,7 +173,7 @@ def import_from_heroku(request):
         generator = Generator.objects.get(name='Sphinx')
         project = Project(owner=request.user, name=app['name'],
                           url=app['web_url'], git_url=app['git_url'],
-                          private=True, language=language)
+                          private=True, language=language, generator=generator)
         project.save()
         logger.info('Imported %s app from Heroku.' % project.name)
         # Creates a post-receive webhook at GitHub

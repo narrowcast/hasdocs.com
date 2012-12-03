@@ -7,22 +7,10 @@
 {% block content %}
   
   <h1 class="page-header">Profile</h1>
-  <form action="{% url profile_settings %}" method="post">
+  <form method="post" action="{{ request.path }}">
     {% csrf_token %}
     {{ form|crispy }}
     <input class="btn btn-primary" type="submit" value="Save" />
   </form>
-  <h3>GitHub</h3>
-  {% if user.get_profile.github_access_token %}
-    <a class="btn disabled">Connected</a>
-  {% else %}
-    <a class="btn" href="{% url oauth_authenticate %}">Connect with GitHub</a>
-  {% endif %}  
-  <h3>Heroku</h3>
-  {% if user.get_profile.heroku_api_key %}
-    <a class="btn disabled">Connected</a>
-  {% else %}
-    <a href="#heroku" role="button" class="btn" data-toggle="modal">Connect with Heroku</a>
-  {% endif %}
 
 {% endblock %}

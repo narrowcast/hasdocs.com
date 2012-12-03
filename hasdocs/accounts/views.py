@@ -33,20 +33,6 @@ github = OAuth2Service(
 )
 
 
-class UserCreateView(CreateView):
-    """View for creating a user."""
-    model = User
-    form_class = SignupForm
-
-    def form_valid(self, form):
-        """Authenticates and logs in the user."""
-        redirect = super(UserCreateView, self).form_valid(form)
-        user = authenticate(username=form.cleaned_data['username'],
-                            password=form.cleaned_data['password'])
-        login(self.request, user)
-        return redirect
-
-
 class UserDetailView(DetailView):
     """View for showing user detail."""
     model = User

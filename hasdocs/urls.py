@@ -6,7 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from hasdocs.accounts.views import (
     BillingUpdateView, ConnectionsUpdateView,
-    OrganizationsUpdateView, ProfileUpdateView, UserCreateView
+    OrganizationsUpdateView, ProfileUpdateView
 )
 from hasdocs.core.views import ContactView, PlansView
 from hasdocs.projects.views import (
@@ -31,9 +31,6 @@ urlpatterns = patterns(
         name='login'),
     # Logout view
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
-
-    # Signup
-    url(r'^signup/$', UserCreateView.as_view(), name='signup'),
 
     # Profile settings
     url(r'^settings/profile/$', ProfileUpdateView.as_view(),

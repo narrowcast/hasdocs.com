@@ -291,3 +291,6 @@ GS_BUCKET_NAME = os.environ['GS_BUCKET_NAME']
 # Virtualenv
 VENV_NAME = 'venv'
 VENV_FILENAME = '.venv.tar.gz'
+
+# Gravatar
+GRAVATAR_API_URL = 'https://secure.gravatar.com/avatar'

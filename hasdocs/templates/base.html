@@ -40,9 +40,13 @@
               <li class="{% active request.path 'contact' %}"><a href="{% url contact %}">Contact</a></li>
               <li class="divider-vertical"></li>
               {% if user.is_authenticated %}
-                <li class=""><a href="{{ user.get_absolute_url }}">{{ user }}</a></li>
+                <li class="">
+                  <a href="{{ user.get_absolute_url }}"><img src="{{ user.get_profile.gravatar_url }}" width="18" /> {{ user }}</a>
+                </li>
               {% else %}
-                <li class=""><a href="{% url login %}">Sign in with GitHub</a></li>
+                <li class="">
+                  <a href="{% url login %}">Sign in with GitHub</a>
+                </li>
               {% endif %}
             </ul>
           </div><!--/.nav-collapse -->

@@ -6,7 +6,7 @@
 
 {% block content %}
   
-  <h1 class="page-header">Profile</h1>
+  <h1 class="page-header">Settings</h1>
   <form method="post" action="{{ request.path }}">
     {% csrf_token %}
     {{ form|crispy }}

@@ -109,6 +109,7 @@ def create_user(access_token):
     user.save()
     # Update profile based on data from GitHub
     profile = UserProfile.objects.create(user=user)
+    profile.gravatar_id = data['gravatar_id']
     profile.url = data['blog']
     profile.company = data['company']
     profile.location = data['location']

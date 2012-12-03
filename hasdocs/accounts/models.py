@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -28,6 +29,8 @@ class UserProfile(models.Model):
     """Model for representing user profiles."""
     # One-to-one mapping to the auth user model
     user = models.OneToOneField(User)
+    # Gravatar ID
+    gravatar_id = models.CharField(max_length=32, blank=True)
     # Blog or webiste URL
     url = models.URLField(blank=True)
     # Company
@@ -48,3 +51,7 @@ class UserProfile(models.Model):
     
     def __unicode__(self):
         return self.user.username
+    
+    def gravatar_url(self, size=210):
+        return '%s/%s?s=%s' % (settings.GRAVATAR_API_URL,
+                               self.gravatar_id, size)

@@ -74,7 +74,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -84,17 +84,17 @@ SECRET_KEY = '2$+dp%u926(lr*e24#$1_daj9f@%jb=zpf*uvihx$wc2yqbc^)'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #'django.template.loaders.eggs.Loader',
 )
 
 # Cache
 CACHES = {
-  'default': {
-    'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-    'LOCATION': os.environ['MEMCACHE_SERVERS'],
-    'TIMEOUT': 500,
-    'BINARY': True,
-  }
+    'default': {
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+        'LOCATION': os.environ['MEMCACHE_SERVERS'],
+        'TIMEOUT': 500,
+        'BINARY': True,
+    }
 }
 
 MIDDLEWARE_CLASSES = (
@@ -117,7 +117,6 @@ CNAME_URLCONF = 'hasdocs.core.cname_urls'
 WSGI_APPLICATION = 'hasdocs.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_ROOT, 'hasdocs', 'templates')
@@ -156,7 +155,8 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '[%(levelname)s] %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': '[%(levelname)s] %(asctime)s %(module)s \
+            %(process)d %(thread)d %(message)s'
         },
         'simple': {
             'format': '[%(levelname)s] %(message)s'
@@ -172,7 +172,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
         },
-        'console':{
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'

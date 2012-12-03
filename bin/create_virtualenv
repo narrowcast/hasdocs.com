@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# This script creates a virtualenv for building Sphinx documentations.
+#
+#     $ bin/create_virtualenv <build-dir> <docs-dir> <requirements-path>
+
+# Fail fast and hard
+set -eo pipefail
+
+# Hack to use Python in /usr/local/ rather than the .heroku/venv/
+export PATH=/usr/local/bin:$PATH
+
+# Paths
+BIN_DIR=$(cd $(dirname $0); pwd)
+ROOT_DIR=$(dirname $BIN_DIR)
+BUILD_DIR=$1
+DOCS_DIR=$2
+REQUIREMENTS=$3
+
+# Python version
+PYTHON_VERSION="2.7.2"
+PYTHON_EXE="python2.7"
+
+# Unset environment variables
+unset GIT_DIR PYTHONHOME PYTHONPATH LD_LIBRARY_PATH LIBRARY_PATH
+
+# Make these variables available in sourced scripts
+export BUILD_DIR BIN_DIR BIN_DIR
+
+cd $BUILD_DIR
+
+# Check whether to use pip or disutils
+if [ -z $3 ]; then
+  echo "No requirements.txt provided; assuming dist package."
+  echo "-e ." > requirements.txt
+  REQUIREMENTS=requirements.txt
+else
+  echo "Requirements in $3"
+fi
+
+# Create virtualenv
+echo "Preparing Python interpreter ($PYTHON_VERSION)"
+echo "Creating Virtualenv version $(virtualenv --version)"
+virtualenv --python $PYTHON_EXE --distribute --never-download venv

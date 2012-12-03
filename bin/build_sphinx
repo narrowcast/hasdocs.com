@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# This script builds documentations for a python application using Sphinx.
+
+# Pylibmc support
+source $BIN_DIR/steps/pylibmc
+
+# Activate the virtualenv
+echo "Activating virtualenv"
+source venv/bin/activate
+
+# Install dependencies with pip
+pip install --use-mirrors -r $REQUIREMENTS --exists-action=w
+
+# Install Sphinx
+pip install --use-mirrors sphinx
+
+# Build html docs
+cd $DOCS_DIR
+make html
+
+deactivate

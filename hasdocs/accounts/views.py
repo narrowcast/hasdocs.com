@@ -18,7 +18,8 @@ from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
-from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm, SignupForm
+from hasdocs.accounts.forms import (OrganizationsUpdateForm,
+                                    ProfileUpdateFormSignupForm)
 from hasdocs.accounts.models import UserProfile
 
 logger = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ class UserCreateView(CreateView):
     """View for creating a user."""
     model = User
     form_class = SignupForm
-    
+
     def form_valid(self, form):
         """Authenticates and logs in the user."""
         redirect = super(UserCreateView, self).form_valid(form)
@@ -46,62 +47,72 @@ class UserCreateView(CreateView):
         login(self.request, user)
         return redirect
 
+
 class UserDetailView(DetailView):
     """View for showing user detail."""
     model = User
     slug_field = 'username'
     context_object_name = 'account'
-    template_name='accounts/user_detail.html'
-    
+    template_name = 'accounts/user_detail.html'
+
     def get_context_data(self, **kwargs):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         # Retrieves the list of GitHub repos
         access_token = self.request.user.get_profile().github_access_token
-        payload = {'access_token': access_token }
+        payload = {'access_token': access_token}
         r = requests.get('%s/user/repos' % settings.GITHUB_API_URL,
                          params=payload)
         context['repos'] = r.json
         # Retrieves the list of Heroku apps
         headers = {'Accept': 'application/json'}
-        r = requests.get('%s/apps' % settings.HEROKU_API_URL, headers=headers,
-                     auth=('', self.request.user.get_profile().heroku_api_key))
+        r = requests.get(
+            '%s/apps' % settings.HEROKU_API_URL, headers=headers,
+            auth=('', self.request.user.get_profile().heroku_api_key)
+        )
         context['apps'] = r.json
         return context
-        
+
+
 class SettingsUpdateView(UpdateView):
     """View for updating various settings."""
     success_url = '.'
-    
+
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(SettingsUpdateView, self).dispatch(*args, **kwargs)
-    
+
     def get_object(self, queryset=None):
         return self.request.user.get_profile()
-    
+
     def form_valid(self, form):
-        messages.success(self.request, _("Thanks, your settings have been saved."))
+        messages.success(self.request,
+                         _("Thanks, your settings have been saved."))
         return super(SettingsUpdateView, self).form_valid(form)
+
 
 class ProfileUpdateView(SettingsUpdateView):
     """View for updating profile settings."""
     form_class = ProfileUpdateForm
 
+
 class BillingUpdateView(SettingsUpdateView):
     form_class = BillingUpdateForm
+
 
 class ConnectionsUpdateView(SettingsUpdateView):
     """View for updating connections settings."""
     form_class = ConnectionsUpdateForm
 
+
 class OrganizationsUpdateView(SettingsUpdateView):
     """View for updating organizations settings."""
     form_class = OrganizationsUpdateForm
 
+
 def create_user(access_token):
     """Creates a new user based on GitHub's user data."""
     logger.info('Creating a new user based on data from GitHub')
-    payload = {'access_token': access_token }
+    payload = {'access_token': access_token}
     r = requests.get('%s/user' % settings.GITHUB_API_URL, params=payload)
     data = r.json
     user = User.objects.create_user(data['login'], data['email'])
@@ -119,6 +130,7 @@ def create_user(access_token):
     user = authenticate(access_token=access_token)
     return user
 
+
 def oauth_authenticate(request):
     """Request authorization usnig OAuth2 protocol."""
     state = base64.b64encode(os.urandom(40))
@@ -127,6 +139,7 @@ def oauth_authenticate(request):
     # the return URL is used to validate the request
     url = github.get_authorize_url(state=state, scope='repo')
     return HttpResponseRedirect(url)
+
 
 def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""

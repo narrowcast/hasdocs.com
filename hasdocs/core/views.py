@@ -22,13 +22,17 @@ from hasdocs.core.tasks import update_docs
 from hasdocs.projects.models import Domain, Project
 
 logger = logging.getLogger(__name__)
-docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
-                             reduced_redundancy=True, secure_urls=False)
+docs_storage = S3BotoStorage(
+    bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
+    reduced_redundancy=True, secure_urls=False
+)
+
 
 def home(request):
     """Shows the home page."""
-    return render_to_response('core/index.html', {
-        }, context_instance=RequestContext(request))
+    return render_to_response(
+        'core/index.html', context_instance=RequestContext(request))
+
 
 def user_detail(request, slug):
     """Shows the user detail page."""
@@ -42,12 +46,14 @@ def user_detail(request, slug):
         'account': user, 'projects': projects,
     }, context_instance=RequestContext(request))
 
+
 def last_modified(request, path):
     """Returns the last modified time of the given static file."""
     username, project, rest = path.split('/', 2)
     owner = User.objects.get(username=username)
     project = Project.objects.filter(owner=owner).get(name=project)
     return project.mod_date
+
 
 @condition(last_modified_func=last_modified)
 def serve(request, path):
@@ -64,6 +70,7 @@ def serve(request, path):
         response['Content-Encoding'] = encoding
     return response
 
+
 def has_permission(user, project):
     """Returns whether the user has permission to access the project."""
     if project.private:
@@ -76,12 +83,14 @@ def has_permission(user, project):
         # Then everyone has access to the project
         return True
 
+
 def user_page(request):
     """Returns the page for the user, if any."""
     user = get_object_or_404(User, username=request.subdomain)
     path = '%s/index.html' % user
     logger.info('Serving user page at %s' % path)
     return serve(request, path)
+
 
 def project_page(request, slug):
     """Returns the project page for the given user and project, if any."""
@@ -93,6 +102,7 @@ def project_page(request, slug):
     path = '%s/%s/index.html' % (user, project)
     return serve(request, path)
 
+
 def custom_domain_page(request):
     """Returns the project page for cnamed requests."""
     host = request.get_host()
@@ -103,7 +113,8 @@ def custom_domain_page(request):
         raise Http404
     path = '%s/%s/index.html' % (project.owner, project.name)
     logger.info('Serving custom domain page at %s from %s' % (path, host))
-    return serve(request, path)    
+    return serve(request, path)
+
 
 def serve_static(request, slug, path):
     """Returns the requested static file from S3."""
@@ -112,6 +123,7 @@ def serve_static(request, slug, path):
     path = '%s/%s/%s' % (user, slug, path)
     return serve(request, path)
 
+
 def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3."""
     host = request.get_host()
@@ -119,6 +131,7 @@ def serve_static_cname(request, path):
     project = get_object_or_404(Project, custom_domains=domain)
     path = '%s/%s/%s' % (project.owner, project.name, path)
     return serve(request, path)
+
 
 @csrf_exempt
 def post_receive_github(request):
@@ -132,10 +145,11 @@ def post_receive_github(request):
         return HttpResponse('Thanks')
     else:
         raise Http404
-    
+
+
 @csrf_exempt
 def post_receive_heroku(request):
-    """Post-receive hook to be hit by Heroku."""    
+    """Post-receive hook to be hit by Heroku."""
     if request.method == 'POST':
         app_url = request.POST['url']
         logger.info('Heroku deploy hook triggered for %s' % app_url)
@@ -145,23 +159,26 @@ def post_receive_heroku(request):
     else:
         raise Http404
 
+
 class PlansView(TemplateView):
     """View for showting the plans and pricing."""
-    template_name="content/pricing.html"
-    
+    template_name = "content/pricing.html"
+
     def get_context_data(self, **kwargs):
         """Sets the individual and business plans as context for the view."""
         context = super(PlansView, self).get_context_data(**kwargs)
-        context['individual_plans'] = Plan.objects.filter(business=False).exclude(price=0)
+        context['individual_plans'] = Plan.objects.filter(
+            business=False).exclude(price=0)
         context['business_plans'] = Plan.objects.filter(business=True)
         return context
-    
+
+
 class ContactView(FormView):
-    """Shows the contact form and sends email to admin on a valid submission."""
+    """Shows the contact form and sends email to admin on form submission."""
     form_class = ContactForm
     template_name = 'core/contact.html'
     success_url = '/thanks/'
-    
+
     def form_valid(self, form):
         """Sends emails to the admins on form validation."""
         logger.info('Emailing admins of new contact form')

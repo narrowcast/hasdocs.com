@@ -14,8 +14,11 @@ from django.core.files import File
 
 logger = get_task_logger(__name__)
 
-docs_storage = S3BotoStorage(bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
-                             reduced_redundancy=True, secure_urls=False)
+docs_storage = S3BotoStorage(
+    bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
+    reduced_redundancy=True, secure_urls=False
+)
+
 
 @task
 def update_docs(project):
@@ -27,6 +30,7 @@ def update_docs(project):
         upload_docs.s(project)
     )()
     return result
+
 
 @task
 def fetch_source(project):
@@ -41,6 +45,7 @@ def fetch_source(project):
     with open(filename, 'wb') as file:
         file.write(r.content)
     return filename
+
 
 @task
 def extract(filename, project):
@@ -57,17 +62,21 @@ def extract(filename, project):
     os.remove(filename)
     return path
 
+
 @task
 def create_virtualenv(path, project):
     """Retrives or creates the virtualenv for the project and stores it."""
-    logger.info('Creating virtualenv for %s/%s' % (project.owner, project.name))
+    logger.info('Creating virtualenv for %s/%s' % (
+        project.owner, project.name))
     pass
+
 
 @task
 def build_docs(path, project):
     """Builds the documentations for the projects."""
     # TODO: This function is way too long, decompose
-    logger.info('Building documentations for %s/%s' % (project.owner, project.name))
+    logger.info('Building documentations for %s/%s' % (
+        project.owner, project.name))
     # Check if the virtualenv is stored in S3
     dest = '%s/%s/%s' % (project.owner, project.name, settings.VENV_FILENAME)
     try:
@@ -77,10 +86,11 @@ def build_docs(path, project):
                 tar.extractall()
     except IOError:
         logger.info('No previously stored virtualenv was found.')
-    try:        
+    try:
         args = ['bash', 'bin/compile', path, project.docs_path,
                 project.requirements_path]
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(args, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
         stdoutdata, stderrdata = process.communicate()
         # Save the logs in S3
         out_path = '%s/%s/logs.txt' % (project.owner, project.name)
@@ -90,7 +100,8 @@ def build_docs(path, project):
         with docs_storage.open(err_path, 'w') as file:
             file.write(stderrdata)
     except subprocess.CalledProcessError:
-        logger.warning('Compilation failed for %s/%s.' % (project.owner, project.name))
+        logger.warning('Compilation failed for %s/%s.' % (
+            project.owner, project.name))
         # TODO: nicer handling of exception
         raise
     # Store the virtualenv in S3
@@ -105,6 +116,7 @@ def build_docs(path, project):
     logger.info('Built docs for %s/%s' % (project.owner, project.name))
     return path
 
+
 @task
 def upload_docs(path, project):
     """Uploads the built docs to the appropriate storage."""
@@ -118,7 +130,8 @@ def upload_docs(path, project):
         for idx, name in enumerate(names):
             with open(os.path.join(root, name), 'rb') as fp:
                 file = File(fp)
-                dest = '%s/%s' % (dest_base, os.path.relpath(file.name, local_base))
+                dest = '%s/%s' % (dest_base,
+                                  os.path.relpath(file.name, local_base))
                 logger.info('Uploading %s...' % dest)
                 docs_storage.save(dest, file)
                 # Invalidates cache

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# This script builds a static site using Jekyll.
+
+jekyll --pygments --no-lsi --safe

@@ -13,7 +13,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: Other/Proprietary License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',        
+        'Programming Language :: Python',
         'Topic :: Documentation',
         'Topic :: Software Development :: Documentation'
     ]

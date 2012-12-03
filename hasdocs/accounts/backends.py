@@ -17,7 +17,7 @@ class GithubBackend(object):
             return profile.user
         except UserProfile.DoesNotExist:
             return None
-    
+
     def get_user(self, user_id):
         """Returns the authenticated user."""
         try:

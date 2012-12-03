@@ -4,7 +4,8 @@ from hasdocs.projects.models import Domain, Generator, Language, Project
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'name', 'language', 'generator', 'url', 'description')
+    list_display = ('owner', 'name', 'language', 'generator', 'url',
+                    'description')
 
 admin.site.register(Domain)
 admin.site.register(Generator)

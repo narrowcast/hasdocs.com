@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# This script builds documentations for a Ruby application using RDoc.
+
+rdoc

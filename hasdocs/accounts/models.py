@@ -17,14 +17,16 @@ class Plan(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class UserType(models.Model):
     """Type of a user (e.g. individual user or organization)."""
     # Name of the user type
     name = models.CharField(max_length=50)
-    
+
     def __unicode__(self):
         return self.name
-    
+
+
 class UserProfile(models.Model):
     """Model for representing user profiles."""
     # One-to-one mapping to the auth user model
@@ -48,10 +50,13 @@ class UserProfile(models.Model):
     github_access_token = models.CharField(max_length=255, blank=True)
     # Heroku API key
     heroku_api_key = models.CharField(max_length=255, blank=True)
-    
+
     def __unicode__(self):
         return self.user.username
-    
+
     def gravatar_url(self, size=210):
-        return '%s/%s?s=%s' % (settings.GRAVATAR_API_URL,
-                               self.gravatar_id, size)
+        if self.gravatar_id:
+            return '%s/%s?s=%s' % (settings.GRAVATAR_API_URL,
+                                   self.gravatar_id, size)
+        else:
+            return None

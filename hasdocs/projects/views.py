@@ -31,7 +31,7 @@ class ProjectDetailView(DetailView):
     slug_field = 'name'
     context_object_name = 'project'
 
-    @method_decorator(user_passes_test(has_permission))
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         project = get_object_or_404(Project, name=kwargs['slug'])
         if project.private and request.user != project.owner:

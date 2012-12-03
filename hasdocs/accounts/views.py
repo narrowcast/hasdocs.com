@@ -15,7 +15,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
 from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm
@@ -100,11 +100,15 @@ def create_user(access_token):
     payload = {'access_token': access_token}
     r = requests.get('%s/user' % settings.GITHUB_API_URL, params=payload)
     data = r.json
-    user = User.objects.create_user(data['login'], data['email'])
+    try:
+        user = User.objects.get(username=data['login'])
+        profile = user.get_profile()
+    except User.DoesNotExist:
+        user = User.objects.create_user(data['login'], data['email'])
+        profile = UserProfile.objects.create(user=user)
     user.first_name = data['name']
     user.save()
     # Update profile based on data from GitHub
-    profile = UserProfile.objects.create(user=user)
     profile.gravatar_id = data['gravatar_id']
     profile.url = data['blog']
     profile.company = data['company']

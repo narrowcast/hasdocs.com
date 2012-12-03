@@ -8,6 +8,7 @@ from storages.backends.s3boto import S3BotoStorage
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
+from django.core.mail import mail_managers
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -165,5 +166,8 @@ class ContactView(FormView):
     def form_valid(self, form):
         """Sends emails to the admins on form validation."""
         logger.info('Emailing admins of new contact form')
-        #form.send_email()
+        message = '\n'.join([form.cleaned_data['name'],
+                             form.cleaned_data['email'],
+                             form.cleaned_data['body']])
+        mail_managers(form.cleaned_data['subject'], message)
         return super(ContactView, self).form_valid(form)

@@ -18,8 +18,7 @@ from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
-from hasdocs.accounts.forms import (OrganizationsUpdateForm,
-                                    ProfileUpdateFormSignupForm)
+from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm
 from hasdocs.accounts.models import UserProfile
 
 logger = logging.getLogger(__name__)

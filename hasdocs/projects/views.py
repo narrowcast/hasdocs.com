@@ -13,6 +13,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from hasdocs.core.tasks import update_docs
+from hasdocs.projects.forms import ProjectCreateForm
 from hasdocs.projects.models import Generator, Language, Project
 
 logger = logging.getLogger(__name__)
@@ -20,8 +21,25 @@ logger = logging.getLogger(__name__)
 
 class ProjectCreate(CreateView):
     """View for creating a new project."""
-    model = Project
-    template_name_suffix = '_create_form'
+    form_class = ProjectCreateForm
+    template_name = 'projects/project_create_form.html'
+
+    def get_initial(self):
+        initial = super(ProjectCreate, self).get_initial()
+        access_token = self.request.user.get_profile().github_access_token
+        payload = {'access_token': access_token}
+        r = requests.get('%s/repos/%s/%s' % (
+            settings.GITHUB_API_URL, self.kwargs['username'],
+            self.kwargs['slug']), params=payload)
+        repo = r.json
+        initial['owner'] = self.request.user
+        initial['name'] = repo['name']
+        initial['description'] = repo['description']
+        initial['private'] = repo['private']
+        initial['url'] = repo['html_url']
+        initial['git_url'] = repo['git_url']
+        initial['language'] = Language.objects.get(name=repo['language'])
+        return initial
 
 
 class ProjectList(ListView):

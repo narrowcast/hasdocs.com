@@ -13,8 +13,8 @@
       <a class="btn" href="/signup/free/">Create a free acount</a>
     </div>
   </div>
-  <div class="row">
-    <h2 class="span12">Individual Plans</h2>
+  <h2>Individual Plans</h2>
+  <div class="individual row">
     {% for plan in individual_plans %}
       <div class="plan span4">
         <h3>{{ plan.name }}</h3>
@@ -27,8 +27,8 @@
       </div>
     {% endfor %}
   </div>
-  <div class="row">
-    <h2 class="span12">Business Plans</h2>
+  <h2>Business Plans</h2>
+  <div class="business row">    
     {% for plan in business_plans %}
       <div class="plan span3">
         <h3>{{ plan.name }}</h3>

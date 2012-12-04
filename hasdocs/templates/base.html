@@ -14,14 +14,9 @@
     <link rel="stylesheet/less" type="text/css" href="{% static "less/application.less" %}">
     <script type="text/javascript" src="{% static "js/jquery-1.8.2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
   </head>
   <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -32,27 +27,24 @@
           <a class="brand" href="{% url home %}">HasDocs</a>
           <div class="nav-collapse collapse">
             <ul class="nav">              
-              <li class="{% active request.path 'home' %}"><a href="{% url home %}">Home</a></li>
-              <li class="{% active request.path 'how' %}"><a href="{% url how %}">How it Works</a></li>
+              <!--<li class="{% active request.path 'how' %}"><a href="{% url how %}">How it Works</a></li>-->
               <li class="{% active request.path 'explore' %}"><a href="{% url explore %}">Explore</a></li>
               <li class="{% active request.path 'pricing' %}"><a href="{% url pricing %}">Pricing</a></li>
               <li class="{% active request.path 'help' %}"><a href="{% url help %}">Help</a></li>
               <li class="{% active request.path 'contact' %}"><a href="{% url contact %}">Contact</a></li>
               <li class="divider-vertical"></li>
-              {% if user.is_authenticated %}
-                <li class="">
+              <li class="profile">
+                {% if user.is_authenticated %}
                   <a href="{{ user.get_absolute_url }}">
                     {% if user.get_profile.gravatar_url %}
                       <img src="{{ user.get_profile.gravatar_url }}" width="18" class="img-rounded" />
                     {% endif %}
                     {{ user }}                    
                   </a>
-                </li>
-              {% else %}
-                <li class="">
+                {% else %}
                   <a href="{% url login %}">Sign in with GitHub</a>
-                </li>
-              {% endif %}
+                {% endif %}
+              </li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

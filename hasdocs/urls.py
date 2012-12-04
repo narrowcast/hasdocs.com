@@ -68,6 +68,9 @@ urlpatterns = patterns(
     url(r'^privacy/$',
         TemplateView.as_view(template_name='content/privacy.html'),
         name='privacy'),
+    
+    # Articles
+    #url(r'^articles/[\w-]+/$', ArticleDetail.as_view(), name='article_detail'),
 
     # GitHub post-receive hook
     url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github',

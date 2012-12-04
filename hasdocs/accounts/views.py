@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+import re
 
 import requests
 from rauth.service import OAuth2Service
@@ -19,7 +20,7 @@ from django.views.generic.edit import UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
 from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm
-from hasdocs.accounts.models import UserProfile
+from hasdocs.accounts.models import UserProfile, UserType
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +95,36 @@ class OrganizationsUpdateView(SettingsUpdateView):
     form_class = OrganizationsUpdateForm
 
 
+def create_orgs(access_token):
+    """Creates new organization users based on data from GitHub."""
+    logger.info('Creating new organization users based on data from GitHub')
+    payload = {'access_token': access_token}
+    r = requests.get('%s/user/orgs' % settings.GITHUB_API_URL, params=payload)
+    orgs = r.json
+    for org in orgs:
+        r = requests.get('%s/orgs/%s' % (
+            settings.GITHUB_API_URL, org['login']), params=payload)
+        data = r.json
+        try:
+            user = User.objects.get(username=data['login'])
+            profile = user.get_profile()
+        except User.DoesNotExist:
+            user = User.objects.create_user(data['login'], data['email'])
+            profile = UserProfile.objects.create(user=user)
+        user.first_name = data['name']
+        user.user_type = UserType.objects.get(name='Organization')
+        user.save()
+        # Update profile based on data from GitHub
+        if data['avatar_url']:
+            match = re.match('.+/avatar/(?P<hashcode>\w+)?.+',
+                             data['avatar_url'])
+            profile.gravatar_id = match.group('hashcode')    
+        profile.url = data['blog'] or ''
+        profile.company = data['company'] or ''
+        profile.location = data['location'] or ''
+        profile.save()
+
+
 def create_user(access_token):
     """Creates a new user based on GitHub's user data."""
     logger.info('Creating a new user based on data from GitHub')
@@ -107,12 +138,13 @@ def create_user(access_token):
         user = User.objects.create_user(data['login'], data['email'])
         profile = UserProfile.objects.create(user=user)
     user.first_name = data['name']
+    user.user_type = UserType.objects.get(name='User')
     user.save()
-    # Update profile based on data from GitHub
-    profile.gravatar_id = data['gravatar_id']
-    profile.url = data['blog']
-    profile.company = data['company']
-    profile.location = data['location']
+    # Update profile based on data from GitHub    
+    profile.gravatar_id = data['gravatar_id'] or ''
+    profile.url = data['blog'] or ''
+    profile.company = data['company'] or ''
+    profile.location = data['location'] or ''
     profile.github_access_token = access_token
     profile.save()
     # Authenticate and sign in the user

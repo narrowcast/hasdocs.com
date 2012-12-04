@@ -19,34 +19,27 @@
     <div class="navbar navbar-inverse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
           <a class="brand" href="{% url home %}">HasDocs</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">              
-              <!--<li class="{% active request.path 'how' %}"><a href="{% url how %}">How it Works</a></li>-->
-              <li class="{% active request.path 'explore' %}"><a href="{% url explore %}">Explore</a></li>
-              <li class="{% active request.path 'pricing' %}"><a href="{% url pricing %}">Pricing</a></li>
-              <li class="{% active request.path 'help' %}"><a href="{% url help %}">Help</a></li>
-              <li class="{% active request.path 'contact' %}"><a href="{% url contact %}">Contact</a></li>
-              <li class="divider-vertical"></li>
-              <li class="profile">
-                {% if user.is_authenticated %}
-                  <a href="{{ user.get_absolute_url }}">
-                    {% if user.get_profile.gravatar_url %}
-                      <img src="{{ user.get_profile.gravatar_url }}" width="18" class="img-rounded" />
-                    {% endif %}
-                    {{ user }}                    
-                  </a>
-                {% else %}
-                  <a href="{% url login %}">Sign in with GitHub</a>
-                {% endif %}
-              </li>
-            </ul>
-          </div><!--/.nav-collapse -->
+          <ul class="nav">              
+            <!--<li class="{% active request.path 'how' %}"><a href="{% url how %}">How it Works</a></li>-->
+            <li class="{% active request.path 'explore' %}"><a href="{% url explore %}">Explore</a></li>
+            <li class="{% active request.path 'pricing' %}"><a href="{% url pricing %}">Pricing</a></li>
+            <li class="{% active request.path 'help' %}"><a href="{% url help %}">Help</a></li>
+            <li class="{% active request.path 'contact' %}"><a href="{% url contact %}">Contact</a></li>
+            <li class="divider-vertical"></li>
+            <li class="profile">
+              {% if user.is_authenticated %}
+                <a href="{{ user.get_absolute_url }}">
+                  {% if user.get_profile.gravatar_url %}
+                    <img src="{{ user.get_profile.gravatar_url }}" width="18" class="img-rounded" />
+                  {% endif %}
+                  {{ user }}                    
+                </a>
+              {% else %}
+                <a href="{% url login %}">Sign in with GitHub</a>
+              {% endif %}
+            </li>
+          </ul>
         </div>
       </div>
     </div>

@@ -34,19 +34,6 @@ def home(request):
         'core/index.html', context_instance=RequestContext(request))
 
 
-def user_detail(request, slug):
-    """Shows the user detail page."""
-    # Then server the user detail for the given user
-    user = get_object_or_404(User, username=slug)
-    projects = Project.objects.filter(owner=user)
-    if user != request.user:
-        # Then limit access to the public projects
-        projects = projects.filter(private=False)
-    return render_to_response('accounts/user_detail.html', {
-        'account': user, 'projects': projects,
-    }, context_instance=RequestContext(request))
-
-
 def last_modified(request, path):
     """Returns the last modified time of the given static file."""
     username, project, rest = path.split('/', 2)
@@ -160,20 +147,20 @@ def post_receive_heroku(request):
         raise Http404
 
 
-class PlansView(TemplateView):
+class Plans(TemplateView):
     """View for showting the plans and pricing."""
     template_name = "content/pricing.html"
 
     def get_context_data(self, **kwargs):
         """Sets the individual and business plans as context for the view."""
-        context = super(PlansView, self).get_context_data(**kwargs)
+        context = super(Plans, self).get_context_data(**kwargs)
         context['individual_plans'] = Plan.objects.filter(
             business=False).exclude(price=0)
         context['business_plans'] = Plan.objects.filter(business=True)
         return context
 
 
-class ContactView(FormView):
+class Contact(FormView):
     """Shows the contact form and sends email to admin on form submission."""
     form_class = ContactForm
     template_name = 'core/contact.html'
@@ -186,4 +173,4 @@ class ContactView(FormView):
                              form.cleaned_data['email'],
                              form.cleaned_data['body']])
         mail_managers(form.cleaned_data['subject'], message)
-        return super(ContactView, self).form_valid(form)
+        return super(Contact, self).form_valid(form)

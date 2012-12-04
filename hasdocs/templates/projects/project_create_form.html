@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block container %}
+  
+  <h1 class="page-header">Import {{ project }}</h1>
+  <form action="{{ request.path }}" method="post" class="form-horizontal">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="form-actions">
+      <input class="btn btn-primary" type="submit" value="Create" />
+    </div>
+  </form>
+
+{% endblock %}

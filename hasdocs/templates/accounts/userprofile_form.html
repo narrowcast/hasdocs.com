@@ -7,10 +7,12 @@
 {% block content %}
   
   <h1 class="page-header">Settings</h1>
-  <form method="post" action="{{ request.path }}">
+  <form method="post" action="{{ request.path }}" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}
-    <input class="btn btn-primary" type="submit" value="Save" />
+    <div class="form-actions">
+      <input class="btn btn-primary" type="submit" value="Save" />
+    </div>
   </form>
 
 {% endblock %}

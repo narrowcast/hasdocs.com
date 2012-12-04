@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
@@ -21,6 +22,7 @@ from django.views.generic.edit import UpdateView
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
 from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm
 from hasdocs.accounts.models import UserProfile, UserType
+from hasdocs.projects.models import Project
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,7 @@ github = OAuth2Service(
 )
 
 
-class UserDetailView(DetailView):
+class UserDetail(DetailView):
     """View for showing user detail."""
     model = User
     slug_field = 'username'
@@ -42,30 +44,25 @@ class UserDetailView(DetailView):
     template_name = 'accounts/user_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(UserDetailView, self).get_context_data(**kwargs)
-        # Retrieves the list of GitHub repos
-        access_token = self.request.user.get_profile().github_access_token
-        payload = {'access_token': access_token}
-        r = requests.get('%s/user/repos' % settings.GITHUB_API_URL,
-                         params=payload)
-        context['repos'] = r.json
-        # Retrieves the list of Heroku apps
-        headers = {'Accept': 'application/json'}
-        r = requests.get(
-            '%s/apps' % settings.HEROKU_API_URL, headers=headers,
-            auth=('', self.request.user.get_profile().heroku_api_key)
-        )
-        context['apps'] = r.json
+        """Returns the context with account and projects for this user."""
+        context = super(UserDetail, self).get_context_data(**kwargs)
+        user = kwargs['object']
+        projects = Project.objects.filter(owner=user)
+        if user != self.request.user:
+            # Then limit access to the public projects
+            projects = projects.filter(private=False)
+        context['account'] = user
+        context['projects'] = projects
         return context
 
 
-class SettingsUpdateView(UpdateView):
+class SettingsUpdate(UpdateView):
     """View for updating various settings."""
     success_url = '.'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(SettingsUpdateView, self).dispatch(*args, **kwargs)
+        return super(SettingsUpdate, self).dispatch(*args, **kwargs)
 
     def get_object(self, queryset=None):
         return self.request.user.get_profile()
@@ -73,24 +70,24 @@ class SettingsUpdateView(UpdateView):
     def form_valid(self, form):
         messages.success(self.request,
                          _("Thanks, your settings have been saved."))
-        return super(SettingsUpdateView, self).form_valid(form)
+        return super(SettingsUpdate, self).form_valid(form)
 
 
-class ProfileUpdateView(SettingsUpdateView):
+class ProfileUpdate(SettingsUpdate):
     """View for updating profile settings."""
     form_class = ProfileUpdateForm
 
 
-class BillingUpdateView(SettingsUpdateView):
+class BillingUpdate(SettingsUpdate):
     form_class = BillingUpdateForm
 
 
-class ConnectionsUpdateView(SettingsUpdateView):
+class ConnectionsUpdate(SettingsUpdate):
     """View for updating connections settings."""
     form_class = ConnectionsUpdateForm
 
 
-class OrganizationsUpdateView(SettingsUpdateView):
+class OrganizationsUpdate(SettingsUpdate):
     """View for updating organizations settings."""
     form_class = OrganizationsUpdateForm
 

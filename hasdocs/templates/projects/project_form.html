@@ -4,11 +4,13 @@
 
 {% block container %}
   
-  <h1>{{ project }}</h1>
-  <form action="{% url project_update project.owner project %}" method="post">
+  <h1 class="page-header">Edit {{ project }}</h1>
+  <form action="{% url project_update project.owner project %}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}
-    <input class="btn" type="submit" value="Save" />
+    <div class="form-actions">
+      <input class="btn btn-primary" type="submit" value="Save" />
+    </div>
   </form>
 
 {% endblock %}

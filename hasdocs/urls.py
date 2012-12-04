@@ -4,15 +4,12 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-from hasdocs.accounts.views import (
-    BillingUpdateView, ConnectionsUpdateView,
-    OrganizationsUpdateView, ProfileUpdateView
-)
-from hasdocs.core.views import ContactView, PlansView
-from hasdocs.projects.views import (
-    GitHubProjectListView, HerokuProjectListView, ProjectDetailView,
-    ProjectDeleteView, ProjectListView, ProjectLogsView, ProjectUpdateView
-)
+from hasdocs.accounts.views import BillingUpdate, ConnectionsUpdate, \
+    OrganizationsUpdate, ProfileUpdate, UserDetail
+from hasdocs.core.views import Contact, Plans
+from hasdocs.projects.views import GitHubProjectList, HerokuProjectList, \
+    ProjectCreate, ProjectDetail, ProjectDelete, ProjectList, ProjectLogs, \
+    ProjectUpdate
 
 admin.autodiscover()
 
@@ -33,16 +30,16 @@ urlpatterns = patterns(
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 
     # Profile settings
-    url(r'^settings/profile/$', ProfileUpdateView.as_view(),
+    url(r'^settings/profile/$', ProfileUpdate.as_view(),
         name='profile_settings'),
     # Billing settings
-    url(r'^settings/billing/$', BillingUpdateView.as_view(),
+    url(r'^settings/billing/$', BillingUpdate.as_view(),
         name='billing_settings'),
     # Connections settings
-    url(r'^settings/connections/$', ConnectionsUpdateView.as_view(),
+    url(r'^settings/connections/$', ConnectionsUpdate.as_view(),
         name='connections_settings'),
     # Organizations settings
-    url(r'^settings/organizations/$', OrganizationsUpdateView.as_view(),
+    url(r'^settings/organizations/$', OrganizationsUpdate.as_view(),
         name='organizations_settings'),
 
     # OAuth
@@ -53,17 +50,17 @@ urlpatterns = patterns(
         name='oauth_authenticated'),
 
     # Explore
-    url(r'^explore/$', ProjectListView.as_view(), name='explore'),
+    url(r'^explore/$', ProjectList.as_view(), name='explore'),
     # How it works
     url(r'^how/$', TemplateView.as_view(template_name='content/how.html'),
         name='how'),
     # Pricing
-    url(r'^pricing/$', PlansView.as_view(), name='pricing'),
+    url(r'^pricing/$', Plans.as_view(), name='pricing'),
     # Help
     url(r'^help/$', TemplateView.as_view(template_name='content/help.html'),
         name='help'),
     # Contact form
-    url(r'^contact/$', ContactView.as_view(), name='contact'),
+    url(r'^contact/$', Contact.as_view(), name='contact'),
     # Terms of service
     url(r'^terms/$', TemplateView.as_view(template_name='content/terms.html'),
         name='terms'),
@@ -80,10 +77,10 @@ urlpatterns = patterns(
         name='heroku_hook'),
 
     # List of GitHub repositories
-    url(r'^github/$', GitHubProjectListView.as_view(),
+    url(r'^github/$', GitHubProjectList.as_view(),
         name='project_list_github'),
     # List of Heroku apps
-    url(r'^heroku/$', HerokuProjectListView.as_view(),
+    url(r'^heroku/$', HerokuProjectList.as_view(),
         name='project_list_heroku'),
 
     # Import from a GitHub project
@@ -94,20 +91,22 @@ urlpatterns = patterns(
         name='import_from_heroku'),
 
     # User detail
-    url(r'^(?P<slug>[\w.-]+)/$', 'hasdocs.core.views.user_detail',
-        name='user_detail'),
+    url(r'^(?P<slug>[\w.-]+)/$', UserDetail.as_view(), name='user_detail'),
     # Project detail
-    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/$', ProjectDetailView.as_view(),
+    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/$', ProjectDetail.as_view(),
         name='project_detail'),
     # Project logs
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/logs/$',
-        ProjectLogsView.as_view(), name='project_logs'),
+        ProjectLogs.as_view(), name='project_logs'),
+    # Project create
+    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/create/$',
+        ProjectCreate.as_view(), name='project_create'),
     # Project update
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/edit/$',
-        ProjectUpdateView.as_view(), name='project_update'),
+        ProjectUpdate.as_view(), name='project_update'),
     # Project delete
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/delete/$',
-        ProjectDeleteView.as_view(), name='project_delete'),
+        ProjectDelete.as_view(), name='project_delete'),
 )
 
 if settings.DEBUG:

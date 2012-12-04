@@ -9,7 +9,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from hasdocs.core.tasks import update_docs
@@ -18,14 +18,20 @@ from hasdocs.projects.models import Generator, Language, Project
 logger = logging.getLogger(__name__)
 
 
-class ProjectListView(ListView):
+class ProjectCreate(CreateView):
+    """View for creating a new project."""
+    model = Project
+    template_name_suffix = '_create_form'
+
+
+class ProjectList(ListView):
     """View for viewing the list of projects."""
     def get_queryset(self):
         """Limits the list to public projects."""
         return Project.objects.filter(private=False)
 
 
-class ProjectDetailView(DetailView):
+class ProjectDetail(DetailView):
     """View for showing the project details."""
     model = Project
     slug_field = 'name'
@@ -37,11 +43,11 @@ class ProjectDetailView(DetailView):
         if project.private and request.user != project.owner:
             # Then just raise 404
             raise Http404
-        return super(ProjectDetailView, self).dispatch(
+        return super(ProjectDetail, self).dispatch(
             request, *args, **kwargs)
 
 
-class ProjectUpdateView(UpdateView):
+class ProjectUpdate(UpdateView):
     """View for updating project details."""
     model = Project
     slug_field = 'name'
@@ -51,16 +57,16 @@ class ProjectUpdateView(UpdateView):
         project = get_object_or_404(Project, name=kwargs['slug'])
         if request.user != project.owner:
             raise Http404
-        return super(ProjectUpdateView, self).dispatch(
+        return super(ProjectUpdate, self).dispatch(
             request, *args, **kwargs)
 
     def form_valid(self, form):
         """Logs updating of the project."""
         logger.info('Updated project %s' % self.kwargs['slug'])
-        return super(ProjectUpdateView, self).form_valid(form)
+        return super(ProjectUpdate, self).form_valid(form)
 
 
-class ProjectDeleteView(DeleteView):
+class ProjectDelete(DeleteView):
     """View for delting a project."""
     model = Project
     slug_field = 'name'
@@ -70,7 +76,7 @@ class ProjectDeleteView(DeleteView):
         project = get_object_or_404(Project, name=kwargs['slug'])
         if request.user != project.owner:
             raise Http404
-        return super(ProjectDeleteView, self).dispatch(
+        return super(ProjectDelete, self).dispatch(
             request, *args, **kwargs)
 
     def get_success_url(self):
@@ -79,14 +85,14 @@ class ProjectDeleteView(DeleteView):
         return self.request.user.get_absolute_url()
 
 
-class ProjectLogsView(DetailView):
+class ProjectLogs(DetailView):
     """View for viewing the logs for a project."""
     model = Project
     slug_field = 'name'
     template_name = 'projects/project_logs.html'
 
 
-class GitHubProjectListView(TemplateView):
+class GitHubProjectList(TemplateView):
     """View for viewing the list of GitHub projects."""
     template_name = 'projects/project_list_github.html'
 
@@ -96,12 +102,12 @@ class GitHubProjectListView(TemplateView):
         if not access_token:
             # Then redirect to GitHub OAuth view
             return HttpResponseRedirect(reverse('oauth_authenticate'))
-        return super(GitHubProjectListView, self).dispatch(
+        return super(GitHubProjectList, self).dispatch(
             request, args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """Sets the list of GitHub repositories as context."""
-        context = super(GitHubProjectListView, self).get_context_data(**kwargs)
+        context = super(GitHubProjectList, self).get_context_data(**kwargs)
         access_token = self.request.user.get_profile().github_access_token
         payload = {'access_token': access_token}
         r = requests.get('%s/user/repos' % settings.GITHUB_API_URL,
@@ -115,7 +121,7 @@ class GitHubProjectListView(TemplateView):
         return context
 
 
-class HerokuProjectListView(TemplateView):
+class HerokuProjectList(TemplateView):
     """View for viewing the list of Heroku projects."""
     template_name = 'projects/project_list_heroku.html'
 
@@ -125,12 +131,12 @@ class HerokuProjectListView(TemplateView):
         if not api_key:
             # Then redirect to Heroku OAuth view
             pass
-        return super(HerokuProjectListView, self).dispatch(
+        return super(HerokuProjectList, self).dispatch(
             request, args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """Sets the list of Heroku apps as context."""
-        context = super(HerokuProjectListView, self).get_context_data(**kwargs)
+        context = super(HerokuProjectList, self).get_context_data(**kwargs)
         api_key = self.request.user.get_profile().heroku_api_key
         r = requests.get('%s/apps' % settings.HEROKU_API_URL,
                          auth=('', api_key))

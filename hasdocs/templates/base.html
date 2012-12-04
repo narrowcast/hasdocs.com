@@ -43,7 +43,7 @@
                 <li class="">
                   <a href="{{ user.get_absolute_url }}">
                     {% if user.get_profile.gravatar_url %}
-                      <img src="{{ user.get_profile.gravatar_url }}" width="18" />
+                      <img src="{{ user.get_profile.gravatar_url }}" width="18" class="img-rounded" />
                     {% endif %}
                     {{ user }}                    
                   </a>

@@ -230,7 +230,7 @@ def create_hook_github(request, project):
     logger.info('Creating a post-receive hook at GitHub')
     access_token = project.owner.get_profile().github_access_token
     url = request.build_absolute_uri(reverse('github_hook'))
-    config = {'url': url, 'content_type': 'json'}
+    config = {'url': url}
     payload = {'name': 'web', 'config': config}
     r = requests.post('%s/repos/%s/%s/hooks' % (
         settings.GITHUB_API_URL, project.owner.username, project.name

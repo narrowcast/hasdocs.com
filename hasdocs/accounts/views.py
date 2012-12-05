@@ -47,6 +47,7 @@ class UserDetail(DetailView):
         context = super(UserDetail, self).get_context_data(**kwargs)
         user = kwargs['object']
         projects = Project.objects.filter(owner=user)
+        # TODO: Take account of organizations
         if user != self.request.user:
             # Then limit access to the public projects
             projects = projects.filter(private=False)

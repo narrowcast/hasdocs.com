@@ -46,7 +46,6 @@ class ProjectList(ListView):
     """View for viewing the list of projects."""
     def get_queryset(self):
         """Limits the list to public projects."""
-        # WTF: should show everything for members
         return Project.objects.filter(private=False)
 
 

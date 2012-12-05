@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=1024">
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/application.css" %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "img/favicon.ico" %}>
     <script type="text/javascript" src="{% static "js/jquery-1.8.2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
   </head>
@@ -18,8 +19,10 @@
     <div class="navbar navbar-inverse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="{% url home %}">HasDocs</a>
-          <ul class="nav">              
+          <a class="brand" href="{% url home %}">
+            <img id="logo" src="{% static "img/logo.png" %}" alt="HasDocs logo" />
+          </a>
+          <ul class="nav">
             <!--<li class="{% active request.path 'how' %}"><a href="{% url how %}">How it Works</a></li>-->
             <li class="{% active request.path 'explore' %}"><a href="{% url explore %}">Explore</a></li>
             <li class="{% active request.path 'pricing' %}"><a href="{% url pricing %}">Pricing</a></li>
@@ -32,7 +35,7 @@
                   {% if user.get_profile.gravatar_url %}
                     <img src="{{ user.get_profile.gravatar_url }}" width="18" class="img-rounded" />
                   {% endif %}
-                  {{ user }}                    
+                  {{ user }}
                 </a>
               {% else %}
                 <a href="{% url login %}">Sign in with GitHub</a>

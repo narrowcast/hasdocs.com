@@ -87,6 +87,10 @@ urlpatterns = patterns(
     url(r'^heroku/$', HerokuProjectList.as_view(),
         name='project_list_heroku'),
 
+    # Import from a Heroku project
+    url(r'^heroku/import/$', 'hasdocs.projects.views.import_from_heroku',
+        name='import_from_heroku'),
+
     # User detail
     url(r'^(?P<slug>[\w.-]+)/$', UserDetail.as_view(), name='user_detail'),
     # Project detail

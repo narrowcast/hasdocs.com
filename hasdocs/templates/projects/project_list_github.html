@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load crispy_forms_tags %}
+
 {% block title %}GitHub Projects{% endblock %}
 
 {% block container %}
@@ -12,19 +14,29 @@
         <h3><a href="{{ repo.html_url }}">{{ repo.name }}</a></h3>
         <p class="language">{{ repo.language }}</p>
         <p class="description">{{ repo.description }}</p>
-        <p class="mod_date">Last modified {{ repo.updated_at }}</p>
-        <form action="{% url import_from_github %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="owner" value="{{ repo.owner.login }}">
-          <input type="hidden" name="repo" value="{{ repo.name }}">
-          {% if repo.exists %}
-            <button class="btn btn-success disabled">Imported</button>
-          {% else %}
-            <button type="submit" class="btn btn-success">Import</button>
-          {% endif %}
-        </form>
+        <p class="mod_date">Last modified {{ repo.updated_at }}</p>        
+        {% if repo.exists %}
+          <a class="btn btn-success disabled">Imported</a>
+        {% else %}
+          <a href="{% url project_create repo.owner.login repo.name %}" class="btn">Import</a>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>
+
+{% endblock %}
+
+{% block script %}
+  
+  <script type="text/javascript">
+    $("#modal-form-submit").on('click', function(e) {
+      // Disables anchor behavior
+      e.preventDefault();
+      // Set the name of the repository
+      $("#id_name").val('name')
+      // Submits the form
+      $("#modal-form").submit();
+    });
+  </script>
   
 {% endblock %}

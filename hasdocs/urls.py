@@ -70,7 +70,8 @@ urlpatterns = patterns(
         name='privacy'),
     
     # Articles
-    #url(r'^articles/[\w-]+/$', ArticleDetail.as_view(), name='article_detail'),
+    url(r'^articles/(?P<title>[\w-]+)/$', 'hasdocs.core.views.article_detail',
+        name='article_detail'),
 
     # GitHub post-receive hook
     url(r'^post-receive/github/$', 'hasdocs.core.views.post_receive_github',
@@ -85,13 +86,6 @@ urlpatterns = patterns(
     # List of Heroku apps
     url(r'^heroku/$', HerokuProjectList.as_view(),
         name='project_list_heroku'),
-
-    # Import from a GitHub project
-    url(r'^github/import/$', 'hasdocs.projects.views.import_from_github',
-        name='import_from_github'),
-    # Import from a Heroku project
-    url(r'^heroku/import/$', 'hasdocs.projects.views.import_from_heroku',
-        name='import_from_heroku'),
 
     # User detail
     url(r'^(?P<slug>[\w.-]+)/$', UserDetail.as_view(), name='user_detail'),

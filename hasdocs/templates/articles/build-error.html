@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+  <article>
+    <h1 class="page-header">Build error</h1>
+    <ul>
+      <li>
+        <a href="#common-issues">Common issues</a>
+      </li>
+      <li>
+        <a href="#seeing-the-build-logs">Seeing the build logs</a>
+      </li>
+      <li>
+        <a href="#platform-specific-issues">Platform specific issues</a>
+      </li>
+    </ul>
+    <h2>
+      <a id="common-issues">Common issues</a>
+    </h2>
+    <p>
+      Build can fail due to errors in source. Maybe a dependency is not
+      specified correctly.
+    </p>
+    <h2>
+      <a id="seeing-the-build-logs">Seeing the build logs</a>
+    </h2>
+    <p>
+      You can see the output from build at <code>www.hasdocs.com/owner/project/logs/</code>.
+    </p>
+    <h2>
+      <a id="platform-specific-issues">Platform specific issues</a>
+    </h2>
+    <h3>Sphinx</h3>
+    <h3>Jekyll</h3>
+    <h3>Javadoc</h3>
+  </article>
+
+{% endblock %}

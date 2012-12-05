@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
@@ -115,7 +114,7 @@ def create_orgs(access_token):
         if data['avatar_url']:
             match = re.match('.+/avatar/(?P<hashcode>\w+)?.+',
                              data['avatar_url'])
-            profile.gravatar_id = match.group('hashcode')    
+            profile.gravatar_id = match.group('hashcode')
         profile.url = data['blog'] or ''
         profile.company = data['company'] or ''
         profile.location = data['location'] or ''
@@ -137,7 +136,7 @@ def create_user(access_token):
     user.first_name = data['name']
     user.user_type = UserType.objects.get(name='User')
     user.save()
-    # Update profile based on data from GitHub    
+    # Update profile based on data from GitHub
     profile.gravatar_id = data['gravatar_id'] or ''
     profile.url = data['blog'] or ''
     profile.company = data['company'] or ''

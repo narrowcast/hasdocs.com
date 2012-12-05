@@ -10,7 +10,7 @@ from django.core.cache import cache
 from django.core.mail import mail_managers
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.template import RequestContext, TemplateDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import condition
 from django.views.generic import TemplateView
@@ -144,6 +144,16 @@ def post_receive_heroku(request):
         result = update_docs.delay(project)
         return HttpResponse('Thanks')
     else:
+        raise Http404
+
+
+def article_detail(request, title):
+    """Returns the article for the given url or 404."""
+    filename = 'articles/%s.html' % title
+    try:
+        return render_to_response(
+            filename, context_instance=RequestContext(request))
+    except TemplateDoesNotExist:
         raise Http404
 
 

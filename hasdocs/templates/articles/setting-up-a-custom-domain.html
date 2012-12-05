@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+  <article>
+    <h1 class="page-header">Setting up a custom domain</h1>
+    <ul>
+      <li>
+        <a href="#set-up-custom-domain">Set the custom domain</a>
+      </li>
+      <li>
+        <a href="#set-up-dns">Set up DNS</a>
+      </li>
+    </ul>
+    <h2>
+      <a id="set-up-custom-domain">Set the custom domain</a>
+    </h2>
+    <p>
+      You can set up a custom domain for your project at the project edit
+      page. You can have multiple custom domains.
+    </p>
+    <h2>
+      <a id="set-up-dns">Set up DNS</a>
+    </h2>
+    <p>
+      You need to set up your DNS in order to custom domain names for your
+      docs.
+    </p>
+    <h3>Top-level domain (TLD)</h3>
+    <p>
+      For a TLD like <code>example.com</code>, make your DNS A record to
+      point to <code>111.111.111.111</code>.</p>
+    <h3>Subdomains</h3>
+    <p>
+      You can set a CNAME record pointing to your docs. For example, if your
+      docs are served at <code>user.hasdocs.com/example</code>, create a cname
+      record pointing to <code>user.hasdocs.com</code>.
+    </p>
+  </article>
+
+{% endblock %}

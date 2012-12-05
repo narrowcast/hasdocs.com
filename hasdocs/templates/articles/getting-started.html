@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+  <article>
+    <h1 class="page-header">Getting Started with HasDocs</h1>
+    <ul>
+      <li>
+        <a href="#step-1-sign-up">Step 1: Sign up</a>
+      </li>
+      <li>
+        <a href="#step-2-write-the-docs">Step 2: Write the docs</a>
+      </li>
+      <li>
+        <a href="#step3-import-a-repository">Step 3: Import a repository</a>
+      </li>
+      <li>
+        <a href="#step4-deploy-the-docs">Step 4: Deploy the docs</a>
+      </li>
+    </ul>
+    <h2>
+      <a id="step-1-sign-up">Step 1: Sign up</a>
+    </h2>
+    <p>
+      <a href="http://www.hasdocs.com/login/">Sign up</a> using your existing
+      <a href="https://github.com/">GitHub</a> account. HasDocs requires
+      permission to read from your public and private repos.
+    </p>
+    <h2>
+      <a id="step-2-write-the-docs">Step 2: Write the docs</a>
+    </h2>
+    <p>
+      Write the documentation for your project. HasDocs supports
+      <a href="http://sphinx-doc.org/">Sphinx</a>,
+      <a href="http://jekyllrb.com/">Jekyll</a>,
+      <a href="http://rdoc.sourceforge.net/">RDoc</a>, and
+      <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html" target="_blank">Javadoc</a>.
+    </p>
+    <h2>
+      <a id="step-3-import-a-repository">Step 3: Import a repository</a>
+    </h2>
+    <p>
+      Import your repository from GitHub by clicking the import button on the
+      repo list page. This adds
+      <a href="https://help.github.com/articles/post-receive-hooks">a post-receive hook</a>
+      to the repo.
+    </p>
+    <h2>
+      <a id="step-4-deploy-the-docs">Step 4: Deploy the docs</a>
+    </h2>
+    <p>
+      Deploy the docs by pushing to the GitHub. Your docs are built by the
+      appropriate documentation generator and hosted on HasDocs.
+    </p>
+  </article>
+
+{% endblock %}

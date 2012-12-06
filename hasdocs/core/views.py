@@ -95,7 +95,7 @@ def custom_domain_page(request):
     """Returns the project page for cnamed requests."""
     host = request.get_host()
     domain = get_object_or_404(Domain, name=host)
-    project = get_object_or_404(Project, custom_domains=domain)
+    project = domain.project
     # Check permissions
     if not has_permission(request.user, project):
         raise Http404
@@ -116,7 +116,7 @@ def serve_static_cname(request, path):
     """Returns the requested static file using cname from S3."""
     host = request.get_host()
     domain = get_object_or_404(Domain, name=host)
-    project = get_object_or_404(Project, custom_domains=domain)
+    project = domain.project
     path = '%s/%s/%s' % (project.owner, project.name, path)
     return serve(request, path)
 

@@ -14,30 +14,6 @@ docs_storage = S3BotoStorage(
 )
 
 
-class Build(models.Model):
-    """Model for representing a documentation build."""
-    # Commit that caused the build
-    #commit =
-    # Time it took to build the documentations
-    #duration = models.TimeDeltaField()
-    # Status of the build (e.g., building, finished, or failed)
-    #status = models.ForeignKeyField()
-    # Time it finished building the documentations
-    #built_date = models.DateTimeField()
-
-    def __unicode__(self):
-        pass
-
-
-class Domain(models.Model):
-    """Model for representing a domain name."""
-    # URL of the domain
-    name = models.CharField(max_length=200)
-
-    def __unicode__(self):
-        return self.name
-
-
 class Generator(models.Model):
     """Model for representing a documentation generator."""
     # Name of the documentation generator
@@ -78,8 +54,6 @@ class Project(models.Model):
     language = models.ForeignKey(Language, blank=True, null=True)
     # Documentation generator to be used for this project
     generator = models.ForeignKey(Generator, blank=True, null=True)
-    # Custom domains for this project
-    custom_domains = models.ManyToManyField(Domain, blank=True, null=True)
     # Path to the requirements file
     requirements_path = models.CharField(max_length=200, blank=True)
     # Path to the directory containing Sphinx documentation
@@ -119,3 +93,31 @@ class Project(models.Model):
                 return file.read()
         except IOError:
             return 'No logs were found.'
+
+
+"""
+class Build(models.Model):
+    Model for representing a documentation build.
+    # The project this build is for
+    project = models.ForeignKey(Project)
+    # Commit that caused the build
+    #commit =
+    # Status of the build (e.g., building, finished, or failed)
+    #status = models.ForeignKeyField()
+    # Time it finished building the documentations
+    built_date = models.DateTimeField()
+
+    def __unicode__(self):
+        return '%s: %s' % (self.project.name, self.pk)
+"""
+
+
+class Domain(models.Model):
+    """Model for representing a domain name."""
+    # URL of the domain
+    name = models.CharField(max_length=200)
+    # The project this domain is for
+    project = models.ForeignKey(Project)
+
+    def __unicode__(self):
+        return self.name

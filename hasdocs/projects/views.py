@@ -17,33 +17,70 @@ from hasdocs.projects.models import Generator, Language, Project
 logger = logging.getLogger(__name__)
 
 
-class OwnershipRequiredMixin(object):
+class OwnershipRequiredMixin(object):    
     """Mixin for requiring membership to access the project."""
+
+    def has_ownership(user, project):
+        """Returns whether the user has ownership for the project."""
+        access_token = user.get_profile().github_access_token
+        payload = {'access_token': access_token}
+        r = requests.get('%s/orgs/%s/teams' % (
+            settings.GITHUB_API_URL, project.owner), params=payload)
+        if r.ok:
+            teams = r.json
+            ids = [team['id'] for team in teams if team['name'] == 'Owners']
+            r = requests.get('%s/teams/%s/members/%s' % (
+                settings.GITHUB_API_URL, ids[0], user.username),
+                params=payload)
+            return r.status_code == 204
+        else:
+            return False
+
     def dispatch(self, request, *args, **kwargs):
+        """Limits access to the owners of the project."""
         project = get_object_or_404(Project, name=kwargs['slug'])
-        if request.user != project.owner:
-            # Then just raise 404
-            raise Http404
-        # TODO: should raise 403 if member
-        # TODO: should check for organizational ownership
+        if project.owner.get_profile().user_type.name == 'Organization':
+            # Then checks if the user is owner of the project's organization
+            if not has_ownership(request.user, project):
+                raise Http404
+        else:
+            # Then check if the user is owner of the project
+            if request.user != project.owner:
+                raise Http404
         return super(OwnershipRequiredMixin, self).dispatch(
             request, *args, **kwargs)
 
 
 class MembershipRequiredMixin(object):
     """Mixin for requiring membership to access the project."""
+
+    def has_membership(user, project):
+        """Returns whether the user has membership for the project."""
+        access_token = user.get_profile().github_access_token
+        payload = {'access_token': access_token, 'type': 'member'}
+        r = requests.get('%s/orgs/%s/repos' % (
+            settings.GITHUB_API_URL, project.owner), params=payload)
+        repos = r.json
+        # Returns true if project is in the list of repos that user is a member
+        return [True for repo in repos if repos['name'] == project.name]
+
     def dispatch(self, request, *args, **kwargs):
         project = get_object_or_404(Project, name=kwargs['slug'])
-        if project.private and request.user != project.owner:
-            # Then just raise 404
-            raise Http404
-        # TODO: should check for organizational membership
+        if project.private:
+            if project.owner.get_profile().user_type.name == 'Organization':
+                # Then checks if the user is member of the project
+                if not has_membership(request.user, project):
+                    raise Http404
+            else:
+                # Then checks if the user is owner of the project
+                if request.user != project.owner:
+                    raise Http404
         return super(MembershipRequiredMixin, self).dispatch(
             request, *args, **kwargs)
 
 
 class ProjectList(ListView):
-    """View for viewing the list of projects."""
+    """View for viewing the list of projects in explore page."""
     def get_queryset(self):
         """Limits the list to public projects."""
         return Project.objects.filter(private=False)

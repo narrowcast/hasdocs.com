@@ -25,19 +25,30 @@
       <ul class="stats">
         <li>{{ projects.count }} projects</li>
       </ul>
-      <h4>Organizations</h4>
-      <ul class="organizations">
-        {% for organization in account.get_profile.organizations.all %}
-          <li class="organization">
-            {{ organization.username }}
-          </li>
-        {% endfor %}
-      </ul>      
+      {% if not account.get_profile.is_organization %}
+        <h4>Organizations</h4>      
+        <ul class="organizations">
+          {% for organization in account.get_profile.organizations.all %}
+            <li class="organization">
+              <a href="{{ organization.get_absolute_url }}">{{ organization.username }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
     <div class="span9">
-      <a href="{% url profile_settings %}" class="btn">
-        <i class="icon-edit"></i> Edit Your Profile
-      </a>
+      {% if account == request.user or account in request.user.get_profile.organizations.all %}
+        <a href="{% url profile_settings %}" class="btn">
+          <i class="icon-edit"></i> Edit Your Profile
+        </a>
+        <form action="{% url sync_repos_github %}" method="post">
+          {% csrf_token %}
+          {% if account.get_profile.is_organization %}
+            <input name="organization" type="hidden" value="{{ account.username }}">
+          {% endif %}
+          <input class="btn" type="submit" value="Sync Now">
+        </form>
+      {% endif %}
       <h2>Projects</h3>
       <ul class="unstyled">
         {% for project in projects %}

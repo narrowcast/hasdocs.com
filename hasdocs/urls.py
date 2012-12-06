@@ -86,13 +86,16 @@ urlpatterns = patterns(
     # List of Heroku apps
     url(r'^heroku/$', HerokuProjectList.as_view(),
         name='project_list_heroku'),
+    # Sync user's repositories with GitHub
+    url(r'^sync/github/$', 'hasdocs.accounts.views.sync_repos_github',
+        name='sync_repos_github'),
 
     # Import from a Heroku project
     url(r'^heroku/import/$', 'hasdocs.projects.views.import_from_heroku',
         name='import_from_heroku'),
 
     # User detail
-    url(r'^(?P<slug>[\w.-]+)/$', UserDetail.as_view(), name='user_detail'),
+    url(r'^(?P<slug>\w+)/$', UserDetail.as_view(), name='user_detail'),    
     # Project detail
     url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/$', ProjectDetail.as_view(),
         name='project_detail'),

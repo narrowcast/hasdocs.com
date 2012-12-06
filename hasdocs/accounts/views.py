@@ -12,14 +12,14 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import FormMixin, UpdateView
 
-from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm
-from hasdocs.accounts.forms import OrganizationsUpdateForm, ProfileUpdateForm
+from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm, \
+    OrganizationsUpdateForm, ProfileUpdateForm
 from hasdocs.accounts.models import UserProfile, UserType
 from hasdocs.projects.models import Project
 
@@ -177,3 +177,37 @@ def oauth_authenticated(request):
         user = create_user(token.content['access_token'])
     login(request, user)
     return HttpResponseRedirect(reverse('home'))
+
+
+def sync_repos_github(request):
+    """Sync the repositories with the GitHub"""
+    if request.method == 'GET':
+        raise Http404
+    logger.info('Syncing repos with GitHub for %s' % request.user)
+    if request.POST.get('organization'):
+        # WTF: Should check if the requesting user is owner of the organization
+        owner = User.objects.get(username=request.POST['organization'])
+    else:
+        owner = request.user
+    projects = Project.objects.filter(owner=owner)
+    access_token = request.user.get_profile().github_access_token
+    payload = {'access_token': access_token}
+    if owner.get_profile().user_type.name == 'Organization':
+        url = '%s/orgs/%s/repos' % (settings.GITHUB_API_URL, owner.username)
+    else:
+        url = '%s/user/repos' % settings.GITHUB_API_URL
+    r = requests.get(url, params=payload)
+    repos = r.json
+    for repo in repos:
+        try:
+            project = projects.get(name=repo['name'])
+            logger.info('Project %s is already synced' % project.name)
+        except Project.DoesNotExist:
+            # Then creates a project for this repo
+            project = Project.objects.create(
+                owner=owner, name=repo['name'], private=repo['private'],
+                description=repo['description'], url=repo['html_url'],
+                git_url=repo['git_url'])
+            project.save()
+            logger.info('Project %s has been created' % project.name)
+    return HttpResponseRedirect(owner.get_absolute_url())

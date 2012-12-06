@@ -12,6 +12,9 @@ design decisions.
 .. toctree::
    :maxdepth: 2
 
+  requirements
+  architecture
+
 Overview
 --------
 

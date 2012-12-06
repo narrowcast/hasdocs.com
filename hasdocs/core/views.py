@@ -1,6 +1,7 @@
 import json
 import logging
 import mimetypes
+import requests
 
 from storages.backends.s3boto import S3BotoStorage
 
@@ -36,7 +37,7 @@ def home(request):
 
 def last_modified(request, path):
     """Returns the last modified time of the given static file."""
-    username, project, rest = path.split('/', 2)
+    username, project = path.split('/', 2)[:2]
     owner = User.objects.get(username=username)
     project = Project.objects.filter(owner=owner).get(name=project)
     return project.mod_date
@@ -145,6 +146,19 @@ def post_receive_heroku(request):
         return HttpResponse('Thanks')
     else:
         raise Http404
+
+
+def add_heroku_custom_domain(domain_name):
+    """Adds a custom domain to the hasdocs Heroku app."""
+    logger.info('Adding %s to hasdocs' % domain_name)
+    payload = {'domain_name[domain]': domain_name}
+    r = requests.post('%s/apps/hasdocs/domains' % (settings.HEROKU_API_URL),
+                      auth=('', settings.HEROKU_API_KEY), data=payload)
+    if r.ok:
+        logger.info('%s was added to Heroku hasdocs app' % domain_name)
+    else:
+        logger.warnning('Failed to add %s: %s' % (domain_name, r.content))
+    return r.ok
 
 
 def article_detail(request, title):

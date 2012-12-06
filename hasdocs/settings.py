@@ -276,6 +276,7 @@ GITHUB_API_URL = 'https://api.github.com'
 
 # Heroku
 HEROKU_API_URL = 'https://api.heroku.com'
+HEROKU_API_KEY = os.environ['HEROKU_API_KEY']
 
 # Celery
 BROKER_BACKEND = 'django'

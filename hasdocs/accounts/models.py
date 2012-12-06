@@ -55,8 +55,13 @@ class UserProfile(models.Model):
         return self.user.username
 
     def gravatar_url(self, size=210):
+        """Returns the gravatar url for this user."""
         if self.gravatar_id:
             return '%s/%s?s=%s' % (settings.GRAVATAR_API_URL,
                                    self.gravatar_id, size)
         else:
             return None
+
+    def is_organization(self):
+        """Returns whether this user profile is for an organization or not."""
+        return self.user_type.name == 'Organization'

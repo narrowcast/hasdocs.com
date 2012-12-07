@@ -107,7 +107,7 @@ def create_orgs(access_token):
             profile = user.get_profile()
         except User.DoesNotExist:
             user = User.objects.create_user(data['login'], data['email'])
-            profile = UserProfile.objects.create(user=user)
+            profile = UserProfile(user=user)
         user.first_name = data['name']
         user.user_type = UserType.objects.get(name='Organization')
         user.save()
@@ -133,7 +133,7 @@ def create_user(access_token):
         profile = user.get_profile()
     except User.DoesNotExist:
         user = User.objects.create_user(data['login'], data['email'])
-        profile = UserProfile.objects.create(user=user)
+        profile = UserProfile(user=user)
     user.first_name = data['name']
     user.user_type = UserType.objects.get(name='User')
     user.save()
@@ -208,6 +208,5 @@ def sync_repos_github(request):
                 owner=owner, name=repo['name'], private=repo['private'],
                 description=repo['description'], url=repo['html_url'],
                 git_url=repo['git_url'])
-            project.save()
             logger.info('Project %s has been created' % project.name)
     return HttpResponseRedirect(owner.get_absolute_url())

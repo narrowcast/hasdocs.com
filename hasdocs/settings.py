@@ -279,7 +279,7 @@ HEROKU_API_URL = 'https://api.heroku.com'
 HEROKU_API_KEY = os.environ['HEROKU_API_KEY']
 
 # Celery
-BROKER_BACKEND = 'django'
+BROKER_URL = 'django://'
 
 import djcelery
 djcelery.setup_loader()

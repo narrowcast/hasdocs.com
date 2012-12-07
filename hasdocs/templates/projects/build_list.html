@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ owner }}/{{ project }} | HasDocs{% endblock %}
+
+{% block container %}
+  
+  <h1 class="page-header">Build History for {{ project }}</h1>
+  <table class="table">
+    <tr>
+      <th>Status</th>
+      <th>Build</th>
+      <th>Duration</th>
+      <th>Finished</th>
+    </tr>
+    {% for build in build_list %}
+      <tr class="build">
+        <td>{{ build.status }}</td>
+        <td><a href="{{ build.get_absolute_url }}">{{ build.number }}</a></td>
+        <td>{{ build.duration }}</td>
+        <td>{{ build.finished_at|timesince }} ago</td>
+      </tr>
+    {% endfor %}
+  </table>
+  
+{% endblock %}

@@ -37,7 +37,9 @@ class Project(models.Model):
     # Owner of the project
     owner = models.ForeignKey(User)
     # Name of the project
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
+    # slug of the project which is username/project
+    slug = models.SlugField()
     # Collaborators
     collaborators = models.ManyToManyField(
         User, blank=True, null=True, related_name="collaborating_project_set"
@@ -94,22 +96,52 @@ class Project(models.Model):
         except IOError:
             return 'No logs were found.'
 
+    def get_latest_build(self):
+        """Returns the latest documentation build for this project."""
+        try:
+            return self.build_set.order_by('-number')[0:1].get()
+        except Build.DoesNotExist:
+            return None
 
-"""
+    def save(self, *args, **kwargs):
+        """Builds the slug from owner's username and project name."""
+        self.slug = '%s/%s' % (self.owner.username, self.name)
+        return super(Project, self).save(*args, **kwargs)
+
+
 class Build(models.Model):
-    Model for representing a documentation build.
+    """Model for representing a documentation build."""
+    STATUS_CHOICES = (
+        ('S', 'Success'),
+        ('F', 'Failure'),
+        ('U', 'Unknown'),
+    )    
     # The project this build is for
     project = models.ForeignKey(Project)
-    # Commit that caused the build
-    #commit =
+    # Build number for the project
+    number = models.IntegerField()
     # Status of the build (e.g., building, finished, or failed)
-    #status = models.ForeignKeyField()
-    # Time it finished building the documentations
-    built_date = models.DateTimeField()
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    # Time it started building the documentation
+    started_at = models.DateTimeField(auto_now_add=True)
+    # Time it finished building the documentation
+    finished_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-number']
 
     def __unicode__(self):
-        return '%s: %s' % (self.project.name, self.pk)
-"""
+        return '%s: %s' % (self.project.name, self.number)
+    
+    def duration(self):
+        """Returns the time it took for this build to build."""
+        return self.finished_at - self.started_at
+    
+    @models.permalink
+    def get_absolute_url(self):
+        """Returns the url for this project."""
+        return ('project_build_detail',
+                [self.project.owner.username, self.project.name, self.pk])
 
 
 class Domain(models.Model):

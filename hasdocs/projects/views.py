@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 
 from hasdocs.core.tasks import update_docs
 from hasdocs.projects.forms import ProjectCreateForm
-from hasdocs.projects.models import Generator, Language, Project
+from hasdocs.projects.models import Build, Generator, Language, Project
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,8 @@ class OwnershipRequiredMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         """Limits access to the owners of the project."""
-        project = get_object_or_404(Project, name=kwargs['slug'])
+        slug = '%s/%s' % (kwargs['username'], kwargs['project'])
+        project = get_object_or_404(Project, slug=slug)
         if project.owner.get_profile().user_type.name == 'Organization':
             # Then checks if the user is owner of the project's organization
             if not has_ownership(request.user, project):
@@ -65,7 +66,8 @@ class MembershipRequiredMixin(object):
         return [True for repo in repos if repos['name'] == project.name]
 
     def dispatch(self, request, *args, **kwargs):
-        project = get_object_or_404(Project, name=kwargs['slug'])
+        slug = '%s/%s' % (kwargs['username'], kwargs['project'])
+        project = get_object_or_404(Project, slug=slug)
         if project.private:
             if project.owner.get_profile().user_type.name == 'Organization':
                 # Then checks if the user is member of the project
@@ -108,7 +110,7 @@ class ProjectCreate(CreateView):
     def get_context_data(self, **kwargs):
         """Returns the context with project name."""
         context = super(ProjectCreate, self).get_context_data(**kwargs)
-        context['project'] = self.kwargs['slug']
+        context['project'] = self.kwargs['project']
         return context
 
     def get_initial(self):
@@ -121,31 +123,38 @@ class ProjectCreate(CreateView):
 
 class ProjectDetail(MembershipRequiredMixin, DetailView):
     """View for showing the project details."""
-    model = Project
-    slug_field = 'name'
-    context_object_name = 'project'
+    def get_object(self):
+        """Returns the project for the given url."""
+        slug = '%s/%s' % (self.kwargs['username'], self.kwargs['project'])
+        return get_object_or_404(Project, slug=slug)
 
 
 class ProjectUpdate(OwnershipRequiredMixin, UpdateView):
     """View for updating project details."""
-    model = Project
-    slug_field = 'name'
 
     def form_valid(self, form):
         """Logs updating of the project."""
-        logger.info('Updated project %s' % self.kwargs['slug'])
+        logger.info('Updated project %s' % self.kwargs['project'])
         return super(ProjectUpdate, self).form_valid(form)
+
+    def get_object(self):
+        """Returns the project for the given url."""
+        slug = '%s/%s' % (self.kwargs['username'], self.kwargs['project'])
+        return get_object_or_404(Project, slug=slug)
 
 
 class ProjectDelete(OwnershipRequiredMixin, DeleteView):
     """View for delting a project."""
-    model = Project
-    slug_field = 'name'
 
     def get_success_url(self):
         """Returns the URL of the user's detail_view."""
-        logger.info('Deleted project %s' % self.kwargs['slug'])
+        logger.info('Deleted project %s' % self.kwargs['project'])
         return self.request.user.get_absolute_url()
+    
+    def get_object(self):
+        """Returns the project for the given url."""
+        slug = '%s/%s' % (self.kwargs['username'], self.kwargs['project'])
+        return get_object_or_404(Project, slug=slug)
 
 
 class ProjectLogs(MembershipRequiredMixin, DetailView):
@@ -186,7 +195,7 @@ class GitHubProjectList(TemplateView):
 
 
 class HerokuProjectList(TemplateView):
-    """View for viewing the list of Heroku projects."""
+    """View for showing the list of Heroku projects."""
     template_name = 'projects/project_list_heroku.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -210,6 +219,25 @@ class HerokuProjectList(TemplateView):
             app['exists'] = Project.objects.filter(url=app['web_url']).exists()
         context['apps'] = apps
         return context
+
+
+class ProjectBuildList(MembershipRequiredMixin, ListView):
+    """View for showing the list of builds for a project."""
+
+    def get_queryset(self):
+        """Returns the builds for the project."""
+        return Build.objects.filter(project__name=self.kwargs['project'])
+    
+    def get_context_data(self, **kwargs):
+        """Sets the list of Heroku apps as context."""
+        context = super(ProjectBuildList, self).get_context_data(**kwargs)
+        context['owner'] = self.kwargs['username']
+        context['project'] = self.kwargs['project']
+        return context
+
+
+class ProjectBuildDetail(MembershipRequiredMixin, DetailView):
+    model = Build
 
 
 def import_from_github(request, project):

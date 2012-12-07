@@ -8,8 +8,8 @@ from hasdocs.accounts.views import BillingUpdate, ConnectionsUpdate, \
     OrganizationsUpdate, ProfileUpdate, UserDetail
 from hasdocs.core.views import Contact, Plans
 from hasdocs.projects.views import GitHubProjectList, HerokuProjectList, \
-    ProjectCreate, ProjectDetail, ProjectDelete, ProjectList, ProjectLogs, \
-    ProjectUpdate
+    ProjectBuildDetail, ProjectBuildList, ProjectCreate, ProjectDetail, \
+    ProjectDelete, ProjectList, ProjectLogs, ProjectUpdate
 
 admin.autodiscover()
 
@@ -95,22 +95,28 @@ urlpatterns = patterns(
         name='import_from_heroku'),
 
     # User detail
-    url(r'^(?P<slug>\w+)/$', UserDetail.as_view(), name='user_detail'),    
+    url(r'^(?P<slug>[\w-]+)/$', UserDetail.as_view(), name='user_detail'),    
     # Project detail
-    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/$', ProjectDetail.as_view(),
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/$', ProjectDetail.as_view(),
         name='project_detail'),
     # Project logs
-    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/logs/$',
-        ProjectLogs.as_view(), name='project_logs'),
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/logs/$',
+        ProjectLogs.as_view(), name='project_logs'),    
     # Project create
-    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/create/$',
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/create/$',
         ProjectCreate.as_view(), name='project_create'),
     # Project update
-    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/edit/$',
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/edit/$',
         ProjectUpdate.as_view(), name='project_update'),
     # Project delete
-    url(r'^(?P<username>\w+)/(?P<slug>[\w.-]+)/delete/$',
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/delete/$',
         ProjectDelete.as_view(), name='project_delete'),
+    # List of builds for a project
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/builds/$',
+        ProjectBuildList.as_view(), name='project_build_list'),
+    # Build detail
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/builds/(?P<pk>\d+)/$',
+        ProjectBuildDetail.as_view(), name='project_build_detail'),
 )
 
 if settings.DEBUG:

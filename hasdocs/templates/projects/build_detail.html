@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.owner }}/{{ project }} | HasDocs{% endblock %}
+
+{% block container %}
+  
+  <h1 class="page-header">Build {{ build.number }} for {{ build.project }}</h1>
+  <dl>
+    <dt>Build</dt>
+    <dd>{{ build.number }}</dd>
+    <dt>Status</dt>
+    <dd>{{ build.status }}</dd>
+    <dt>Finished</dt>
+    <dd>{{ build.finished_at|timesince }} ago</dd>
+    <dt>Duration</dt>
+    <dd>{{ build.duration }}</dd>
+  </dl>
+  <pre>Build log goes here</pre>
+  
+{% endblock %}

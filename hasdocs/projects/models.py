@@ -128,6 +128,13 @@ class Build(models.Model):
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.number)
 
+    def save(self, *args, **kwargs):
+        """Numbers itself after the latest build for the project."""
+        if not self.pk:
+            last_build = self.project.get_latest_build()
+            self.number = last_build.number + 1 if last_build else 1
+        super(Build, self).save(*args, **kwargs)
+
     def duration(self):
         """Returns the time it took for this build to build."""
         return self.finished_at - self.started_at

@@ -109,9 +109,10 @@ def create_orgs(access_token):
             user = User.objects.create_user(data['login'], data['email'])
             profile = UserProfile(user=user)
         user.first_name = data['name']
-        user.user_type = UserType.objects.get(name='Organization')
+        
         user.save()
         # Update profile based on data from GitHub
+        profile.user_type = UserType.objects.get(name='Organization')
         if data['avatar_url']:
             match = re.match('.+/avatar/(?P<hashcode>\w+)?.+',
                              data['avatar_url'])
@@ -135,9 +136,9 @@ def create_user(access_token):
         user = User.objects.create_user(data['login'], data['email'])
         profile = UserProfile(user=user)
     user.first_name = data['name']
-    user.user_type = UserType.objects.get(name='User')
     user.save()
     # Update profile based on data from GitHub
+    profile.user_type = UserType.objects.get(name='User')
     profile.gravatar_id = data['gravatar_id'] or ''
     profile.url = data['blog'] or ''
     profile.company = data['company'] or ''

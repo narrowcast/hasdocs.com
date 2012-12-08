@@ -123,7 +123,8 @@ def upload_docs(path, project):
     logger.info('Uploading docs for %s' % project)
     count = 0
     dest_base = '%s/%s' % (project.owner, project.name)
-    target = subprocess.check_output(['bash', 'bin/target', path, 'docs'])
+    target = subprocess.check_output(
+        ['bash', 'bin/target', path, project.docs_path])
     local_base = '%s/%s/html/' % (path, target)
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):

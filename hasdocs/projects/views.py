@@ -108,6 +108,8 @@ class ProjectActivate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
         """Creates a service hook at GitHub."""
         create_hook_github(self.request, self.object)        
         self.object.active = True
+        # Initiates first build
+        build = Build.objects.create(project=self.object)
         update_docs.delay(self.object)
         logger.info('Created hook for %s/%s' % (
             self.kwargs['username'], self.kwargs['project']))

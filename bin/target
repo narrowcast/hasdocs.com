@@ -8,7 +8,7 @@ BUILD_DIR=$1
 DOCS_DIR=$2
 
 # Detect Makefile for the docs
-MAKEFILE=$(find $DOCS_DIR -type f -maxdepth 2 -name 'Makefile' | head -1)
+MAKEFILE=$(find $BUILD_DIR/$DOCS_DIR -type f -maxdepth 2 -name 'Makefile' | head -1)
 
 # Detect source and output dirs from Makefile
 SOURCE_DIR=$(make -p -f $MAKEFILE | awk '/ALLSPHINXOPTS = .+/ {print $(NF);}') 

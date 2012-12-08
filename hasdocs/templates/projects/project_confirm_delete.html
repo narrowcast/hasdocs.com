@@ -6,11 +6,11 @@
   
   <h1 class="page-header">Delete {{ project }}</h1>
   <p>Are you sure you want to delete {{ project }}?</p>
-  <form action="{% url project_delete project.owner project %}" method="post">
+  <form action="{% url project_delete project.owner project.name %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
     <input class="btn btn-danger" type="submit" value="Delete" />
-    <a class="btn" href="{% url project_detail project.owner project %}">Cancel</a>
+    <a class="btn" href="{% url project_detail project.owner project.name %}">Cancel</a>
   </form>
 
 {% endblock %}

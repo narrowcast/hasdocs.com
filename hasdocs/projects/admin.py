@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from hasdocs.projects.models import Build, Domain, Generator, Language, Project    
+from hasdocs.projects.models import Build, Domain, Generator, Language, Project
 
 
 class BuildAdmin(admin.ModelAdmin):
@@ -12,7 +12,7 @@ class DomainAdmin(admin.ModelAdmin):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'name', 'language', 'generator', 'private',
+    list_display = ('name', 'owner', 'language', 'generator', 'private',
                     'description')
 
 admin.site.register(Build, BuildAdmin)

@@ -11,13 +11,13 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from hasdocs.core.tasks import update_docs
-from hasdocs.projects.forms import ProjectCreateForm
+from hasdocs.projects.forms import ProjectActivateForm
 from hasdocs.projects.models import Build, Generator, Language, Project
 
 logger = logging.getLogger(__name__)
 
 
-class OwnershipRequiredMixin(object):    
+class OwnershipRequiredMixin(object):
     """Mixin for requiring membership to access the project."""
 
     def has_ownership(user, project):
@@ -38,11 +38,12 @@ class OwnershipRequiredMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         """Limits access to the owners of the project."""
-        slug = '%s/%s' % (kwargs['username'], kwargs['project'])
-        project = get_object_or_404(Project, slug=slug)
+        project = get_object_or_404(
+            Project, owner__username=kwargs['username'], name=kwargs['project']
+        )
         if project.owner.get_profile().user_type.name == 'Organization':
             # Then checks if the user is owner of the project's organization
-            if not has_ownership(request.user, project):
+            if not self.has_ownership(request.user, project):
                 raise Http404
         else:
             # Then check if the user is owner of the project
@@ -66,12 +67,13 @@ class MembershipRequiredMixin(object):
         return [True for repo in repos if repos['name'] == project.name]
 
     def dispatch(self, request, *args, **kwargs):
-        slug = '%s/%s' % (kwargs['username'], kwargs['project'])
-        project = get_object_or_404(Project, slug=slug)
+        project = get_object_or_404(
+            Project, owner__username=kwargs['username'], name=kwargs['project']
+        )
         if project.private:
             if project.owner.get_profile().user_type.name == 'Organization':
                 # Then checks if the user is member of the project
-                if not has_membership(request.user, project):
+                if not self.has_membership(request.user, project):
                     raise Http404
             else:
                 # Then checks if the user is owner of the project
@@ -88,48 +90,35 @@ class ProjectList(ListView):
         return Project.objects.filter(private=False)
 
 
-class ProjectCreate(CreateView):
-    """View for creating a new project."""
-    form_class = ProjectCreateForm
-    template_name = 'projects/project_create_form.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Limits access to the requesting user."""
-        if kwargs['username'] != request.user.username:
-            raise Http404
-        return super(ProjectCreate, self).dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        """Imports the repository from GitHub and redirects to the project."""
-        project = form.save()
-        import_from_github(self.request, project)
-        project.save()
-        return HttpResponseRedirect(
-            reverse('project_detail', args=[project.owner, project.name]))
-
-    def get_context_data(self, **kwargs):
-        """Returns the context with project name."""
-        context = super(ProjectCreate, self).get_context_data(**kwargs)
-        context['project'] = self.kwargs['project']
-        return context
-
-    def get_initial(self):
-        """Returns the initial data for the form."""
-        initial = super(ProjectCreate, self).get_initial()
-        initial['owner'] = self.request.user
-        initial['name'] = self.kwargs['slug']
-        return initial
-
-
-class ProjectDetail(MembershipRequiredMixin, DetailView):
-    """View for showing the project details."""
+class ProjectMixin(object):
+    """Mixin for class-based generic views dealing with a project object."""
     def get_object(self):
         """Returns the project for the given url."""
-        slug = '%s/%s' % (self.kwargs['username'], self.kwargs['project'])
-        return get_object_or_404(Project, slug=slug)
+        return get_object_or_404(
+            Project, owner__username=self.kwargs['username'],
+            name=self.kwargs['project'])
 
 
-class ProjectUpdate(OwnershipRequiredMixin, UpdateView):
+class ProjectActivate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
+    """View for creating a service hook for the project."""
+    form_class = ProjectActivateForm
+    template_name = 'projects/project_activate_form.html'
+
+    def form_valid(self, form):
+        """Creates a service hook at GitHub."""
+        create_hook_github(self.request, self.object)        
+        self.object.active = True
+        update_docs.delay(self.object)
+        logger.info('Created hook for %s/%s' % (
+            self.kwargs['username'], self.kwargs['project']))
+        return super(ProjectActivate, self).form_valid(form)
+
+
+class ProjectDetail(MembershipRequiredMixin, ProjectMixin, DetailView):
+    """View for showing the project details."""
+
+
+class ProjectUpdate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
     """View for updating project details."""
 
     def form_valid(self, form):
@@ -137,88 +126,19 @@ class ProjectUpdate(OwnershipRequiredMixin, UpdateView):
         logger.info('Updated project %s' % self.kwargs['project'])
         return super(ProjectUpdate, self).form_valid(form)
 
-    def get_object(self):
-        """Returns the project for the given url."""
-        slug = '%s/%s' % (self.kwargs['username'], self.kwargs['project'])
-        return get_object_or_404(Project, slug=slug)
 
-
-class ProjectDelete(OwnershipRequiredMixin, DeleteView):
+class ProjectDelete(OwnershipRequiredMixin, ProjectMixin, DeleteView):
     """View for delting a project."""
 
     def get_success_url(self):
         """Returns the URL of the user's detail_view."""
         logger.info('Deleted project %s' % self.kwargs['project'])
         return self.request.user.get_absolute_url()
-    
-    def get_object(self):
-        """Returns the project for the given url."""
-        slug = '%s/%s' % (self.kwargs['username'], self.kwargs['project'])
-        return get_object_or_404(Project, slug=slug)
 
 
-class ProjectLogs(MembershipRequiredMixin, DetailView):
+class ProjectLogs(MembershipRequiredMixin, ProjectMixin, DetailView):
     """View for viewing the logs for a project."""
-    model = Project
-    slug_field = 'name'
     template_name = 'projects/project_logs.html'
-
-
-class GitHubProjectList(TemplateView):
-    """View for viewing the list of GitHub projects."""
-    template_name = 'projects/project_list_github.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Checks whether user has GitHub access token and redirects if not."""
-        access_token = request.user.get_profile().github_access_token
-        if not access_token:
-            # Then redirect to GitHub OAuth view
-            return HttpResponseRedirect(reverse('oauth_authenticate'))
-        return super(GitHubProjectList, self).dispatch(
-            request, args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """Sets the list of GitHub repositories as context."""
-        context = super(GitHubProjectList, self).get_context_data(**kwargs)
-        access_token = self.request.user.get_profile().github_access_token
-        payload = {'access_token': access_token}
-        r = requests.get('%s/user/repos' % settings.GITHUB_API_URL,
-                         params=payload)
-        repos = r.json
-        # Mark already imported repos
-        for repo in repos:
-            repo['exists'] = Project.objects.filter(
-                url=repo['html_url']).exists()
-        context['repos'] = repos
-        context['form'] = ProjectCreateForm()
-        return context
-
-
-class HerokuProjectList(TemplateView):
-    """View for showing the list of Heroku projects."""
-    template_name = 'projects/project_list_heroku.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Checks whether user has Heroku api key and redirects if not."""
-        api_key = request.user.get_profile().heroku_api_key
-        if not api_key:
-            # Then redirect to Heroku OAuth view
-            pass
-        return super(HerokuProjectList, self).dispatch(
-            request, args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """Sets the list of Heroku apps as context."""
-        context = super(HerokuProjectList, self).get_context_data(**kwargs)
-        api_key = self.request.user.get_profile().heroku_api_key
-        r = requests.get('%s/apps' % settings.HEROKU_API_URL,
-                         auth=('', api_key))
-        apps = r.json
-        # Mark already imported apps
-        for app in apps:
-            app['exists'] = Project.objects.filter(url=app['web_url']).exists()
-        context['apps'] = apps
-        return context
 
 
 class ProjectBuildList(MembershipRequiredMixin, ListView):
@@ -227,7 +147,7 @@ class ProjectBuildList(MembershipRequiredMixin, ListView):
     def get_queryset(self):
         """Returns the builds for the project."""
         return Build.objects.filter(project__name=self.kwargs['project'])
-    
+
     def get_context_data(self, **kwargs):
         """Sets the list of Heroku apps as context."""
         context = super(ProjectBuildList, self).get_context_data(**kwargs)
@@ -237,27 +157,8 @@ class ProjectBuildList(MembershipRequiredMixin, ListView):
 
 
 class ProjectBuildDetail(MembershipRequiredMixin, DetailView):
+    """View for showing the build detail for a project."""
     model = Build
-
-
-def import_from_github(request, project):
-    """Imports a project from a GitHub repository."""
-    logger.info('Importing a repository from GitHub')
-    access_token = project.owner.get_profile().github_access_token
-    payload = {'access_token': access_token}
-    r = requests.get('%s/repos/%s/%s' % (
-        settings.GITHUB_API_URL, project.owner.username, project.name
-    ), params=payload)
-    repo = r.json
-    project.description = repo['description']
-    project.url = repo['html_url']
-    project.git_url = repo['git_url']
-    project.private = repo['private']
-    logger.info('Imported %s repo from GitHub' % project.name)
-    # Creates a post-receive webhook at GitHub
-    create_hook_github(request, project)
-    # Build docs for the first time
-    update_docs.delay(project)
 
 
 def import_from_heroku(request):

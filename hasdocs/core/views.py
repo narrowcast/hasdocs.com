@@ -38,8 +38,8 @@ def home(request):
 def last_modified(request, path):
     """Returns the last modified time of the given static file."""
     username, project = path.split('/', 2)[:2]
-    owner = User.objects.get(username=username)
-    project = Project.objects.filter(owner=owner).get(name=project)
+    project = get_object_or_404(Project, owner__username=username,
+                                name=project)
     return project.mod_date
 
 
@@ -80,14 +80,14 @@ def user_page(request):
     return serve(request, path)
 
 
-def project_page(request, slug):
+def project_page(request, project):
     """Returns the project page for the given user and project, if any."""
-    user = get_object_or_404(User, username=request.subdomain)
-    project = get_object_or_404(Project, name=slug)
+    project = get_object_or_404(Project, owner__username=request.subdomain,
+                                name=project)
     # Check permissions
     if not has_permission(request.user, project):
         raise Http404
-    path = '%s/%s/index.html' % (user, project)
+    path = '%s/%s/index.html' % (request.subdomain, project.name)
     return serve(request, path)
 
 
@@ -104,11 +104,11 @@ def custom_domain_page(request):
     return serve(request, path)
 
 
-def serve_static(request, slug, path):
+def serve_static(request, project, path):
     """Returns the requested static file from S3."""
     # Then serve the page for the given user, if any
     user = get_object_or_404(User, username=request.subdomain)
-    path = '%s/%s/%s' % (user, slug, path)
+    path = '%s/%s/%s' % (user, project, path)
     return serve(request, path)
 
 

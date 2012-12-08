@@ -38,14 +38,14 @@ class Project(models.Model):
     owner = models.ForeignKey(User)
     # Name of the project
     name = models.CharField(max_length=100)
-    # slug of the project which is username/project
-    slug = models.SlugField()
     # Collaborators
     collaborators = models.ManyToManyField(
         User, blank=True, null=True, related_name="collaborating_project_set"
     )
     # Description of the project
     description = models.TextField(blank=True)
+    # Whether this project is actively built
+    active = models.BooleanField()
     # Whether this project is private or not
     private = models.BooleanField(default=False)
     # Project's GitHub repo or Heroku app URL
@@ -103,11 +103,6 @@ class Project(models.Model):
         except Build.DoesNotExist:
             return None
 
-    def save(self, *args, **kwargs):
-        """Builds the slug from owner's username and project name."""
-        self.slug = '%s/%s' % (self.owner.username, self.name)
-        return super(Project, self).save(*args, **kwargs)
-
 
 class Build(models.Model):
     """Model for representing a documentation build."""
@@ -115,7 +110,7 @@ class Build(models.Model):
         ('S', 'Success'),
         ('F', 'Failure'),
         ('U', 'Unknown'),
-    )    
+    )
     # The project this build is for
     project = models.ForeignKey(Project)
     # Build number for the project
@@ -132,11 +127,11 @@ class Build(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.project.name, self.number)
-    
+
     def duration(self):
         """Returns the time it took for this build to build."""
         return self.finished_at - self.started_at
-    
+
     @models.permalink
     def get_absolute_url(self):
         """Returns the url for this project."""

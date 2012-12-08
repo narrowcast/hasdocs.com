@@ -1,29 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}{{ project.owner }}/{{ project }} | HasDocs{% endblock %}
+{% block title %}{{ project.owner }}/{{ project.name }} | HasDocs{% endblock %}
 
 {% block container %}
   
   <h1 class="page-header">
     <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a> /
-    <a href="{{ project.get_absolute_url }}">{{ project }}</a>
+    <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
   </h1>
+  {% if project.active %}
+    <span>Active</span>
+  {% else %}
+    <span>Not active</span>
+  {% endif %}
   {% if project.private %}
     <span>Private</span>
   {% else %}
     <span>Public</span>
   {% endif %}
-  <p>{{ project.git_url }}</p>
-  <p>{{ project.description }}</p>
+  <dl>    
+    <dt>Language</dt>
+    <dd>{{ project.language }}</dd>
+    <dt>Generator</dt>
+    <dd>{{ project.generator }}</dd>
+    <dt>Repository</dt>
+    <dd>{{ project.git_url }}</dd>
+    <dt>Latest build</dt>
+    <dd>
+      {% if project.get_latest_build %}
+        <a href="{{ project.get_latest_build.get_absolute_url }}">
+          {{ project.get_latest_build }}
+        </a>
+        ({{ project.get_latest_build.finished_at|timesince }} ago)
+      {% else %}
+        None
+      {% endif %}
+    </dd>
+    <dt>Description</dt>
+    <dd>{{ project.description }}</dd>
+  </dl>
   {% if project.get_latest_build %}
     <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
   {% else %}
     <a class="btn btn-info disabled">No Docs</a>
   {% endif %}
   {% if user == project.owner %}
-    <a class="btn" href="{% url project_build_list project.owner project %}">Builds</a>
-    <a class="btn" href="{% url project_update project.owner project %}">Edit</a>
-    <a class="btn btn-danger" href="{% url project_delete project.owner project %}">Delete</a>
+    <a class="btn" href="{% url project_build_list project.owner project.name %}">Builds</a>
+    <a class="btn" href="{% url project_update project.owner project.name %}">Edit</a>
+    <a class="btn btn-danger" href="{% url project_delete project.owner project.name %}">Delete</a>
   {% endif %}
   
 {% endblock %}

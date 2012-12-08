@@ -54,10 +54,16 @@
         {% for project in projects %}
           <li class="project">
             <ul class="unstyled">
+              <li>{{ project.active }}</li>
               <li>{% if project.private %}Private{% else %}Public{% endif %}</li>
               <li>{{ project.language }}</li>
               <li>{{ project.generator }}</li>
             </ul>
+            {% if project.active %}
+              <a class="btn" href="{{ project.url }}/admin/hooks#generic_minibucket">Hook Installed</a>
+            {% else %}
+              <a class="btn btn-primary" href="{% url project_activate project.owner.username project.name %}">Create Hook</a>
+            {% endif %}
             <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
             <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
             <p class="description">{{ project.description }}</p>
@@ -65,14 +71,6 @@
           </li>
         {% endfor %}
       </ul>
-      {% if account.get_profile.github_access_token %}
-        <h3>GitHub</h3>
-        <a class="btn" href="{% url project_list_github %}">View Repositories</a>
-      {% endif %}
-      {% if account.get_profile.heroku_api_key %}
-        <h3>Heroku</h3>
-        <a class="btn" href="{% url project_list_heroku %}">View Apps</a>
-      {% endif %}
     </div>
   </div>
 

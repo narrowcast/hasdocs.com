@@ -7,9 +7,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from hasdocs.accounts.views import BillingUpdate, ConnectionsUpdate, \
     OrganizationsUpdate, ProfileUpdate, UserDetail
 from hasdocs.core.views import Contact, Plans
-from hasdocs.projects.views import GitHubProjectList, HerokuProjectList, \
-    ProjectBuildDetail, ProjectBuildList, ProjectCreate, ProjectDetail, \
-    ProjectDelete, ProjectList, ProjectLogs, ProjectUpdate
+from hasdocs.projects.views import  ProjectBuildDetail, ProjectBuildList, \
+    ProjectActivate, ProjectDelete, ProjectDetail, ProjectList, ProjectLogs, \
+    ProjectUpdate
 
 admin.autodiscover()
 
@@ -80,12 +80,6 @@ urlpatterns = patterns(
     url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku',
         name='heroku_hook'),
 
-    # List of GitHub repositories
-    url(r'^github/$', GitHubProjectList.as_view(),
-        name='project_list_github'),
-    # List of Heroku apps
-    url(r'^heroku/$', HerokuProjectList.as_view(),
-        name='project_list_heroku'),
     # Sync user's repositories with GitHub
     url(r'^sync/github/$', 'hasdocs.accounts.views.sync_repos_github',
         name='sync_repos_github'),
@@ -102,9 +96,9 @@ urlpatterns = patterns(
     # Project logs
     url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/logs/$',
         ProjectLogs.as_view(), name='project_logs'),    
-    # Project create
-    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/create/$',
-        ProjectCreate.as_view(), name='project_create'),
+    # Project activate
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/activate/$',
+        ProjectActivate.as_view(), name='project_activate'),
     # Project update
     url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/edit/$',
         ProjectUpdate.as_view(), name='project_update'),

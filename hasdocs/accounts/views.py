@@ -16,7 +16,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
-from django.views.generic.edit import FormMixin, UpdateView
+from django.views.generic.edit import UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm, \
     OrganizationsUpdateForm, ProfileUpdateForm
@@ -179,25 +179,41 @@ def oauth_authenticated(request):
     return HttpResponseRedirect(reverse('home'))
 
 
+def get_repos_github(user, organization=None):
+    """Returns the list of repositories for the given user or organization."""
+    access_token = user.get_profile().github_access_token
+    payload = {'access_token': access_token}
+    if organization:
+        # WTF: Should check if the requesting user is owner of the organization
+        url = '%s/orgs/%s/repos' % (settings.GITHUB_API_URL, organization)
+    else:
+        url = '%s/user/repos' % settings.GITHUB_API_URL
+    r = requests.get(url, params=payload)
+    repos = r.json
+    return repos
+
+
+def get_hooks_github(user, repo):
+    """Returns the list of service hooks for the user's repo."""
+    access_token = user.get_profile().github_access_token
+    payload = {'access_token': access_token}
+    url = '%s/repos/%s/%s/hooks' % (settings.GITHUB_API_URL, user, repo)
+    r = requests.get(url, params=payload)
+    hooks = r.json
+    return hooks
+
+
 def sync_repos_github(request):
     """Sync the repositories with the GitHub"""
     if request.method == 'GET':
         raise Http404
     logger.info('Syncing repos with GitHub for %s' % request.user)
     if request.POST.get('organization'):
-        # WTF: Should check if the requesting user is owner of the organization
         owner = User.objects.get(username=request.POST['organization'])
     else:
         owner = request.user
     projects = Project.objects.filter(owner=owner)
-    access_token = request.user.get_profile().github_access_token
-    payload = {'access_token': access_token}
-    if owner.get_profile().user_type.name == 'Organization':
-        url = '%s/orgs/%s/repos' % (settings.GITHUB_API_URL, owner.username)
-    else:
-        url = '%s/user/repos' % settings.GITHUB_API_URL
-    r = requests.get(url, params=payload)
-    repos = r.json
+    repos = get_repos_github(request.user, request.POST.get('organization'))
     for repo in repos:
         try:
             project = projects.get(name=repo['name'])

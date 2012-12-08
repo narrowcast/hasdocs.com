@@ -5,7 +5,7 @@
 {% block container %}
   
   <h1 class="page-header">Edit {{ project }}</h1>
-  <form action="{% url project_update project.owner project %}" method="post" class="form-horizontal">
+  <form action="{% url project_update project.owner project.name %}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}
     <div class="form-actions">

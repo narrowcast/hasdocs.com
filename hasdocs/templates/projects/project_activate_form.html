@@ -4,7 +4,7 @@
 
 {% block container %}
   
-  <h1 class="page-header">Import {{ project }}</h1>
+  <h1 class="page-header">Create a hook for {{ project }}</h1>
   <form action="{{ request.path }}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}

@@ -37,7 +37,7 @@
       {% endif %}
     </div>
     <div class="span9">
-      {% if account == request.user or account in request.user.get_profile.organizations.all %}
+      {% if owner %}
         <a href="{% url profile_settings %}" class="btn">
           <i class="icon-edit"></i> Edit Your Profile
         </a>
@@ -59,10 +59,13 @@
               <li>{{ project.language }}</li>
               <li>{{ project.generator }}</li>
             </ul>
-            {% if project.active %}
-              <a class="btn" href="{{ project.url }}/admin/hooks#generic_minibucket">Hook Installed</a>
-            {% else %}
-              <a class="btn btn-primary" href="{% url project_activate project.owner.username project.name %}">Create Hook</a>
+            {{ owner }}
+            {% if owner %}
+              {% if project.active %}
+                <a class="btn" href="{{ project.url }}/admin/hooks#generic_minibucket">Hook Installed</a>
+              {% else %}
+                <a class="btn btn-primary" href="{% url project_activate project.owner.username project.name %}">Create Hook</a>
+              {% endif %}
             {% endif %}
             <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
             <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>

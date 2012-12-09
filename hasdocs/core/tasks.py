@@ -99,6 +99,8 @@ def build_docs(build, project):
         build.output = e.output
         build.status = Build.FAILURE
         build.save()
+        # TODO: nicer cleanup of mess on failure (maybe an error link)
+        shutil.rmtree(build.path)
         # TODO: nicer handling of exception
         raise
     # Store the virtualenv in S3

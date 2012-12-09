@@ -42,13 +42,20 @@ class UserDetail(DetailView):
     context_object_name = 'account'
     template_name = 'accounts/user_detail.html'
 
+    def has_ownership(self, request, user):
+        return (
+            request.user == user or
+            request.user.get_profile().organizations.filter(username=user).exists()
+        )
+
     def get_context_data(self, **kwargs):
         """Returns the context with account and projects for this user."""
         context = super(UserDetail, self).get_context_data(**kwargs)
-        user = kwargs['object']
+        user = self.object
         projects = Project.objects.filter(owner=user)
-        # TODO: Take account of organizations
-        if user != self.request.user:
+        if self.has_ownership(self.request, user):
+            context['owner'] = True
+        else:
             # Then limit access to the public projects
             projects = projects.filter(private=False)
         context['account'] = user

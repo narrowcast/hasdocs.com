@@ -106,10 +106,13 @@ class Project(models.Model):
 
 class Build(models.Model):
     """Model for representing a documentation build."""
+    SUCCESS = 'S'
+    FAILURE = 'F'
+    UNKNOWN = 'U'
     STATUS_CHOICES = (
-        ('S', 'Success'),
-        ('F', 'Failure'),
-        ('U', 'Unknown'),
+        (SUCCESS, 'Success'),
+        (FAILURE, 'Failure'),
+        (UNKNOWN, 'Unknown'),
     )
     # The project this build is for
     project = models.ForeignKey(Project)
@@ -117,16 +120,19 @@ class Build(models.Model):
     number = models.IntegerField()
     # Status of the build (e.g., building, finished, or failed)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    # Output from running the build
+    output = models.TextField(blank=True)
     # Time it started building the documentation
     started_at = models.DateTimeField(auto_now_add=True)
     # Time it finished building the documentation
     finished_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-number']
+        ordering = ['-started_at']
 
     def __unicode__(self):
-        return '%s: %s' % (self.project.name, self.number)
+        return '%s/%s: %s' % (
+            self.project.owner.username, self.project.name, self.number)
 
     def save(self, *args, **kwargs):
         """Numbers itself after the latest build for the project."""

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}{{ project.owner }}/{{ project }} | HasDocs{% endblock %}
+{% block title %}{{ build.project.owner }}/{{ build.project.name }} | HasDocs{% endblock %}
 
 {% block container %}
   
-  <h1 class="page-header">Build {{ build.number }} for {{ build.project }}</h1>
+  <h1 class="page-header">Build {{ build.number }} for {{ build.project.owner}}/{{ build.project }}</h1>
   <dl>
     <dt>Build</dt>
     <dd>{{ build.number }}</dd>
@@ -15,6 +15,6 @@
     <dt>Duration</dt>
     <dd>{{ build.duration }}</dd>
   </dl>
-  <pre>Build log goes here</pre>
+  <pre class="pre-scrollable">{{ build.output }}</pre>
   
 {% endblock %}

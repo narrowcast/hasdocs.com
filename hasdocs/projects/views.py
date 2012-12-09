@@ -138,11 +138,6 @@ class ProjectDelete(OwnershipRequiredMixin, ProjectMixin, DeleteView):
         return self.request.user.get_absolute_url()
 
 
-class ProjectLogs(MembershipRequiredMixin, ProjectMixin, DetailView):
-    """View for viewing the logs for a project."""
-    template_name = 'projects/project_logs.html'
-
-
 class ProjectBuildList(MembershipRequiredMixin, ListView):
     """View for showing the list of builds for a project."""
 

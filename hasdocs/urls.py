@@ -93,9 +93,6 @@ urlpatterns = patterns(
     # Project detail
     url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/$', ProjectDetail.as_view(),
         name='project_detail'),
-    # Project logs
-    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/logs/$',
-        ProjectLogs.as_view(), name='project_logs'),    
     # Project activate
     url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/activate/$',
         ProjectActivate.as_view(), name='project_activate'),

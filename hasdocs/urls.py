@@ -8,8 +8,7 @@ from hasdocs.accounts.views import BillingUpdate, ConnectionsUpdate, \
     OrganizationsUpdate, ProfileUpdate, UserDetail
 from hasdocs.core.views import Contact, Plans
 from hasdocs.projects.views import  ProjectBuildDetail, ProjectBuildList, \
-    ProjectActivate, ProjectDelete, ProjectDetail, ProjectList, ProjectLogs, \
-    ProjectUpdate
+    ProjectActivate, ProjectDelete, ProjectDetail, ProjectList, ProjectUpdate
 
 admin.autodiscover()
 

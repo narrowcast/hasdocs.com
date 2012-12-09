@@ -109,8 +109,7 @@ class ProjectActivate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
         create_hook_github(self.request, self.object)        
         self.object.active = True
         # Initiates first build
-        build = Build.objects.create(project=self.object)
-        update_docs.delay(self.object)
+        update_docs(self.object)
         logger.info('Created hook for %s/%s' % (
             self.kwargs['username'], self.kwargs['project']))
         return super(ProjectActivate, self).form_valid(form)
@@ -180,7 +179,7 @@ def import_from_heroku(request):
         # Creates a post-receive webhook at GitHub
         create_hook_heroku(request)
         # Build docs for the first time
-        update_docs.delay(project)
+        update_docs(project)
         return HttpResponseRedirect(
             reverse('project_detail', args=[request.user, project]))
     else:

@@ -20,7 +20,7 @@ from django.views.generic.edit import FormView
 from hasdocs.accounts.models import Plan
 from hasdocs.core.forms import ContactForm
 from hasdocs.core.tasks import update_docs
-from hasdocs.projects.models import Build, Domain, Project
+from hasdocs.projects.models import Domain, Project
 
 logger = logging.getLogger(__name__)
 docs_storage = S3BotoStorage(
@@ -129,7 +129,7 @@ def post_receive_github(request):
         repo_url = payload['repository']['url']
         logger.info('GitHub post-receive hook triggered for %s' % repo_url)
         project = get_object_or_404(Project, url=repo_url)
-        result = update_docs.delay(project)
+        update_docs(project)
         return HttpResponse('Thanks')
     else:
         raise Http404
@@ -142,8 +142,7 @@ def post_receive_heroku(request):
         app_url = request.POST['url']
         logger.info('Heroku deploy hook triggered for %s' % app_url)
         project = get_object_or_404(Project, url=app_url)
-        build = Build.objects.create(project=project)
-        result = update_docs.delay(project)
+        update_docs(project)
         return HttpResponse('Thanks')
     else:
         raise Http404

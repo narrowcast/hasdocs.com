@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
 # This script builds a static site using Jekyll.
+#
+#     $ bin/compile <build-dir> <docs-dir>
+
+# Fail fast and hard
+set -eo pipefail
+
+# Add local ruby gems to path 
+export PATH=$PATH:/app/.gem/ruby/1.9.1/bin
+
+# Paths
+BUILD_DIR=$1
+DOCS_DIR=$2
+
+# Jekyll version
+JEKYLL_VERSION="0.11.2"
+LIQUID_VERSION="2.4.1"
+
+cd $BUILD_DIR
+cd $DOCS_DIR
 
 jekyll --pygments --no-lsi --safe

@@ -91,7 +91,7 @@ def post_receive_github(request):
         payload = json.loads(request.POST['payload'])
         repo_url = payload['repository']['url']
         logger.info('GitHub post-receive hook triggered for %s' % repo_url)
-        project = get_object_or_404(Project, url=repo_url)
+        project = get_object_or_404(Project, html_url=repo_url)
         update_docs(project)
         return HttpResponse('Thanks')
     else:

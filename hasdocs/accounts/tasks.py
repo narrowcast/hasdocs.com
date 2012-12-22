@@ -13,7 +13,14 @@ logger = celery.utils.log.get_task_logger(__name__)
 
 
 def github_api_get(url, params=None):
-    r = requests.get('%s%s' % (settings.GITHUB_API_URL, url), params=params)
+    """Returns the requested data using GitHub's API."""
+    r = requests.get('%s%s?per_page=100' % (settings.GITHUB_API_URL, url),
+                     params=params)
+    data = r.json
+    while r.links.get('next'):
+        # Then there is more data to fetch
+        r = requests.get(r.links['next']['url'])
+        data += r.json
     return r.json
 
 

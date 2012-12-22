@@ -21,4 +21,4 @@ LIQUID_VERSION="2.4.1"
 cd $BUILD_DIR
 cd $DOCS_DIR
 
-jekyll --pygments --no-lsi --safe
+jekyll --pygments --no-auto  --no-lsi --safe

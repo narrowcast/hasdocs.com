@@ -104,7 +104,7 @@ def post_receive_heroku(request):
     if request.method == 'POST':
         app_url = request.POST['url']
         logger.info('Heroku deploy hook triggered for %s' % app_url)
-        project = get_object_or_404(Project, url=app_url)
+        project = get_object_or_404(Project, html_url=app_url)
         update_docs(project)
         return HttpResponse('Thanks')
     else:

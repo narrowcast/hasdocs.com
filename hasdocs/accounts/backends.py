@@ -1,8 +1,6 @@
 import logging
 
-from django.contrib.auth.models import User
-
-from hasdocs.accounts.models import UserProfile
+from hasdocs.accounts.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +11,8 @@ class GithubBackend(object):
         """Receives the user's login from GitHub and authenticates the user."""
         logger.info('Authenticating a user with GitHub access token')
         try:
-            profile = UserProfile.objects.get(github_access_token=access_token)
-            return profile.user
-        except UserProfile.DoesNotExist:
+            return User.objects.get(github_access_token=access_token)
+        except User.DoesNotExist:
             return None
 
     def get_user(self, user_id):

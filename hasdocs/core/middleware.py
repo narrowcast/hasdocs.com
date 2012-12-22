@@ -11,9 +11,9 @@ class SubdomainMiddleware:
     def process_request(self, request):
         host = request.get_host()
         subdomain = host.split('.')[0]
-        request.subdomain = subdomain
         if subdomain != 'www':
             # Then handle subdomain urls
+            request.subdomain = subdomain
             request.urlconf = settings.SUBDOMAIN_URLCONF
         # Handle custom domains
         if Site.objects.get_current().domain not in host:

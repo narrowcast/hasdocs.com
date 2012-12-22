@@ -1,0 +1,18 @@
+// Footer
+footer {
+  margin-top: 40px;
+  padding: 20px 0;
+  
+  #legal {
+    margin: 0;
+    list-style: none;
+    
+    li {
+      display: inline-block;
+      margin-right: 15px;
+    }
+  }
+  #copyright {
+    float: right;
+  }
+}

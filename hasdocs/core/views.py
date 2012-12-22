@@ -6,7 +6,6 @@ import requests
 from storages.backends.s3boto import S3BotoStorage
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.mail import mail_managers
 from django.http import Http404, HttpResponse
@@ -17,7 +16,8 @@ from django.views.decorators.http import condition
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
-from hasdocs.accounts.models import Plan
+from hasdocs.accounts.decorators import permission_required
+from hasdocs.accounts.models import Plan, BaseUser
 from hasdocs.core.forms import ContactForm
 from hasdocs.core.tasks import update_docs
 from hasdocs.projects.models import Domain, Project
@@ -35,17 +35,18 @@ def home(request):
         'core/index.html', context_instance=RequestContext(request))
 
 
-def last_modified(request, path):
+def last_modified(request, project, path):
     """Returns the last modified time of the given static file."""
-    username, project = path.split('/', 2)[:2]
-    project = get_object_or_404(Project, owner__username=username,
+    project = get_object_or_404(Project, owner__login=request.subdomain,
                                 name=project)
     return project.mod_date
 
 
+@permission_required('read')
 @condition(last_modified_func=last_modified)
-def serve(request, path):
+def serve(request, project, path):
     """Returns the requested static file from cache or S3."""
+    path = '/%s/%s/%s' % (request.subdomain, project, path)
     logger.debug('Serving static file at %s' % path)
     try:
         content = cache.get(path, docs_storage.open(path, 'r').read())
@@ -59,36 +60,10 @@ def serve(request, path):
     return response
 
 
-def has_permission(user, project):
-    """Returns whether the user has permission to access the project."""
-    if project.private:
-        if not user.is_authenticated():
-            return False
-        else:
-            return user == project.owner or project.collaborators.filter(
-                pk=user.pk).exists()
-    else:
-        # Then everyone has access to the project
-        return True
-
-
 def user_page(request):
     """Returns the page for the user, if any."""
-    user = get_object_or_404(User, username=request.subdomain)
-    path = '%s/index.html' % user
-    logger.info('Serving user page at %s' % path)
-    return serve(request, path)
-
-
-def project_page(request, project):
-    """Returns the project page for the given user and project, if any."""
-    project = get_object_or_404(Project, owner__username=request.subdomain,
-                                name=project)
-    # Check permissions
-    if not has_permission(request.user, project):
-        raise Http404
-    path = '%s/%s/index.html' % (request.subdomain, project.name)
-    return serve(request, path)
+    user = get_object_or_404(BaseUser, login=request.subdomain)
+    return serve(request, '%s.github.com' % user, 'index.html')
 
 
 def custom_domain_page(request):
@@ -96,20 +71,8 @@ def custom_domain_page(request):
     host = request.get_host()
     domain = get_object_or_404(Domain, name=host)
     project = domain.project
-    # Check permissions
-    if not has_permission(request.user, project):
-        raise Http404
-    path = '%s/%s/index.html' % (project.owner, project.name)
-    logger.info('Serving custom domain page at %s from %s' % (path, host))
-    return serve(request, path)
-
-
-def serve_static(request, project, path):
-    """Returns the requested static file from S3."""
-    # Then serve the page for the given user, if any
-    user = get_object_or_404(User, username=request.subdomain)
-    path = '%s/%s/%s' % (user, project, path)
-    return serve(request, path)
+    logger.info('Serving custom domain page for %s from %s' % (project, host))
+    return serve(request, project, 'index.html')
 
 
 def serve_static_cname(request, path):
@@ -161,14 +124,15 @@ def add_heroku_custom_domain(domain_name):
     return r.ok
 
 
-def article_detail(request, title):
-    """Returns the article for the given url or 404."""
-    filename = 'articles/%s.html' % title
-    try:
-        return render_to_response(
-            filename, context_instance=RequestContext(request))
-    except TemplateDoesNotExist:
-        raise Http404
+class ArticleDetail(TemplateView):
+    """View for returning the article for the given url or 404."""
+    def get(self, request, *args, **kwargs):
+        filename = 'articles/%s.html' % kwargs['title']
+        try:
+            return render_to_response(
+                filename, context_instance=RequestContext(request))
+        except TemplateDoesNotExist:
+            raise Http404
 
 
 class Plans(TemplateView):

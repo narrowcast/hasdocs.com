@@ -1,0 +1,16 @@
+/* line 4, ../../sass/globals/icons.scss */
+.large-icon {
+  width: 37px;
+  height: 37px;
+  display: inline-block;
+}
+
+/* line 9, ../../sass/globals/icons.scss */
+.public-repo-icon {
+  background: url("../img/public_repo_icon.png") no-repeat;
+}
+
+/* line 12, ../../sass/globals/icons.scss */
+.private-repo-icon {
+  background: url("../img/private_repo_icon.png") no-repeat;
+}

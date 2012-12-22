@@ -1,0 +1,15 @@
+@import "compass/css3/images";
+
+@import "../globals/variables";
+
+.btn-green {
+  @include background-image(linear-gradient(top, $main-color, $main-color-dark));
+  background-color: darken($main-color, 10%);
+  
+  &:hover {
+    background-color: $main-color-dark;
+  }
+  &:active {
+    background-color: darken($main-color-dark, 5%);
+  }
+}

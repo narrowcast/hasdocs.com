@@ -18,7 +18,7 @@
   {% else %}
     <span>Public</span>
   {% endif %}
-  <dl>    
+  <dl>
     <dt>Language</dt>
     <dd>{{ project.language }}</dd>
     <dt>Generator</dt>
@@ -44,7 +44,7 @@
   {% else %}
     <a class="btn btn-info disabled">No Docs</a>
   {% endif %}
-  {% if user == project.owner %}
+  {% if 'admin' in request.user.perms %}
     <a class="btn" href="{% url project_build_list project.owner project.name %}">Builds</a>
     <a class="btn" href="{% url project_update project.owner project.name %}">Edit</a>
     <a class="btn btn-danger" href="{% url project_delete project.owner project.name %}">Delete</a>

@@ -6,7 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from hasdocs.accounts.views import BillingUpdate, ConnectionsUpdate, \
     OrganizationsUpdate, ProfileUpdate, UserDetail
-from hasdocs.core.views import Contact, Plans
+from hasdocs.core.views import ArticleDetail, Contact, Plans
 from hasdocs.projects.views import  ProjectBuildDetail, ProjectBuildList, \
     ProjectActivate, ProjectDelete, ProjectDetail, ProjectList, ProjectUpdate
 
@@ -22,7 +22,6 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
 
     # Login view
-    #url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^login/$', 'hasdocs.accounts.views.oauth_authenticate',
         name='login'),
     # Logout view
@@ -69,7 +68,7 @@ urlpatterns = patterns(
         name='privacy'),
     
     # Articles
-    url(r'^articles/(?P<title>[\w-]+)/$', 'hasdocs.core.views.article_detail',
+    url(r'^articles/(?P<title>[\w-]+)/$', ArticleDetail.as_view(),
         name='article_detail'),
 
     # GitHub post-receive hook
@@ -80,18 +79,20 @@ urlpatterns = patterns(
         name='heroku_hook'),
 
     # Sync user's repositories with GitHub
-    url(r'^sync/github/$', 'hasdocs.accounts.views.sync_repos_github',
-        name='sync_repos_github'),
+    url(r'^sync/github/$', 'hasdocs.accounts.views.sync_account_github',
+        name='sync_account_github'),
 
     # Import from a Heroku project
     url(r'^heroku/import/$', 'hasdocs.projects.views.import_from_heroku',
         name='import_from_heroku'),
 
+    # Account detail
+    #url(r'^(?P<slug>[\w-]+)/$', AccountDetail.as_view(), name='account_detail'),
     # User detail
-    url(r'^(?P<slug>[\w-]+)/$', UserDetail.as_view(), name='user_detail'),    
+    url(r'^(?P<slug>[\w-]+)/$', UserDetail.as_view(), name='user_detail'),
     # Project detail
-    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/$', ProjectDetail.as_view(),
-        name='project_detail'),
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/$',
+        ProjectDetail.as_view(), name='project_detail'),
     # Project activate
     url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/activate/$',
         ProjectActivate.as_view(), name='project_activate'),

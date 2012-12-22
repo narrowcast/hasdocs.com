@@ -1,18 +1,16 @@
 import base64
 import logging
 import os
-import re
 
-import requests
 from rauth.service import OAuth2Service
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
@@ -20,7 +18,9 @@ from django.views.generic.edit import UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm, \
     OrganizationsUpdateForm, ProfileUpdateForm
-from hasdocs.accounts.models import UserProfile, UserType
+from hasdocs.accounts.models import Organization, User
+from hasdocs.accounts.tasks import github_api_get, sync_user_account_github, \
+    sync_org_account_github
 from hasdocs.projects.models import Project
 
 logger = logging.getLogger(__name__)
@@ -37,30 +37,28 @@ github = OAuth2Service(
 
 class UserDetail(DetailView):
     """View for showing user detail."""
-    model = User
-    slug_field = 'username'
     context_object_name = 'account'
     template_name = 'accounts/user_detail.html'
-
-    def has_ownership(self, request, user):
-        return (
-            request.user == user or
-            request.user.get_profile().organizations.filter(username=user).exists()
-        )
 
     def get_context_data(self, **kwargs):
         """Returns the context with account and projects for this user."""
         context = super(UserDetail, self).get_context_data(**kwargs)
-        user = self.object
-        projects = Project.objects.filter(owner=user)
-        if self.has_ownership(self.request, user):
+        context['projects'] = Project.objects.owned_by(
+            account=self.object, user=self.request.user)
+        if self.request.user.is_owner(self.object):
             context['owner'] = True
-        else:
-            # Then limit access to the public projects
-            projects = projects.filter(private=False)
-        context['account'] = user
-        context['projects'] = projects
         return context
+
+    def get_object(self):
+        """Returns the User or Organization object for the given slug."""        
+        try:
+            user = User.objects.get(login=self.kwargs['slug'])
+            if user.is_active:
+                return user
+            else:
+                raise Http404
+        except User.DoesNotExist:
+            return get_object_or_404(Organization, login=self.kwargs['slug'])
 
 
 class SettingsUpdate(UpdateView):
@@ -72,7 +70,7 @@ class SettingsUpdate(UpdateView):
         return super(SettingsUpdate, self).dispatch(*args, **kwargs)
 
     def get_object(self, queryset=None):
-        return self.request.user.get_profile()
+        return self.request.user
 
     def form_valid(self, form):
         messages.success(self.request,
@@ -99,62 +97,29 @@ class OrganizationsUpdate(SettingsUpdate):
     form_class = OrganizationsUpdateForm
 
 
-def create_orgs(access_token):
-    """Creates new organization users based on data from GitHub."""
-    logger.info('Creating new organization users based on data from GitHub')
-    payload = {'access_token': access_token}
-    r = requests.get('%s/user/orgs' % settings.GITHUB_API_URL, params=payload)
-    orgs = r.json
-    for org in orgs:
-        r = requests.get('%s/orgs/%s' % (
-            settings.GITHUB_API_URL, org['login']), params=payload)
-        data = r.json
-        try:
-            user = User.objects.get(username=data['login'])
-            profile = user.get_profile()
-        except User.DoesNotExist:
-            user = User.objects.create_user(data['login'], data['email'])
-            profile = UserProfile(user=user)
-        user.first_name = data['name']
-        
-        user.save()
-        # Update profile based on data from GitHub
-        profile.user_type = UserType.objects.get(name='Organization')
-        if data['avatar_url']:
-            match = re.match('.+/avatar/(?P<hashcode>\w+)?.+',
-                             data['avatar_url'])
-            profile.gravatar_id = match.group('hashcode')
-        profile.url = data['blog'] or ''
-        profile.company = data['company'] or ''
-        profile.location = data['location'] or ''
-        profile.save()
-
-
 def create_user(access_token):
     """Creates a new user based on GitHub's user data."""
     logger.info('Creating a new user based on data from GitHub')
     payload = {'access_token': access_token}
-    r = requests.get('%s/user' % settings.GITHUB_API_URL, params=payload)
-    data = r.json
-    try:
-        user = User.objects.get(username=data['login'])
-        profile = user.get_profile()
-    except User.DoesNotExist:
-        user = User.objects.create_user(data['login'], data['email'])
-        profile = UserProfile(user=user)
-    user.first_name = data['name']
-    user.save()
-    # Update profile based on data from GitHub
-    profile.user_type = UserType.objects.get(name='User')
-    profile.gravatar_id = data['gravatar_id'] or ''
-    profile.url = data['blog'] or ''
-    profile.company = data['company'] or ''
-    profile.location = data['location'] or ''
-    profile.github_access_token = access_token
-    profile.save()
+    data = github_api_get('/user', params=payload)
+    # Creates a new user based on data from GitHub
+    user = User.from_kwargs(github_access_token=access_token, **data)
     # Authenticate and sign in the user
     user = authenticate(access_token=access_token)
     return user
+
+
+def create_orgs(user):
+    """Creates new organization users based on data from GitHub."""
+    logger.info('Creating new organization users based on data from GitHub')
+    payload = {'access_token': user.github_access_token}
+    orgs = github_api_get('/user/orgs', params=payload)
+    for org in orgs:
+        data = github_api_get('/orgs/%s' % org['login'], params=payload)
+        organization = Organization.from_kwargs(**data)
+        organization.members.add(user)
+        sync_org_account_github(organization, payload)
+        logger.info('Organization %s has been created' % organization)
 
 
 def oauth_authenticate(request):
@@ -183,54 +148,25 @@ def oauth_authenticated(request):
     user = authenticate(access_token=token.content['access_token'])
     if user is None:
         user = create_user(token.content['access_token'])
+        create_orgs(user)
     login(request, user)
     return HttpResponseRedirect(reverse('home'))
 
 
-def get_repos_github(user, organization=None):
-    """Returns the list of repositories for the given user or organization."""
-    access_token = user.get_profile().github_access_token
-    payload = {'access_token': access_token}
-    if organization:
-        # WTF: Should check if the requesting user is owner of the organization
-        url = '%s/orgs/%s/repos' % (settings.GITHUB_API_URL, organization)
-    else:
-        url = '%s/user/repos' % settings.GITHUB_API_URL
-    r = requests.get(url, params=payload)
-    repos = r.json
-    return repos
-
-
-def get_hooks_github(user, repo):
-    """Returns the list of service hooks for the user's repo."""
-    access_token = user.get_profile().github_access_token
-    payload = {'access_token': access_token}
-    url = '%s/repos/%s/%s/hooks' % (settings.GITHUB_API_URL, user, repo)
-    r = requests.get(url, params=payload)
-    hooks = r.json
-    return hooks
-
-
-def sync_repos_github(request):
-    """Sync the repositories with the GitHub"""
+def sync_account_github(request):
+    """Syncs a user or an organization account with GitHub"""
     if request.method == 'GET':
         raise Http404
-    logger.info('Syncing repos with GitHub for %s' % request.user)
+    payload = {'access_token': request.user.github_access_token}
     if request.POST.get('organization'):
-        owner = User.objects.get(username=request.POST['organization'])
+        logger.info('Syncing organization account %s with GitHub' %
+                    request.POST['organization'])
+        org = Organization.objects.get(login=request.POST['organization'])
+        sync_org_account_github(org, payload)
+        logger.info('Organization %s has been synced' % org)
+        return HttpResponseRedirect(org.get_absolute_url())
     else:
-        owner = request.user
-    projects = Project.objects.filter(owner=owner)
-    repos = get_repos_github(request.user, request.POST.get('organization'))
-    for repo in repos:
-        try:
-            project = projects.get(name=repo['name'])
-            logger.info('Project %s is already synced' % project.name)
-        except Project.DoesNotExist:
-            # Then creates a project for this repo
-            project = Project.objects.create(
-                owner=owner, name=repo['name'], private=repo['private'],
-                description=repo['description'], url=repo['html_url'],
-                git_url=repo['git_url'])
-            logger.info('Project %s has been created' % project.name)
-    return HttpResponseRedirect(owner.get_absolute_url())
+        logger.info('Syncing user account %s with GitHub' % request.user)
+        sync_user_account_github(request.user, payload)
+        logger.info('User account %s has been synced' % request.user)
+        return HttpResponseRedirect(request.user.get_absolute_url())

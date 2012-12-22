@@ -1,0 +1,19 @@
+/* line 2, ../../sass/sections/footer.scss */
+footer {
+  margin-top: 40px;
+  padding: 20px 0;
+}
+/* line 6, ../../sass/sections/footer.scss */
+footer #legal {
+  margin: 0;
+  list-style: none;
+}
+/* line 10, ../../sass/sections/footer.scss */
+footer #legal li {
+  display: inline-block;
+  margin-right: 15px;
+}
+/* line 15, ../../sass/sections/footer.scss */
+footer #copyright {
+  float: right;
+}

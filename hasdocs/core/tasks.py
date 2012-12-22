@@ -3,9 +3,8 @@ import shutil
 import subprocess
 import tarfile
 
+import celery
 import requests
-from celery import chain, task
-from celery.utils.log import get_task_logger
 from storages.backends.s3boto import S3BotoStorage
 
 from django.conf import settings
@@ -14,7 +13,7 @@ from django.core.files import File
 
 from hasdocs.projects.models import Build
 
-logger = get_task_logger(__name__)
+logger = celery.utils.log.get_task_logger(__name__)
 
 docs_storage = S3BotoStorage(
     bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
@@ -26,20 +25,26 @@ def update_docs(project):
     """Fetches the source repo, builds docs and uploads them for serving."""
     build = Build.objects.create(project=project, status=Build.UNKNOWN)
     logger.info('Build %s started' % build)
-    chain(
+    celery.chain(
         fetch_source.s(build, project),
         extract.s(project),
+        fetch_virtualenv.s(project),
         build_docs.s(project),
+        store_virtualenv.s(project),
         upload_docs.s(project)
     ).apply_async()
 
 
-@task
+@celery.task
 def fetch_source(build, project):
-    """Fetchs the source from git repository."""    
+    """Fetchs the source from a GitHub repository."""
     logger.info('Fetching source for %s from GitHub' % project)
-    # TODO: This cannot just be the project owner's token
-    payload = {'access_token': project.owner.get_profile().github_access_token}
+    if project.owner.is_organization():
+        access_token = project.owner.organization.team_set.get(
+            name='Owners').members.all()[0].github_access_token
+    else:
+        access_token = project.owner.user.github_access_token
+    payload = {'access_token': access_token}
     r = requests.get('%s/repos/%s/%s/tarball' % (
         settings.GITHUB_API_URL, project.owner, project.name,
     ), params=payload)
@@ -49,7 +54,7 @@ def fetch_source(build, project):
     return build
 
 
-@task
+@celery.task
 def extract(build, project):
     """Extracts the given tarball and returns its resulting path."""
     logger.debug('Extracting %s', build.filename)
@@ -57,44 +62,45 @@ def extract(build, project):
         with tarfile.open(build.filename) as tar:
             build.path = tar.next().path
             tar.extractall()
+        return build
     except tarfile.ReadError:
-        logger.error('Error opening file %s' % build.filename)
-        # TODO: nicer handling of exception
+        logger.warning('Error opening file %s' % build.filename)
         raise
-    os.remove(build.filename)
-    return build
+    finally:
+        os.remove(build.filename)
 
 
-@task
-def create_virtualenv(build, project):
-    """Retrives or creates the virtualenv for the project and stores it."""
-    logger.info('Creating virtualenv for %s/%s' % (
+@celery.task
+def fetch_virtualenv(build, project):
+    """etrives the virtualenv for the project from S3, if any."""
+    logger.info('Fetching virtualenv for %s/%s' % (
         project.owner, project.name))
-    pass
-
-
-@task
-def build_docs(build, project):
-    """Builds the documentations for the projects."""
-    # TODO: This function is way too long, decompose
-    logger.info('Building documentation for %s/%s' % (
-        project.owner, project.name))
-    # Check if the virtualenv is stored in S3
-    dest = '%s/%s/%s' % (project.owner, project.name, settings.VENV_FILENAME)
+    source = '%s/%s/%s' % (project.owner, project.name, settings.VENV_FILENAME)
     try:
-        with docs_storage.open(dest, 'r') as fp:
-            logger.info('Detected a previously stored virtualenv')
+        with docs_storage.open(source, 'r') as fp:
             with tarfile.open(fileobj=fp) as tar:
                 tar.extractall()
+            logger.info('Fetched previously stored virtualenv')
     except IOError:
         logger.info('No previously stored virtualenv was found')
+    finally:
+        return build
+
+
+@celery.task
+def build_docs(build, project):
+    """Builds the documentations for the projects."""
+    logger.info('Building documentation for %s/%s' % (
+        project.owner, project.name))
     try:
-        args = ['bash', 'bin/compile', build.path, project.docs_path,
-                project.requirements_path]
+        args = ['bash', 'bin/build_sphinx', build.path,
+                project.docs_path, project.requirements_path]
         build.output = subprocess.check_output(args, stderr=subprocess.STDOUT)
         build.save()
+        logger.info('Built docs for %s/%s' % (project.owner, project.name))
+        return build
     except subprocess.CalledProcessError, e:
-        logger.warning('Compilation failed for %s/%s' % (
+        logger.warning('Build failed for %s/%s' % (
             project.owner, project.name))
         build.output = e.output
         build.status = Build.FAILURE
@@ -103,20 +109,25 @@ def build_docs(build, project):
         shutil.rmtree(build.path)
         # TODO: nicer handling of exception
         raise
-    # Store the virtualenv in S3
+
+
+@celery.task
+def store_virtualenv(build, project):
+    """Stores the virtualenv in S3 for future builds."""
+    logger.info('Storing virtualenv for %s/%s' % (project.owner, project.name))
     venv = '%s/%s' % (build.path, settings.VENV_FILENAME)
-    logger.info('Storing virtualenv in S3')
+    dest = '%s/%s/%s' % (project.owner, project.name, settings.VENV_FILENAME)
     with tarfile.open(venv, 'w:gz') as tar:
         tar.add('%s/%s' % (build.path, settings.VENV_NAME))
     with open(venv, 'rb') as fp:
         file = File(fp)
         docs_storage.save(dest, file)
     os.remove(venv)
-    logger.info('Built docs for %s/%s' % (project.owner, project.name))
+    logger.info('Stored virtualenv for %s/%s' % (project.owner, project.name))
     return build
 
 
-@task
+@celery.task
 def upload_docs(build, project):
     """Uploads the built docs to the appropriate storage."""
     project = build.project

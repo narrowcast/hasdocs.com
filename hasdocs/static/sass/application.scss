@@ -1,0 +1,39 @@
+@import "globals/buttons";
+@import "globals/icons";
+
+@import "components/projects";
+
+@import "sections/navigation";
+@import "sections/footer";
+@import "sections/accounts";
+
+body {
+  background: url("../img/background.png");
+}
+
+.container {
+  padding: 0 32px;
+}
+
+.page-header {
+  border-bottom-color: $border-color;
+}
+
+// Account detail
+#account-detail {
+  #settings {
+    float: right;
+    margin-top: 15px;
+  }
+  #sync {
+    float: left;
+    margin-right: 10px;
+  }
+  p.sync-date {
+    font-size: 12px;
+   line-height: 30px;
+    padding-bottom: 12px;
+    color: $muted-color;
+    border-bottom: 1px solid $border-color;
+  }
+}

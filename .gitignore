@@ -6,3 +6,4 @@
 venv
 docs/_build
 celerybeat-schedule
+hasdocs/static/.sass-cache

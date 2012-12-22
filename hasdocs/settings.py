@@ -99,14 +99,16 @@ CACHES = {
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
-    'hasdocs.core.middleware.SubdomainMiddleware',
+    #'hasdocs.core.middleware.SubdomainMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'hasdocs.accounts.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'hasdocs.urls'
@@ -138,6 +140,7 @@ INSTALLED_APPS = (
     'storages',
     'south',
     'crispy_forms',
+    'debug_toolbar',
     # Hasdocs apps
     'hasdocs.accounts',
     'hasdocs.core',
@@ -248,9 +251,12 @@ AUTHENTICATION_BACKENDS = (
     'hasdocs.accounts.backends.GithubBackend',
 )
 
+# Debug toolbar
+INTERNAL_IPS = ('127.0.0.1',)
+
 # Django storages
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']

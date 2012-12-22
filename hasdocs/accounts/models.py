@@ -1,8 +1,7 @@
-from django.conf import settings
-from django.contrib.auth.models import User as ContribUser
-from django.db import models
+import re
 
-from hasdocs.projects.models import Project
+from django.conf import settings
+from django.db import models
 
 
 class Plan(models.Model):
@@ -20,38 +19,79 @@ class Plan(models.Model):
         return self.name
 
 
-class UserType(models.Model):
-    """Type of a user (e.g. individual user or organization)."""
-    # Name of the user type
-    name = models.CharField(max_length=50)
+class AnonymousUser(models.Model):
+    """Model for an anonoymous user."""
+    is_active = False
 
-    def __unicode__(self):
-        return self.name
+    def is_authenticated(self):
+        return False
+
+    def is_owner(self, account):
+        return False
 
 
 class BaseUser(models.Model):
-    # Login name of the user
-    login = models.CharField(max_length=100)
+    """Model for base user."""
+    # Username of the user
+    login = models.CharField(max_length=100, unique=True)
     # Full name of the user
     name = models.CharField(max_length=100, blank=True)
     # Email of the user
     email = models.EmailField(blank=True)
+    # Whether this user is active or not
+    is_active = models.BooleanField(default=True)
     # Gravatar ID
     gravatar_id = models.CharField(max_length=32, blank=True)
     # Blog or webiste URL
-    url = models.URLField(blank=True)
+    blog = models.URLField(blank=True)
     # Company
-    company = models.CharField(max_length=50, blank=True)
+    company = models.CharField(max_length=100, blank=True)
     # Location
-    location = models.CharField(max_length=50, blank=True)
+    location = models.CharField(max_length=100, blank=True)
     # Plan for the user
     plan = models.ForeignKey(Plan, blank=True, null=True)
+    # Date the user has joined
+    date_joined = models.DateTimeField(auto_now_add=True)
+    # Date last synchronized with GitHub
+    github_sync_date = models.DateTimeField(blank=True, null=True)
 
-
-class Organization(BaseUser):
-    """Model for representing an organization."""
     def __unicode__(self):
         return self.login
+
+    @classmethod
+    def from_kwargs(cls, **kwargs):
+        """Returns the existing baseuser for the kwargs or creates one."""
+        baseuser, created = cls.objects.get_or_create(
+            id=kwargs['id'], login=kwargs['login'])
+        baseuser.is_active = True
+        for key, value in baseuser.__dict__.iteritems():
+            if key in kwargs and kwargs.get(key):
+                setattr(baseuser, key, kwargs.get(key))
+        baseuser.save()
+        return baseuser
+
+    def is_authenticated(self):
+        return True
+
+    def is_organization(self):
+        """Returns if this BaseUser is an Organization or not."""
+        try:
+            return self.organization
+        except Organization.DoesNotExist:
+            return False
+
+    @models.permalink
+    def get_absolute_url(self):
+        """Returns the url for this user."""
+        return ('user_detail', [self.login])
+
+    def gravatar_url(self, size=210):
+        """Returns the gravatar url for this user."""
+        if self.gravatar_id:
+            return '%s/%s?s=%s' % (settings.GRAVATAR_API_URL,
+                                   self.gravatar_id, size)
+        else:
+            return ''
 
 
 class User(BaseUser):
@@ -60,51 +100,43 @@ class User(BaseUser):
     github_access_token = models.CharField(max_length=255, blank=True)
     # Heroku API key
     heroku_api_key = models.CharField(max_length=255, blank=True)
-    # Organizations this user belongs to
-    organizations = models.ManyToManyField(Organization, blank=True, null=True)
 
-    def __unicode__(self):
-        return self.login
-
-
-class UserProfile(models.Model):
-    """Model for representing user profiles."""
-    # One-to-one mapping to the auth user model
-    user = models.OneToOneField(ContribUser)
-    # Gravatar ID
-    gravatar_id = models.CharField(max_length=32, blank=True)
-    # Blog or webiste URL
-    url = models.URLField(blank=True)
-    # Company
-    company = models.CharField(max_length=50, blank=True)
-    # Location
-    location = models.CharField(max_length=50, blank=True)
-    # User ype (e.g., user or organization)
-    user_type = models.ForeignKey(UserType, blank=True, null=True)
-    # Current plan for this user
-    plan = models.ForeignKey(Plan, blank=True, null=True)
-    # Organizations this user belongs to
-    organizations = models.ManyToManyField(User, blank=True, null=True,
-                                           related_name="organization_set")
-    # GitHub access token
-    github_access_token = models.CharField(max_length=255, blank=True)
-    # Heroku API key
-    heroku_api_key = models.CharField(max_length=255, blank=True)
-
-    def __unicode__(self):
-        return self.user.username
-
-    def gravatar_url(self, size=210):
-        """Returns the gravatar url for this user."""
-        if self.gravatar_id:
-            return '%s/%s?s=%s' % (settings.GRAVATAR_API_URL,
-                                   self.gravatar_id, size)
+    def is_owner(self, account):
+        """Returns whehter the user is the owner of the account."""
+        if account.is_organization():
+            try:
+                return account.team_set.get(name='Owners').members.filter(
+                    pk=self.pk).exists()
+            except Team.DoesNotExist:
+                return False
         else:
-            return None
+            return self == account
+
+
+class Organization(BaseUser):
+    """Model for representing an organization."""
+    # Billing email address for this organization
+    billing_email = models.EmailField()
+    # Members of this organization
+    members = models.ManyToManyField(User, blank=True, null=True)
+
+    def active_members(self):
+        """Returns only the active members of the organization."""
+        return self.members.filter(is_active=True)
 
     def is_organization(self):
-        """Returns whether this user profile is for an organization or not."""
-        return self.user_type.name == 'Organization'
+        return True
+
+    @classmethod
+    def from_kwargs(cls, **kwargs):
+        """Returns the existing organization for the kwargs or creates one."""
+        org = super(Organization, cls).from_kwargs(**kwargs)
+        if 'avatar_url' in kwargs:
+            match = re.match('.+/avatar/(?P<hashcode>\w+)?.+',
+                             kwargs['avatar_url'])
+            org.gravatar_id = match.group('hashcode')
+        org.save()
+        return org
 
 
 class Team(models.Model):
@@ -125,8 +157,64 @@ class Team(models.Model):
     permission = models.CharField(max_length=5, choices=PERMISSION_CHOICES)
     # Members of the team
     members = models.ManyToManyField(User, blank=True, null=True)
-    # Repositories of the team
-    repos = models.ManyToManyField(Project, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('name', 'organization')
 
     def __unicode__(self):
         return '%s: %s' % (self.organization, self.name)
+
+    @classmethod
+    def from_kwargs(cls, organization=None, **kwargs):
+        """Returns the existing team for the given kwargs or creates one."""
+        team, created = cls.objects.get_or_create(
+            organization=organization, id=kwargs['id'])
+        for key, value in team.__dict__.iteritems():
+            if key in kwargs:
+                setattr(team, key, kwargs.get(key))
+        team.organization = organization
+        team.save()
+        return team
+
+
+class BasePermission(models.Model):
+    """Model for representing a base object-level permission."""
+    # URL for which this permission is applied
+    path = models.CharField(max_length=200)
+    # Permission
+    permission = models.CharField(max_length=50)
+
+    class Meta:
+        abstract = True
+
+    def __unicode__(self):
+        account = getattr(self, 'user', False) or self.group
+        return '%s can %s %s' % (account, self.permission, self.path)
+
+
+class UserPermission(BasePermission):
+    """Model for an object-level permission for a user."""
+    # User who is associated with this permission
+    user = models.ForeignKey(User)
+
+    class Meta:
+        unique_together = ('user', 'path', 'permission')
+
+
+class GroupPermission(BasePermission):
+    """Model for an object-level permission for a group."""
+    # Group that is associated with this permission
+    group = models.ForeignKey(Team)
+
+    class Meta:
+        unique_together = ('group', 'path', 'permission')
+
+
+class OthersPermission(BasePermission):
+    """Model for an object-level permission for others."""
+
+    class Meta:
+        unique_together = ('path', 'permission')
+
+    def __unicode__(self):
+        return 'everyone can %s %s' % (self.permission, self.path)

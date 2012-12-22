@@ -4,33 +4,46 @@
 
 {% block container %}
   
-  <h1 class="page-header">{{ account }}</h1>
-  <div class="row">
-    <div class="span3">
-      {% if account.get_profile.gravatar_url %}
-        <img src="{{ account.get_profile.gravatar_url }}" class="thumbnail" width="210" />
-      {% endif %}
-      <dl>
-        <dt>Name</dt>
-        <dd>{{ account.first_name }}</dd>
-        <dt>Username</dt>
-        <dd>{{ account.username }}</dd>
-        <dt>Location</dt>
-        <dd>{{ account.get_profile.location }}</dd>
-        <dt>Email</dt>
-        <dd>{{ account.email }}</dd>
-        <dt>Joined on</dt>
-        <dd>{{ account.date_joined|date }}</dd>
-      </dl>
-      <ul class="stats">
-        <li>{{ projects.count }} projects</li>
-      </ul>
-      {% if not account.get_profile.is_organization %}
-        <h4>Organizations</h4>      
-        <ul class="organizations">
-          {% for organization in account.get_profile.organizations.all %}
+  <div class="row" id="account-detail">
+    <div id="accounts" class="span3">
+      {% if account.is_organization %}
+        <h4>Organization</h4>
+        <ul class="unstyled">
+          <li class="organization">
+            <a href="{{ account.get_absolute_url }}">
+              <img src="{{ account.gravatar_url }}" width="24" class="img-rounded" />{{ account.login }}
+            </a>
+          </li>
+        </ul>
+        <h4>Members</h4>
+        <ul class="unstyled">
+          {% for member in account.active_members %}
+            <li class="user">
+              <a href="{{ member.get_absolute_url }}">
+                <img src="{{ member.gravatar_url }}" width="24" class="img-rounded" />{{ member.login }}
+              </a>
+              {% if not member.is_active %}
+                (inactive)
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <h4>Personal</h4>
+        <ul class="unstyled">
+          <li class="user">
+            <a href="{{ account.get_absolute_url }}">
+              <img src="{{ account.gravatar_url }}" width="24" class="img-rounded" />{{ account.login }}
+            </a>
+          </li>
+        </ul>
+        <h4>Organizations</h4>
+        <ul class="unstyled">
+          {% for organization in account.organization_set.all %}
             <li class="organization">
-              <a href="{{ organization.get_absolute_url }}">{{ organization.username }}</a>
+              <a href="{{ organization.get_absolute_url }}">
+                <img src="{{ organization.gravatar_url }}" width="24" class="img-rounded" />{{ organization.login }}
+              </a>
             </li>
           {% endfor %}
         </ul>
@@ -38,37 +51,52 @@
     </div>
     <div class="span9">
       {% if owner %}
-        <a href="{% url profile_settings %}" class="btn">
+        <a class="btn" id="settings" href="{% url profile_settings %}">
           <i class="icon-edit"></i> Edit Your Profile
         </a>
-        <form action="{% url sync_repos_github %}" method="post">
+      {% endif %}
+      <h2>Repositories</h2>
+      {% if owner %}
+        <form action="{% url sync_account_github %}" method="post">
           {% csrf_token %}
-          {% if account.get_profile.is_organization %}
-            <input name="organization" type="hidden" value="{{ account.username }}">
+          {% if account.is_organization %}
+            <input name="organization" type="hidden" value="{{ account.login }}">
           {% endif %}
-          <input class="btn" type="submit" value="Sync Now">
+          <button class="btn" id="sync" type="submit">
+            <i class="icon-refresh"></i> Sync Now            
+          </button>
+          <p class="sync-date">Last synchronized from GitHub:
+            {% if account.github_sync_date %}
+              {{ account.github_sync_date|timesince }} ago
+            {% else %}
+              Never
+            {% endif %}
+          </p>
         </form>
       {% endif %}
-      <h2>Projects</h3>
       <ul class="unstyled">
         {% for project in projects %}
           <li class="project">
-            <ul class="unstyled">
-              <li>{{ project.active }}</li>
-              <li>{% if project.private %}Private{% else %}Public{% endif %}</li>
+            {% if project.private %}
+              <span class="large-icon private-repo-icon"></span>
+            {% else %}
+              <span class="large-icon public-repo-icon"></span>
+            {% endif %}
+            <ul class="stats unstyled">
               <li>{{ project.language }}</li>
               <li>{{ project.generator }}</li>
             </ul>
-            {{ owner }}
-            {% if owner %}
-              {% if project.active %}
-                <a class="btn" href="{{ project.url }}/admin/hooks#generic_minibucket">Hook Installed</a>
-              {% else %}
-                <a class="btn btn-primary" href="{% url project_activate project.owner.username project.name %}">Create Hook</a>
-              {% endif %}
+            {% if project.active %}
+              <a class="btn btn-primary btn-green" href="{{ project.get_docs_url }}">View Docs</a>
+            {% elif owner %}           
+              <a class="btn btn-primary btn-green" href="{% url project_activate project.owner.login project.name %}">Create Hook</a>
             {% endif %}
-            <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
-            <h3><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h3>
+            <h3>              
+              <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
+              {% if project.active %}
+                <a class="label-hasdocs" href="{{ project.get_docs_url }}">has docs</a>
+              {% endif %}
+            </h3>
             <p class="description">{{ project.description }}</p>
             <p class="mod_date">Last modified {{ project.mod_date|timesince }} ago</p>
           </li>

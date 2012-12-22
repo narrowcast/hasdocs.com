@@ -6,85 +6,22 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import DetailView, View
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+from hasdocs.accounts.mixins import PermissionRequiredMixin
 from hasdocs.core.tasks import update_docs
+from hasdocs.core.views import serve
 from hasdocs.projects.forms import ProjectActivateForm
 from hasdocs.projects.models import Build, Generator, Language, Project
 
 logger = logging.getLogger(__name__)
 
 
-class OwnershipRequiredMixin(object):
-    """Mixin for requiring membership to access the project."""
-
-    def has_ownership(user, project):
-        """Returns whether the user has ownership for the project."""
-        access_token = user.get_profile().github_access_token
-        payload = {'access_token': access_token}
-        r = requests.get('%s/orgs/%s/teams' % (
-            settings.GITHUB_API_URL, project.owner), params=payload)
-        if r.ok:
-            teams = r.json
-            ids = [team['id'] for team in teams if team['name'] == 'Owners']
-            r = requests.get('%s/teams/%s/members/%s' % (
-                settings.GITHUB_API_URL, ids[0], user.username),
-                params=payload)
-            return r.status_code == 204
-        else:
-            return False
-
-    def dispatch(self, request, *args, **kwargs):
-        """Limits access to the owners of the project."""
-        project = get_object_or_404(
-            Project, owner__username=kwargs['username'], name=kwargs['project']
-        )
-        if project.owner.get_profile().user_type.name == 'Organization':
-            # Then checks if the user is owner of the project's organization
-            if not self.has_ownership(request.user, project):
-                raise Http404
-        else:
-            # Then check if the user is owner of the project
-            if request.user != project.owner:
-                raise Http404
-        return super(OwnershipRequiredMixin, self).dispatch(
-            request, *args, **kwargs)
-
-
-class MembershipRequiredMixin(object):
-    """Mixin for requiring membership to access the project."""
-
-    def has_membership(user, project):
-        """Returns whether the user has membership for the project."""
-        access_token = user.get_profile().github_access_token
-        payload = {'access_token': access_token, 'type': 'member'}
-        r = requests.get('%s/orgs/%s/repos' % (
-            settings.GITHUB_API_URL, project.owner), params=payload)
-        repos = r.json
-        # Returns true if project is in the list of repos that user is a member
-        return [True for repo in repos if repos['name'] == project.name]
-
-    def dispatch(self, request, *args, **kwargs):
-        project = get_object_or_404(
-            Project, owner__username=kwargs['username'], name=kwargs['project']
-        )
-        if project.private:
-            if project.owner.get_profile().user_type.name == 'Organization':
-                # Then checks if the user is member of the project
-                if not self.has_membership(request.user, project):
-                    raise Http404
-            else:
-                # Then checks if the user is owner of the project
-                if request.user != project.owner:
-                    raise Http404
-        return super(MembershipRequiredMixin, self).dispatch(
-            request, *args, **kwargs)
-
-
 class ProjectList(ListView):
     """View for viewing the list of projects in explore page."""
+
     def get_queryset(self):
         """Limits the list to public projects."""
         return Project.objects.filter(private=False)
@@ -95,18 +32,19 @@ class ProjectMixin(object):
     def get_object(self):
         """Returns the project for the given url."""
         return get_object_or_404(
-            Project, owner__username=self.kwargs['username'],
+            Project, owner__login=self.kwargs['username'],
             name=self.kwargs['project'])
 
 
-class ProjectActivate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
+class ProjectActivate(PermissionRequiredMixin, ProjectMixin, UpdateView):
     """View for creating a service hook for the project."""
     form_class = ProjectActivateForm
     template_name = 'projects/project_activate_form.html'
+    required_permission = 'admin'
 
     def form_valid(self, form):
         """Creates a service hook at GitHub."""
-        create_hook_github(self.request, self.object)        
+        create_hook_github(self.request, self.object)
         self.object.active = True
         # Initiates first build
         update_docs(self.object)
@@ -115,12 +53,15 @@ class ProjectActivate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
         return super(ProjectActivate, self).form_valid(form)
 
 
-class ProjectDetail(MembershipRequiredMixin, ProjectMixin, DetailView):
+class ProjectDetail(PermissionRequiredMixin, ProjectMixin, DetailView):
     """View for showing the project details."""
+    required_permission = 'read'
 
 
-class ProjectUpdate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
+class ProjectUpdate(PermissionRequiredMixin, ProjectMixin, UpdateView):
     """View for updating project details."""
+    form_class = ProjectActivateForm
+    required_permission = 'admin'
 
     def form_valid(self, form):
         """Logs updating of the project."""
@@ -128,8 +69,9 @@ class ProjectUpdate(OwnershipRequiredMixin, ProjectMixin, UpdateView):
         return super(ProjectUpdate, self).form_valid(form)
 
 
-class ProjectDelete(OwnershipRequiredMixin, ProjectMixin, DeleteView):
+class ProjectDelete(PermissionRequiredMixin, ProjectMixin, DeleteView):
     """View for delting a project."""
+    required_permission = 'admin'
 
     def get_success_url(self):
         """Returns the URL of the user's detail_view."""
@@ -137,7 +79,7 @@ class ProjectDelete(OwnershipRequiredMixin, ProjectMixin, DeleteView):
         return self.request.user.get_absolute_url()
 
 
-class ProjectBuildList(MembershipRequiredMixin, ListView):
+class ProjectBuildList(ListView):
     """View for showing the list of builds for a project."""
 
     def get_queryset(self):
@@ -152,9 +94,18 @@ class ProjectBuildList(MembershipRequiredMixin, ListView):
         return context
 
 
-class ProjectBuildDetail(MembershipRequiredMixin, DetailView):
+class ProjectBuildDetail(PermissionRequiredMixin, DetailView):
     """View for showing the build detail for a project."""
     model = Build
+    required_permission = 'read'
+
+
+class ProjectDocs(View):
+    """View for showing the project's built documentation."""
+
+    def get(self, request, *args, **kwargs):
+        """Returns the index.html file."""
+        return serve(request, self.kwargs['project'], 'index.html')
 
 
 def import_from_heroku(request):
@@ -189,12 +140,12 @@ def import_from_heroku(request):
 def create_hook_github(request, project):
     """Creates a post-receive hook for the given project at the GitHub repo."""
     logger.info('Creating a post-receive hook at GitHub')
-    access_token = project.owner.get_profile().github_access_token
+    access_token = request.user.github_access_token
     url = request.build_absolute_uri(reverse('github_hook'))
     config = {'url': url}
     payload = {'name': 'web', 'config': config}
     r = requests.post('%s/repos/%s/%s/hooks' % (
-        settings.GITHUB_API_URL, project.owner.username, project.name
+        settings.GITHUB_API_URL, project.owner.login, project.name
     ), data=json.dumps(payload), params={'access_token': access_token})
     logger.info('Received %s from GitHub for %s' % (r, project.name))
     return r

@@ -16,7 +16,7 @@
     <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
   </head>
   <body>
-    <div class="navbar navbar-inverse navbar-static-top">
+    <div id="navbar" class="navbar navbar-inverse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="{% url home %}">
@@ -32,8 +32,8 @@
             <li class="profile">
               {% if user.is_authenticated %}
                 <a href="{{ user.get_absolute_url }}">
-                  {% if user.get_profile.gravatar_url %}
-                    <img src="{{ user.get_profile.gravatar_url }}" width="18" class="img-rounded" />
+                  {% if user.gravatar_url %}
+                    <img src="{{ user.gravatar_url }}" width="18" class="img-rounded" />
                   {% endif %}
                   {{ user }}
                 </a>

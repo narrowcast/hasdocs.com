@@ -8,6 +8,27 @@
   <form action="{% url project_update project.owner project.name %}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}
+    <div id="div_id_custom_domains" class="clearfix control-group">
+      <label for="id_custom_domains" class="control-label">
+        Custom domains
+      </label>
+      <div class="controls">
+        <ul class="unstyled">
+          {% for domain in project.domain_set.all %}
+            <li class="domain">
+              <a href="http://{{ domain.name }}">{{ domain }}</a>
+              <a href="" class="remove">Remove</a>
+            </li>
+          {% endfor %}
+        </ul>
+        <!--
+        <form method="post">
+          <input type="text" placeholder="www.example.com" />
+          <input class="btn" type="submit" value="Add" />
+        </form>
+        -->
+      </div>
+    </div>
     <div class="form-actions">
       <input class="btn btn-primary" type="submit" value="Save" />
     </div>

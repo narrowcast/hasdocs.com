@@ -93,7 +93,7 @@
             {% endif %}
             <h3>              
               <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
-              {% if project.active %}
+              {% if project.get_latest_build %}
                 <a class="label-hasdocs" href="{{ project.get_docs_url }}">has docs</a>
               {% endif %}
             </h3>

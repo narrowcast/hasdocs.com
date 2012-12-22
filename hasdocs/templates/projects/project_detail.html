@@ -37,18 +37,17 @@
       {% endif %}
     </dd>
     <dt>Description</dt>
-    <dd>{{ project.description }}</dd>
+    <dd>{{ project.description }}</dd>    
   </dl>
   {% if project.get_latest_build %}
     <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
   {% else %}
-    <a class="btn btn-info disabled">No Docs</a>
+    <a class="btn btn-primary btn-green" href="{% url project_activate project.owner project.name %} ">Create Hook</a>
   {% endif %}
   {% if 'admin' in request.user.perms %}
     <a class="btn" href="{% url project_build_list project.owner project.name %}">Builds</a>
     <a class="btn" href="{% url project_update project.owner project.name %}">Edit</a>
-    <a class="btn btn-danger" href="">Clear</a>
-    <a class="btn btn-danger" href="{% url project_delete project.owner project.name %}">Delete</a>
+    <a class="btn btn-danger" href="{% url project_delete project.owner project.name %}">Delete Docs</a>
   {% endif %}
   
 {% endblock %}

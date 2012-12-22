@@ -44,6 +44,9 @@ def sync_user_collaborators_github(user, payload):
             if collaborator == user:
                 UserPermission.objects.create(
                     user=user, path=path, permission='admin')
+            if created:
+                user.is_active = False
+                user.save()
             UserPermission.objects.create(
                 user=collaborator, path=path, permission='read')
             project.collaborators.add(collaborator)

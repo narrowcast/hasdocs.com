@@ -233,7 +233,7 @@ EMAIL_SUBJECT_PREFIX = '[HasDocs] '
 # Enables session cookies in subdomains
 if DEBUG:
     SESSION_COOKIE_DOMAIN = '.test.com'
-elif os.get('STAGING'):
+elif os.environ.get('STAGING'):
     SESSION_COOKIE_DOMAIN = '.docsome.com'
 else:
     SESSION_COOKIE_DOMAIN = '.hasdocs.com'

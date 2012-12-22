@@ -103,7 +103,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    #'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'hasdocs.accounts.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
@@ -233,6 +233,8 @@ EMAIL_SUBJECT_PREFIX = '[HasDocs] '
 # Enables session cookies in subdomains
 if DEBUG:
     SESSION_COOKIE_DOMAIN = '.test.com'
+elif os.get('STAGING'):
+    SESSION_COOKIE_DOMAIN = '.docsome.com'
 else:
     SESSION_COOKIE_DOMAIN = '.hasdocs.com'
 

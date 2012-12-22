@@ -255,8 +255,8 @@ AUTHENTICATION_BACKENDS = (
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Django storages
-#STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']

@@ -27,6 +27,9 @@ unset GIT_DIR PYTHONHOME PYTHONPATH LD_LIBRARY_PATH LIBRARY_PATH
 # Make these variables available in sourced scripts
 export BUILD_DIR BIN_DIR BIN_DIR
 
+# Pylibmc support
+source $BIN_DIR/steps/pylibmc
+
 cd $BUILD_DIR
 
 # Check whether to use pip or disutils
@@ -42,9 +45,6 @@ fi
 echo "Preparing Python interpreter ($PYTHON_VERSION)"
 echo "Creating Virtualenv version $(virtualenv --version)"
 virtualenv --python $PYTHON_EXE --distribute --never-download venv
-
-# Pylibmc support
-source $BIN_DIR/steps/pylibmc
 
 # Activate the virtualenv
 echo "Activating virtualenv"

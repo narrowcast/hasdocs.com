@@ -16,6 +16,9 @@ def github_api_get(url, params=None):
     """Returns the requested data using GitHub's API."""
     r = requests.get('%s%s?per_page=100' % (settings.GITHUB_API_URL, url),
                      params=params)
+    if not r.ok:
+        logger.warning('From GitHub: %s %s' % (r.status_code, r.reason))
+        raise IOError(r.status_code, r.reason)
     data = r.json
     while r.links.get('next'):
         # Then there is more data to fetch

@@ -162,11 +162,17 @@ def sync_account_github(request):
         logger.info('Syncing organization account %s with GitHub' %
                     request.POST['organization'])
         org = Organization.objects.get(login=request.POST['organization'])
-        sync_org_account_github(org, payload)
-        logger.info('Organization %s has been synced' % org)
+        try:
+            sync_org_account_github(org, payload)
+            logger.info('Organization %s has been synced' % org)
+        except IOError as e:
+            messages.error(request, 'GitHub: %s' % e.strerror)
         return HttpResponseRedirect(org.get_absolute_url())
     else:
         logger.info('Syncing user account %s with GitHub' % request.user)
-        sync_user_account_github(request.user, payload)
-        logger.info('User account %s has been synced' % request.user)
+        try:
+            sync_user_account_github(request.user, payload)
+            logger.info('User account %s has been synced' % request.user)
+        except IOError as e:
+            messages.error(request, 'GitHub: %s' % e.strerror)
         return HttpResponseRedirect(request.user.get_absolute_url())

@@ -92,9 +92,9 @@ def build_docs(build, project):
     """Builds the documentations for the projects."""
     logger.info('Building documentation for %s/%s' % (
         project.owner, project.name))
+    args = ['bash', 'bin/build_sphinx', build.path,
+            project.docs_path, project.requirements_path]
     try:
-        args = ['bash', 'bin/build_sphinx', build.path,
-                project.docs_path, project.requirements_path]
         build.output = subprocess.check_output(args, stderr=subprocess.STDOUT)
         build.save()
         logger.info('Built docs for %s/%s' % (project.owner, project.name))

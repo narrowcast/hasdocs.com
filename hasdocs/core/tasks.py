@@ -28,9 +28,9 @@ def update_docs(project):
     celery.chain(
         fetch_source.s(build, project),
         extract.s(project),
-        fetch_virtualenv.s(project),
+        #fetch_virtualenv.s(project),
         build_docs.s(project),
-        store_virtualenv.s(project),
+        #store_virtualenv.s(project),
         upload_docs.s(project)
     ).apply_async()
 
@@ -92,8 +92,12 @@ def build_docs(build, project):
     """Builds the documentations for the projects."""
     logger.info('Building documentation for %s/%s' % (
         project.owner, project.name))
-    args = ['bash', 'bin/build_sphinx', build.path,
-            project.docs_path, project.requirements_path]
+    args = ['bash']
+    if project.generator.name == 'Sphinx':
+        args += ['bin/build_sphinx', build.path, project.docs_path,
+                 project.requirements_path]
+    elif project.generator.name == 'Jekyll':
+        args += ['bin/build_jekyll', build.path, project.docs_path]
     try:
         build.output = subprocess.check_output(args, stderr=subprocess.STDOUT)
         build.save()

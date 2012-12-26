@@ -50,7 +50,7 @@ class UserDetail(DetailView):
         return context
 
     def get_object(self):
-        """Returns the User or Organization object for the given slug."""        
+        """Returns the User or Organization object for the given slug."""
         try:
             user = User.objects.get(login=self.kwargs['slug'])
             if user.is_active:

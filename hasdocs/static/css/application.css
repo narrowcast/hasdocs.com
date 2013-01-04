@@ -172,17 +172,17 @@ body {
   border-bottom-color: #cccccc;
 }
 
-/* line 24, ../sass/application.scss */
+/* line 25, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 28, ../sass/application.scss */
+/* line 29, ../sass/application.scss */
 #account-detail #sync {
   float: left;
   margin-right: 10px;
 }
-/* line 32, ../sass/application.scss */
+/* line 33, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

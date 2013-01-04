@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block container %}
   
   <div class="hero-unit">
@@ -13,21 +15,25 @@
   </div>
   <div class="row">
     <div class="span3">
+      <img src="{% static "img/forget-servers.png" %}" alt="Forget Servers" />
       <h3>Forget Servers</h3>
       <p>Deploy your documentation with just push of your code.</p>
       <p><a href="#">More about automation</a></p>
     </div>
     <div class="span3">
+      <img src="{% static "img/build-anything.png" %}" alt="Build Anything" />
       <h3>Build Anything</h3>
       <p>Sphinx, RDoc, Jekyll, and Javadoc are supported.</p>
       <p><a href="#">More about polyglotism</a></p>
     </div>
     <div class="span3">
-      <h3>Read Anywhere</h3>
+      <img src="{% static "img/read-everywhere.png" %}" alt="Read Everywhere" />
+      <h3>Read Everywhere</h3>
       <p>Documentation are hosted in the cloud for reliability and speed.</p>
       <p><a href="#">More about hosting</a></p>
     </div>
     <div class="span3">
+      <img src="{% static "img/manage-access.png" %}" alt="Manage Access" />
       <h3>Manage Access</h3>
       <p>Private documentations for your private GitHub repositories.</p>
       <p><a href="#">More about private docs</a></p>

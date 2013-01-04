@@ -2,12 +2,19 @@
 
 # This script detects the destination path for Jekyll.
 #
-#     $ bin/target <build-dir> <docs-dir>
+#     $ bin/target_jekyll <build-dir> <docs-dir>
 
 BUILD_DIR=$1
 DOCS_DIR=$2
 
 # Detect source and destination dirs from _config.yml
-SOURCE_DIR=$(awk '/source:.+/ {print $(2);}' $BUILD_DIR/_config.yml) 
-OUTPUT_DIR=$(awk '/destination:.+/ {print $(2);}' $BUILD_DIR/_config.yml)
-echo -ne $2/$OUTPUT_DIR
+if [ -f $BUILD_DIR/_config.yml ]; then
+  SOURCE_DIR=$(awk '/source:.+/ {print $(2);}' $BUILD_DIR/_config.yml) 
+  OUTPUT_DIR=$(awk '/destination:.+/ {print $(2);}' $BUILD_DIR/_config.yml)
+fi
+
+if [ -z $OUTPUT_DIR ]; then
+  OUTPUT_DIR="_site"
+fi
+
+echo $DOCS_DIR/$OUTPUT_DIR

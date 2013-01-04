@@ -28,9 +28,7 @@ def update_docs(project):
     celery.chain(
         fetch_source.s(build, project),
         extract.s(project),
-        #fetch_virtualenv.s(project),
         build_docs.s(project),
-        #store_virtualenv.s(project),
         upload_docs.s(project)
     ).apply_async()
 
@@ -138,9 +136,13 @@ def upload_docs(build, project):
     logger.info('Uploading docs for %s' % project)
     count = 0
     dest_base = '%s/%s' % (project.owner, project.name)
-    target = subprocess.check_output(
-        ['bash', 'bin/target', build.path, project.docs_path])
-    local_base = '%s/%s/html/' % (build.path, target)
+    if project.generator.name == 'Sphinx':
+        target = subprocess.check_output(
+            ['bash', 'bin/target_sphinx', build.path, project.docs_path])
+    elif project.generator.name == 'Jekyll':
+        target = subprocess.check_output(
+            ['bash', 'bin/target_jekyll', build.path, project.docs_path])
+    local_base = '%s/%s/' % (build.path, target.rstrip())
     # Walks through the built doc files and uploads them
     for root, dirs, names in os.walk(local_base):
         for idx, name in enumerate(names):

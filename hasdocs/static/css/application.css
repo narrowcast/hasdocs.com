@@ -25,12 +25,12 @@
 
 /* line 9, ../sass/globals/icons.scss */
 .public-repo-icon {
-  background: url("../img/public_repo_icon.png") no-repeat;
+  background: url("../img/public-repo-icon.png") no-repeat;
 }
 
 /* line 12, ../sass/globals/icons.scss */
 .private-repo-icon {
-  background: url("../img/private_repo_icon.png") no-repeat;
+  background: url("../img/private-repo-icon.png") no-repeat;
 }
 
 /* line 6, ../sass/components/projects.scss */
@@ -49,14 +49,6 @@
   line-height: 25px;
 }
 /* line 18, ../sass/components/projects.scss */
-.project h3 a {
-  color: #669933;
-}
-/* line 21, ../sass/components/projects.scss */
-.project h3 a:hover {
-  color: #406020;
-}
-/* line 25, ../sass/components/projects.scss */
 .project h3 a.label-hasdocs {
   font-size: 10px;
   vertical-align: middle;
@@ -70,31 +62,31 @@
   background-image: linear-gradient(top, #2a4961, #13212c);
   text-decoration: none;
 }
-/* line 35, ../sass/components/projects.scss */
+/* line 28, ../sass/components/projects.scss */
 .project ul.stats {
   float: right;
   margin-bottom: 10px;
   color: #777777;
 }
-/* line 40, ../sass/components/projects.scss */
+/* line 33, ../sass/components/projects.scss */
 .project ul.stats li {
   float: left;
   margin-left: 20px;
 }
-/* line 45, ../sass/components/projects.scss */
+/* line 38, ../sass/components/projects.scss */
 .project a.btn-primary {
   float: right;
   clear: right;
 }
-/* line 49, ../sass/components/projects.scss */
+/* line 42, ../sass/components/projects.scss */
 .project p {
   margin-left: 47px;
 }
-/* line 52, ../sass/components/projects.scss */
+/* line 45, ../sass/components/projects.scss */
 .project p.description {
   margin-bottom: 5px;
 }
-/* line 55, ../sass/components/projects.scss */
+/* line 48, ../sass/components/projects.scss */
 .project p.mod_date {
   font-size: 12px;
   margin-bottom: 0;
@@ -119,24 +111,26 @@
   float: right;
 }
 
-/* line 2, ../sass/sections/footer.scss */
+/* line 4, ../sass/sections/footer.scss */
 footer {
   margin-top: 40px;
   padding: 20px 0;
 }
-/* line 6, ../sass/sections/footer.scss */
+/* line 8, ../sass/sections/footer.scss */
 footer #legal {
   margin: 0;
   list-style: none;
 }
-/* line 10, ../sass/sections/footer.scss */
+/* line 12, ../sass/sections/footer.scss */
 footer #legal li {
   display: inline-block;
   margin-right: 15px;
 }
-/* line 15, ../sass/sections/footer.scss */
+/* line 17, ../sass/sections/footer.scss */
 footer #copyright {
+  font-size: 12px;
   float: right;
+  color: #777777;
 }
 
 /* line 5, ../sass/sections/accounts.scss */
@@ -157,32 +151,118 @@ footer #copyright {
   margin-right: 6px;
 }
 
-/* line 10, ../sass/application.scss */
+/* line 4, ../sass/sections/plans.scss */
+#individual-plans {
+  text-align: center;
+}
+/* line 7, ../sass/sections/plans.scss */
+#individual-plans span.symbol, #individual-plans span.amount {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* line 13, ../sass/application.scss */
 body {
   background: url("../img/background.png");
 }
 
-/* line 14, ../sass/application.scss */
+/* line 17, ../sass/application.scss */
 .container {
   padding: 0 32px;
 }
 
-/* line 18, ../sass/application.scss */
+/* line 21, ../sass/application.scss */
 .page-header {
   border-bottom-color: #cccccc;
 }
 
-/* line 25, ../sass/application.scss */
+/* line 26, ../sass/application.scss */
+a {
+  color: #669933;
+}
+/* line 29, ../sass/application.scss */
+a:hover {
+  color: #406020;
+}
+
+/* line 35, ../sass/application.scss */
+#intro {
+  color: white;
+}
+/* line 38, ../sass/application.scss */
+#intro #intro-background {
+  position: absolute;
+  top: 41px;
+  left: 0;
+  width: 100%;
+  height: 370px;
+  z-index: -1;
+  background: url("../img/intro-background.png");
+}
+/* line 47, ../sass/application.scss */
+#intro #intro-image {
+  float: right;
+  margin: 0 10px;
+}
+/* line 51, ../sass/application.scss */
+#intro #intro-text {
+  width: 460px;
+  height: 330px;
+  margin: 0 10px;
+}
+/* line 56, ../sass/application.scss */
+#intro h1 {
+  font-size: 40px;
+  text-shadow: 0 1px 1px black;
+  padding-top: 60px;
+}
+/* line 61, ../sass/application.scss */
+#intro p {
+  font-size: 18px;
+  text-shadow: 0 1px 1px black;
+  padding: 10px 0;
+}
+/* line 66, ../sass/application.scss */
+#intro a.btn-primary {
+  margin-left: 70px;
+}
+
+/* line 71, ../sass/application.scss */
+#features {
+  text-align: center;
+}
+/* line 72, ../sass/application.scss */
+#features #features-background {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 230px;
+  z-index: -1;
+  background: #141414;
+  -webkit-box-shadow: 0 1px 10px;
+  -moz-box-shadow: 0 1px 10px;
+  box-shadow: 0 1px 10px;
+}
+/* line 83, ../sass/application.scss */
+#features h3, #features p {
+  color: #999;
+}
+/* line 86, ../sass/application.scss */
+#features h3 {
+  margin-top: 0;
+}
+
+/* line 93, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 29, ../sass/application.scss */
+/* line 97, ../sass/application.scss */
 #account-detail #sync {
   float: left;
   margin-right: 10px;
 }
-/* line 33, ../sass/application.scss */
+/* line 101, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

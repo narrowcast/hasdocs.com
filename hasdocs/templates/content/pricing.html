@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block title %}Plans and Pricing | HasDocs{% endblock %}
 
 {% block container %}
@@ -13,10 +15,14 @@
       <a class="btn" href="/signup/free/">Create a free acount</a>
     </div>
   </div>
+  
   <h2>Individual Plans</h2>
-  <div class="individual row">
+  <section id="individual-plans" class="row">
     {% for plan in individual_plans %}
-      <div class="plan span4">
+      <div id="{{ plan.name }}" class="plan span4">
+        {% with "img/"|add:plan.name|lower|add:".png" as image_path %}
+          <img src="{% static image_path %}" alt="{{ plan.name }}" />
+        {% endwith %}
         <h3>{{ plan.name }}</h3>
         <div class="price">
           <span class="symbol">$</span>
@@ -26,9 +32,10 @@
         <p>{{ plan.private_docs}} Private Documentations</p>
       </div>
     {% endfor %}
-  </div>
+  </section>
+  
   <h2>Business Plans</h2>
-  <div class="business row">    
+  <section id="business-plans" class="row">    
     {% for plan in business_plans %}
       <div class="plan span3">
         <h3>{{ plan.name }}</h3>
@@ -40,6 +47,6 @@
         <p>{{ plan.private_docs}} Private Documentations</p>
       </div>
     {% endfor %}
-  </div>
+  </section>
   
 {% endblock %}

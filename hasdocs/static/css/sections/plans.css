@@ -1,0 +1,9 @@
+/* line 4, ../../sass/sections/plans.scss */
+#individual-plans {
+  text-align: center;
+}
+/* line 7, ../../sass/sections/plans.scss */
+#individual-plans span.symbol, #individual-plans span.amount {
+  font-size: 18px;
+  font-weight: bold;
+}

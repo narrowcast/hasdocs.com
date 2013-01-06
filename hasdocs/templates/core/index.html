@@ -4,16 +4,22 @@
 
 {% block container %}
   
-  <div class="hero-unit">
-    <h1>Polyglot Continuous Documentation Platform</h1>
-    <p>
-      Write, build, and share greate documentation.
-    </p>
-    <p>
-      <a class="btn btn-primary btn-large btn-green" href="{% url login %}">Sign in Using GitHub »</a>
-    </p>
-  </div>
-  <div class="row">
+  <section id="intro">
+    <div id="intro-background"></div>
+    <img id="intro-image" src="{% static "img/intro.png" %}" alt="HasDocs" />
+    <div id="intro-text">
+      <h1>Polyglot Continuous Documentation Platform</h1>
+      <p>
+        Write, build, and share greate documentation.
+      </p>
+      <p>
+        <a class="btn btn-primary btn-large btn-green" href="{% url login %}">Sign in Using GitHub »</a>
+      </p>
+    </div>
+  </section>
+  
+  <section id="features" class="row">
+    <div id="features-background"></div>
     <div class="span3">
       <img src="{% static "img/forget-servers.png" %}" alt="Forget Servers" />
       <h3>Forget Servers</h3>
@@ -38,6 +44,6 @@
       <p>Private documentations for your private GitHub repositories.</p>
       <p><a href="#">More about private docs</a></p>
     </div>
-  </div>
+  </section>
   
 {% endblock %}

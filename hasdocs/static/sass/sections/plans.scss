@@ -1,0 +1,11 @@
+@import "../globals/variables";
+
+// Individual plans
+#individual-plans {  
+  text-align: center;
+  
+  span.symbol, span.amount {
+    font-size: 18px;
+    font-weight: bold;
+  }
+}

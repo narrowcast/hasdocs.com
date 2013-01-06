@@ -14,14 +14,6 @@
   line-height: 25px;
 }
 /* line 18, ../../sass/components/projects.scss */
-.project h3 a {
-  color: #669933;
-}
-/* line 21, ../../sass/components/projects.scss */
-.project h3 a:hover {
-  color: #406020;
-}
-/* line 25, ../../sass/components/projects.scss */
 .project h3 a.label-hasdocs {
   font-size: 10px;
   vertical-align: middle;
@@ -35,31 +27,31 @@
   background-image: linear-gradient(top, #2a4961, #13212c);
   text-decoration: none;
 }
-/* line 35, ../../sass/components/projects.scss */
+/* line 28, ../../sass/components/projects.scss */
 .project ul.stats {
   float: right;
   margin-bottom: 10px;
   color: #777777;
 }
-/* line 40, ../../sass/components/projects.scss */
+/* line 33, ../../sass/components/projects.scss */
 .project ul.stats li {
   float: left;
   margin-left: 20px;
 }
-/* line 45, ../../sass/components/projects.scss */
+/* line 38, ../../sass/components/projects.scss */
 .project a.btn-primary {
   float: right;
   clear: right;
 }
-/* line 49, ../../sass/components/projects.scss */
+/* line 42, ../../sass/components/projects.scss */
 .project p {
   margin-left: 47px;
 }
-/* line 52, ../../sass/components/projects.scss */
+/* line 45, ../../sass/components/projects.scss */
 .project p.description {
   margin-bottom: 5px;
 }
-/* line 55, ../../sass/components/projects.scss */
+/* line 48, ../../sass/components/projects.scss */
 .project p.mod_date {
   font-size: 12px;
   margin-bottom: 0;

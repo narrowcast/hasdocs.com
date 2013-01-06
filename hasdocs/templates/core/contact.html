@@ -7,11 +7,11 @@
 {% block container %}
   
   <h1 class="page-header">Contact</h1>
-  <form action="{% url contact %}" method="post" class="form-horizontal">
+  <form id="contact" action="{% url contact %}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}
     <div class="form-actions">
-      <input class="btn" type="submit" value="Send Request" />
+      <input class="btn btn-primary btn-green" type="submit" value="Send Request" />
     </div>
   </form>
   

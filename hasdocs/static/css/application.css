@@ -255,16 +255,39 @@ a:hover {
 }
 
 /* line 93, ../sass/application.scss */
+#contact #div_id_name, #contact #div_id_email {
+  float: left;
+}
+/* line 97, ../sass/application.scss */
+#contact #div_id_email label {
+  width: 130px;
+}
+/* line 100, ../sass/application.scss */
+#contact #div_id_email div.controls {
+  margin-left: 155px;
+  margin-right: 30px;
+}
+/* line 105, ../sass/application.scss */
+#contact #id_subject, #contact #id_body {
+  width: 580px;
+}
+/* line 108, ../sass/application.scss */
+#contact div.form-actions {
+  background: none;
+  border-top-color: #d4d4d4;
+}
+
+/* line 116, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 97, ../sass/application.scss */
+/* line 120, ../sass/application.scss */
 #account-detail #sync {
   float: left;
   margin-right: 10px;
 }
-/* line 101, ../sass/application.scss */
+/* line 124, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

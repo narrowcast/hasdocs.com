@@ -88,6 +88,29 @@ a {
   }
 }
 
+// Contact
+#contact {
+  #div_id_name, #div_id_email {
+    float: left;
+  }
+  #div_id_email {
+    label {
+      width: 130px;
+    }
+    div.controls {
+      margin-left: 155px;
+      margin-right: 30px;
+    }
+  }
+  #id_subject, #id_body {
+    width: 580px;
+  }
+  div.form-actions {
+    background: none;
+    border-top-color: #d4d4d4;
+  }
+}
+
 // Account detail
 #account-detail {
   #settings {

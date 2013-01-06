@@ -5,6 +5,8 @@
 .btn-green {
   @include background-image(linear-gradient(top, $main-color, $main-color-dark));
   background-color: darken($main-color, 10%);
+  border-color: $main-color-dark $main-color-dark darken($main-color-dark, 5%);
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   
   &:hover {
     background-color: $main-color-dark;

@@ -6,12 +6,14 @@
   background-image: -o-linear-gradient(top, #669933, #406020);
   background-image: linear-gradient(top, #669933, #406020);
   background-color: #4d7326;
+  border-color: #406020 #406020 #334d19;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
-/* line 9, ../sass/globals/buttons.scss */
+/* line 11, ../sass/globals/buttons.scss */
 .btn-green:hover {
   background-color: #406020;
 }
-/* line 12, ../sass/globals/buttons.scss */
+/* line 14, ../sass/globals/buttons.scss */
 .btn-green:active {
   background-color: #334d19;
 }

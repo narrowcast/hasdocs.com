@@ -8,14 +8,13 @@
   top: 0;
 }
 /* line 11, ../../sass/sections/navigation.scss */
-#navbar div.naverbar-inner {
+#navbar div.navbar-inner {
   background: #152531;
-  background-image: none;
-  -webkit-box-shadow: 0 0 5px;
-  -moz-box-shadow: 0 0 5px;
-  box-shadow: 0 0 5px;
+  -webkit-box-shadow: black 0 0 5px;
+  -moz-box-shadow: black 0 0 5px;
+  box-shadow: black 0 0 5px;
 }
-/* line 16, ../../sass/sections/navigation.scss */
+/* line 15, ../../sass/sections/navigation.scss */
 #navbar ul.nav {
   float: right;
 }

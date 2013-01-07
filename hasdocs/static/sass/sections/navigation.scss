@@ -8,10 +8,9 @@
     position: absolute;
     top: 0;
   }
-  div.naverbar-inner {
+  div.navbar-inner {
     background: #152531;
-    background-image: none;
-    @include box-shadow(0 0 5px);
+    @include box-shadow(black 0 0 5px);
   }
   ul.nav {
     float: right;

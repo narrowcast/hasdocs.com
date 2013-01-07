@@ -5,34 +5,48 @@
 {% block container %}
 
   <h1 class="page-header">Help</h1>
-  <ul id="bootcamp">
-    <li>
-      <a href="{% url article_detail 'getting-started' %}">Sign up</a>
+  <ol id="bootcamp" class="row">
+    <li class="span3">
+      <a href="{% url article_detail 'getting-started' %}">
+        <h4>Sign up</h4>
+      </a>
     </li>
-    <li>
-      <a href="{% url article_detail 'getting-started' %}">Write the docs</a>
+    <li class="span3">
+      <a href="{% url article_detail 'getting-started' %}">
+        <h4>Write the docs</h4>
+      </a>
     </li>
-    <li>
-      <a href="{% url article_detail 'getting-started' %}">Import a repository</a>
+    <li class="span3">
+      <a href="{% url article_detail 'getting-started' %}">
+        <h4>Import a repository</h4>
+      </a>
     </li>
-    <li>
-      <a href="{% url article_detail 'getting-started' %}">Deploy the docs</a>
+    <li class="span3">
+      <a href="{% url article_detail 'getting-started' %}">
+        <h4>Deploy the docs</h4>
+      </a>
     </li>
-  </ul>
-  <h2>New to HasDocs?</h2>
-  <ul>
-    <li>
-      <a href="{% url article_detail 'getting-started' %}">Getting started</a>
-    </li>
-    <li>
-      <a href="{% url article_detail 'setting-up-a-custom-domain' %}">Setting up a custom domain</a>
-    </li>
-  </ul>
-  <h2>Common Issues</h2>
-  <ul>
-    <li>
-      <a href="{% url article_detail 'build-error' %}">Build error</a>
-    </li>
-  </ul>
+  </ol>
+  <div class="row">
+    <div class="span6">
+      <h3 class="page-header">New to HasDocs?</h3>
+      <ul>
+        <li>
+          <a href="{% url article_detail 'getting-started' %}">Getting started</a>
+        </li>
+        <li>
+          <a href="{% url article_detail 'setting-up-a-custom-domain' %}">Setting up a custom domain</a>
+        </li>
+      </ul>
+    </div>
+    <div class="span6">
+      <h3 class="page-header">Common Issues</h3>
+      <ul>
+        <li>
+          <a href="{% url article_detail 'build-error' %}">Build error</a>
+        </li>
+      </ul>
+    </div>
+  </div>
     
 {% endblock %}

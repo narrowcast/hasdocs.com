@@ -254,40 +254,70 @@ a:hover {
   margin-top: 0;
 }
 
-/* line 93, ../sass/application.scss */
+/* line 92, ../sass/application.scss */
+#bootcamp {
+  list-style-type: none;
+  counter-reset: li;
+}
+/* line 96, ../sass/application.scss */
+#bootcamp li {
+  background: white;
+  height: 220px;
+}
+/* line 100, ../sass/application.scss */
+#bootcamp li h4 {
+  color: white;
+  background: #405685;
+  margin: 0;
+  padding: 8px 0;
+  text-align: center;
+  text-shadow: 0 1px 1px black;
+}
+/* line 109, ../sass/application.scss */
+#bootcamp > li:before {
+  content: counter(li);
+  counter-increment: li;
+  font-size: 256px;
+  font-weight: bold;
+  color: #d3d6de;
+  position: absolute;
+  top: 274px;
+}
+
+/* line 123, ../sass/application.scss */
 #contact #div_id_name, #contact #div_id_email {
   float: left;
 }
-/* line 97, ../sass/application.scss */
+/* line 127, ../sass/application.scss */
 #contact #div_id_email label {
   width: 130px;
 }
-/* line 100, ../sass/application.scss */
+/* line 130, ../sass/application.scss */
 #contact #div_id_email div.controls {
   margin-left: 154px;
   margin-right: 30px;
 }
-/* line 105, ../sass/application.scss */
+/* line 135, ../sass/application.scss */
 #contact #id_subject, #contact #id_body {
   width: 580px;
 }
-/* line 108, ../sass/application.scss */
+/* line 138, ../sass/application.scss */
 #contact div.form-actions {
   background: none;
   border-top-color: #d4d4d4;
 }
 
-/* line 116, ../sass/application.scss */
+/* line 146, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 120, ../sass/application.scss */
+/* line 150, ../sass/application.scss */
 #account-detail #sync {
   float: left;
   margin-right: 10px;
 }
-/* line 124, ../sass/application.scss */
+/* line 154, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

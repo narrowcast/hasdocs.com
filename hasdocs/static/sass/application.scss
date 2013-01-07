@@ -88,6 +88,35 @@ a {
   }
 }
 
+// Help
+#bootcamp {
+  list-style-type: none;
+  counter-reset: li;
+  
+  li {
+    background: white;
+    height: 220px;
+    
+    h4 {
+      color: white;
+      background: #405685;
+      margin: 0;
+      padding: 8px 0;
+      text-align: center;
+      text-shadow: 0 1px 1px black;
+    }
+  }
+  &> li:before {
+    content: counter(li);
+    counter-increment: li;
+    font-size: 256px;
+    font-weight: bold;
+    color: #d3d6de;
+    position: absolute;
+    top: 274px;
+  }
+}
+
 // Contact
 #contact {
   #div_id_name, #div_id_email {

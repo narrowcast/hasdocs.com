@@ -84,7 +84,10 @@ class ProjectBuildList(ListView):
 
     def get_queryset(self):
         """Returns the builds for the project."""
-        return Build.objects.filter(project__name=self.kwargs['project'])
+        return Build.objects.filter(
+            project__owner__login=self.kwargs['username'],
+            project__name=self.kwargs['project']
+        )
 
     def get_context_data(self, **kwargs):
         """Sets the list of Heroku apps as context."""

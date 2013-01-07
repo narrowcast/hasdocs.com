@@ -41,7 +41,7 @@
   </dl>
   {% if project.get_latest_build %}
     <a class="btn btn-info" href="{{ project.get_docs_url }}">View Docs</a>
-  {% else %}
+  {% else if 'admin' in request.user.perms %}
     <a class="btn btn-primary btn-green" href="{% url project_activate project.owner project.name %} ">Create Hook</a>
   {% endif %}
   {% if 'admin' in request.user.perms %}

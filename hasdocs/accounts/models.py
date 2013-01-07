@@ -119,6 +119,9 @@ class Organization(BaseUser):
     billing_email = models.EmailField()
     # Members of this organization
     members = models.ManyToManyField(User, blank=True, null=True)
+    # Public members of this organization
+    public_members = models.ManyToManyField(
+        User, blank=True, null=True, related_name='public_organization_set')
 
     def active_members(self):
         """Returns only the active members of the organization."""

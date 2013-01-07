@@ -81,7 +81,10 @@ def sync_org_members_github(org, payload):
     """Syncs the members of an organization with GitHub."""
     logger.info('Syncing organization members for %s with GitHub' % org)
     members = github_api_get('/orgs/%s/members' % org, params=payload)
+    public_members = github_api_get('/orgs/%s/public_members' % org,
+                                    params=payload)
     org.members.clear()
+    org.public_members.clear()
     for data in members:
         user, created = User.objects.get_or_create(
             login=data['login'], id=data['id'])
@@ -90,6 +93,9 @@ def sync_org_members_github(org, payload):
             user.is_active = False
             user.save()
         org.members.add(user)
+        # Updates the public members list
+        if data in public_members:
+            org.public_members.add(user)
         logger.info('User %s has been added as member of %s' % (user, org))
     org.save()
     logger.info('Organization members have been synced for %s' % org)

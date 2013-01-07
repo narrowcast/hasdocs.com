@@ -39,13 +39,23 @@
         </ul>
         <h4>Organizations</h4>
         <ul class="unstyled">
-          {% for organization in account.organization_set.all %}
-            <li class="organization">
-              <a href="{{ organization.get_absolute_url }}">
-                <img src="{{ organization.gravatar_url }}" width="24" class="img-rounded" />{{ organization.login }}
-              </a>
-            </li>
-          {% endfor %}
+          {% if owner %}
+            {% for organization in account.organization_set.all %}
+              <li class="organization">
+                <a href="{{ organization.get_absolute_url }}">
+                  <img src="{{ organization.gravatar_url }}" width="24" class="img-rounded" />{{ organization.login }}
+                </a>
+              </li>
+            {% endfor %}
+          {% else %}
+            {% for organization in account.public_organization_set.all %}
+              <li class="organization">
+                <a href="{{ organization.get_absolute_url }}">
+                  <img src="{{ organization.gravatar_url }}" width="24" class="img-rounded" />{{ organization.login }}
+                </a>
+              </li>
+            {% endfor %}
+          {% endif %}
         </ul>
       {% endif %}
     </div>

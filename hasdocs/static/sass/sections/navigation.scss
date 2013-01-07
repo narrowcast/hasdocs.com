@@ -1,3 +1,5 @@
+@import "compass/css3/box-shadow";
+
 // Navigation
 #navbar {
   margin-bottom: 20px;
@@ -8,6 +10,8 @@
   }
   div.naverbar-inner {
     background: #152531;
+    background-image: none;
+    @include box-shadow(0 0 5px);
   }
   ul.nav {
     float: right;

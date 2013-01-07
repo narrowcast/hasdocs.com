@@ -95,20 +95,24 @@
   color: #777777;
 }
 
-/* line 2, ../sass/sections/navigation.scss */
+/* line 4, ../sass/sections/navigation.scss */
 #navbar {
   margin-bottom: 20px;
 }
-/* line 5, ../sass/sections/navigation.scss */
+/* line 7, ../sass/sections/navigation.scss */
 #navbar #logo {
   position: absolute;
   top: 0;
 }
-/* line 9, ../sass/sections/navigation.scss */
+/* line 11, ../sass/sections/navigation.scss */
 #navbar div.naverbar-inner {
   background: #152531;
+  background-image: none;
+  -webkit-box-shadow: 0 0 5px;
+  -moz-box-shadow: 0 0 5px;
+  box-shadow: 0 0 5px;
 }
-/* line 12, ../sass/sections/navigation.scss */
+/* line 16, ../sass/sections/navigation.scss */
 #navbar ul.nav {
   float: right;
 }
@@ -163,35 +167,35 @@ footer #copyright {
   font-weight: bold;
 }
 
-/* line 13, ../sass/application.scss */
+/* line 14, ../sass/application.scss */
 body {
   background: url("../img/background.png");
 }
 
-/* line 17, ../sass/application.scss */
+/* line 18, ../sass/application.scss */
 .container {
   padding: 0 32px;
 }
 
-/* line 21, ../sass/application.scss */
+/* line 22, ../sass/application.scss */
 .page-header {
   border-bottom-color: #cccccc;
 }
 
-/* line 26, ../sass/application.scss */
+/* line 27, ../sass/application.scss */
 a {
   color: #669933;
 }
-/* line 29, ../sass/application.scss */
+/* line 30, ../sass/application.scss */
 a:hover {
   color: #406020;
 }
 
-/* line 35, ../sass/application.scss */
+/* line 36, ../sass/application.scss */
 #intro {
   color: white;
 }
-/* line 38, ../sass/application.scss */
+/* line 39, ../sass/application.scss */
 #intro #intro-background {
   position: absolute;
   top: 41px;
@@ -201,39 +205,39 @@ a:hover {
   z-index: -1;
   background: url("../img/intro-background.png");
 }
-/* line 47, ../sass/application.scss */
+/* line 48, ../sass/application.scss */
 #intro #intro-image {
   float: right;
   margin: 0 10px;
 }
-/* line 51, ../sass/application.scss */
+/* line 52, ../sass/application.scss */
 #intro #intro-text {
   width: 460px;
   height: 330px;
   margin: 0 10px;
 }
-/* line 56, ../sass/application.scss */
+/* line 57, ../sass/application.scss */
 #intro h1 {
   font-size: 40px;
   text-shadow: 0 1px 1px black;
   padding-top: 60px;
 }
-/* line 61, ../sass/application.scss */
+/* line 62, ../sass/application.scss */
 #intro p {
   font-size: 18px;
   text-shadow: 0 1px 1px black;
   padding: 10px 0;
 }
-/* line 66, ../sass/application.scss */
+/* line 67, ../sass/application.scss */
 #intro a.btn-primary {
   margin-left: 70px;
 }
 
-/* line 71, ../sass/application.scss */
+/* line 72, ../sass/application.scss */
 #features {
   text-align: center;
 }
-/* line 72, ../sass/application.scss */
+/* line 73, ../sass/application.scss */
 #features #features-background {
   position: absolute;
   left: 0;
@@ -245,35 +249,39 @@ a:hover {
   -moz-box-shadow: 0 1px 10px;
   box-shadow: 0 1px 10px;
 }
-/* line 83, ../sass/application.scss */
+/* line 84, ../sass/application.scss */
 #features h3, #features p {
   color: #999;
 }
-/* line 86, ../sass/application.scss */
+/* line 87, ../sass/application.scss */
 #features h3 {
   margin-top: 0;
 }
 
-/* line 92, ../sass/application.scss */
+/* line 93, ../sass/application.scss */
 #bootcamp {
   list-style-type: none;
   counter-reset: li;
 }
-/* line 96, ../sass/application.scss */
+/* line 97, ../sass/application.scss */
 #bootcamp li {
   background: white;
   height: 220px;
 }
-/* line 100, ../sass/application.scss */
+/* line 101, ../sass/application.scss */
 #bootcamp li h4 {
   color: white;
-  background: #405685;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5674b0), color-stop(100%, #293658));
+  background-image: -webkit-linear-gradient(top, #5674b0, #293658);
+  background-image: -moz-linear-gradient(top, #5674b0, #293658);
+  background-image: -o-linear-gradient(top, #5674b0, #293658);
+  background-image: linear-gradient(top, #5674b0, #293658);
   margin: 0;
   padding: 8px 0;
   text-align: center;
   text-shadow: 0 1px 1px black;
 }
-/* line 109, ../sass/application.scss */
+/* line 110, ../sass/application.scss */
 #bootcamp > li:before {
   content: counter(li);
   counter-increment: li;

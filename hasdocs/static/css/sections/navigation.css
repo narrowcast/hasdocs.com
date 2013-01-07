@@ -1,17 +1,21 @@
-/* line 2, ../../sass/sections/navigation.scss */
+/* line 4, ../../sass/sections/navigation.scss */
 #navbar {
   margin-bottom: 20px;
 }
-/* line 5, ../../sass/sections/navigation.scss */
+/* line 7, ../../sass/sections/navigation.scss */
 #navbar #logo {
   position: absolute;
   top: 0;
 }
-/* line 9, ../../sass/sections/navigation.scss */
+/* line 11, ../../sass/sections/navigation.scss */
 #navbar div.naverbar-inner {
   background: #152531;
+  background-image: none;
+  -webkit-box-shadow: 0 0 5px;
+  -moz-box-shadow: 0 0 5px;
+  box-shadow: 0 0 5px;
 }
-/* line 12, ../../sass/sections/navigation.scss */
+/* line 16, ../../sass/sections/navigation.scss */
 #navbar ul.nav {
   float: right;
 }

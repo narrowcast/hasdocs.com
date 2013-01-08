@@ -17,9 +17,9 @@ urlpatterns = patterns(
     # Home
     url(r'^$', 'hasdocs.core.views.home', name='home'),
     # Admin documentations
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Admin
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)),
 
     # Login view
     url(r'^login/$', 'hasdocs.accounts.views.oauth_authenticate',

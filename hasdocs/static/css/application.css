@@ -320,17 +320,27 @@ a:hover {
   border-top-color: #d4d4d4;
 }
 
-/* line 149, ../sass/application.scss */
+/* line 148, ../sass/application.scss */
+#error-404 {
+  background: url("../img/intro-background.png");
+}
+/* line 151, ../sass/application.scss */
+#error-404 img {
+  display: block;
+  margin: 0 auto;
+}
+
+/* line 159, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 153, ../sass/application.scss */
+/* line 163, ../sass/application.scss */
 #account-detail #sync {
   float: left;
   margin-right: 10px;
 }
-/* line 157, ../sass/application.scss */
+/* line 167, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

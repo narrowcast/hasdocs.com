@@ -1,8 +1,21 @@
-{% block container %}
+{% load staticfiles %}
 
-  <div id="404">
-    <h1>404</h1>
-    <p>Page not found</p>
-  </div>
-
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HasDocs | Page Not Found</title>
+    <meta name="description" content="Page not found.">
+    <meta name="author" content="Narrowcast, Inc.">
+    <meta name="viewport" content="width=1024">
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/application.css" %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "img/favicon.ico" %}">
+  </head>
+  
+  <body>  
+    <div id="error-404">
+      <img src="{% static "img/404.png" %}" />
+    </div>
+  </body>
+</html>

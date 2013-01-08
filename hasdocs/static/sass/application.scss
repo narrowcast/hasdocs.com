@@ -144,6 +144,16 @@ a {
   }
 }
 
+// 404 Page Not Found
+#error-404 {
+  background: url("../img/intro-background.png");
+  
+  img {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
 // Account detail
 #account-detail {
   #settings {

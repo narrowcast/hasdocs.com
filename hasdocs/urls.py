@@ -59,6 +59,9 @@ urlpatterns = patterns(
         name='help'),
     # Contact form
     url(r'^contact/$', Contact.as_view(), name='contact'),
+    # Thanks
+    url(r'^thanks/$', TemplateView.as_view(
+        template_name='content/thanks.html'), name='thanks'),
     # Terms of service
     url(r'^terms/$', TemplateView.as_view(template_name='content/terms.html'),
         name='terms'),

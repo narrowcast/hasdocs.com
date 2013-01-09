@@ -11,7 +11,7 @@ DOCS_DIR=$2
 MAKEFILE=$(find $BUILD_DIR/$DOCS_DIR -maxdepth 2 -type f -name 'Makefile' | head -1)
 
 # Detect source and output dirs from Makefile
-SOURCE_DIR=$(make -p -f $MAKEFILE | awk '/ALLSPHINXOPTS = .+/ {print $(NF);}') 
+SOURCE_DIR=$(make -p -f $MAKEFILE | awk '/ALLSPHINXOPTS = .+/ {print $(NF);}')
 OUTPUT_DIR=$(make -p -f $MAKEFILE | awk '/BUILDDIR = .+/ {print $(3);}')
 
-echo $DOCS_DOR/$OUTPUT_DIR/html
+echo $DOCS_DIR/$OUTPUT_DIR/html

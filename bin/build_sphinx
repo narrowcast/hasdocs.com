@@ -22,13 +22,16 @@ PYTHON_VERSION="2.7.2"
 PYTHON_EXE="python2.7"
 
 # Unset environment variables
-unset GIT_DIR PYTHONHOME PYTHONPATH LD_LIBRARY_PATH LIBRARY_PATH
+unset GIT_DIR PYTHONHOME PYTHONPATH
 
 # Make these variables available in sourced scripts
-export BUILD_DIR BIN_DIR BIN_DIR
+export BUILD_DIR BIN_DIR
 
 # Pylibmc support
-#source $BIN_DIR/steps/pylibmc
+source $BIN_DIR/steps/pylibmc
+
+# Enchant support
+source $BIN_DIR/steps/enchant
 
 cd $BUILD_DIR
 
@@ -55,12 +58,6 @@ pip install --use-mirrors -r $REQUIREMENTS --exists-action=w
 
 # Install Sphinx
 pip install --use-mirrors sphinx
-
-# Detect Makefile for the docs
-MAKEFILE=$(find $DOCS_DIR -maxdepth 2 -type f -name 'Makefile' | head -1)
-
-# Detect output directory from Makefile
-OUTPUT_DIR=$(make -p -f $MAKEFILE | awk '/BUILDDIR = .+/ {print $(3);}')
 
 # Build html docs
 cd $DOCS_DIR

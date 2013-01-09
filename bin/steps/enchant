@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# This script serves as the Enchant build step of the
+# [**Python Buildpack**](https://github.com/heroku/heroku-buildpack-python) 
+# compiler. 
+# 
+# A [buildpack](http://devcenter.heroku.com/articles/buildpacks) is an 
+# adapter between a Python application and Heroku's runtime.
+#
+# This script is invoked by [`bin/compile`](/).
+
+# The location of the pre-compiled enchant library.
+VENDORED_ENCHANT="https://s3.amazonaws.com/docsome/enchant-1.6.tgz"
+
+# If enchant exists within requirements, use vendored enchant.
+if ((grep -Fiq "enchant" $BUILD_DIR/requirements.txt) || (grep -Fiq "enchant" $BUILD_DIR/setup.py)) then
+  echo "-----> Noticed enchant. Bootstrapping enchant."
+  cd .heroku
+
+  if [ -d "vendor/lib/enchant" ]; then
+    export ENCHANT=$(pwd)/vendor
+  else
+    # Download and extract enchant into target vendor directory.
+    curl -s -L -o tmp-enchant.tgz $VENDORED_ENCHANT
+    tar -zxvf tmp-enchant.tgz > /dev/null
+    rm tmp-enchant.tgz
+  fi
+
+  cd ..
+fi

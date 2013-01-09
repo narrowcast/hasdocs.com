@@ -81,6 +81,7 @@ class ProjectDelete(PermissionRequiredMixin, ProjectMixin, DeleteView):
 
 class ProjectBuildList(ListView):
     """View for showing the list of builds for a project."""
+    # TODO: permission check needs to be done for listing builds
 
     def get_queryset(self):
         """Returns the builds for the project."""

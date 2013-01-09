@@ -57,7 +57,7 @@ pip install --use-mirrors -r $REQUIREMENTS --exists-action=w
 pip install --use-mirrors sphinx
 
 # Detect Makefile for the docs
-MAKEFILE=$(find $BUILD_DIR/$DOCS_DIR -type f -maxdepth 2 -name 'Makefile' | head -1)
+MAKEFILE=$(find $DOCS_DIR -maxdepth 2 -type f -name 'Makefile' | head -1)
 
 # Detect output directory from Makefile
 OUTPUT_DIR=$(make -p -f $MAKEFILE | awk '/BUILDDIR = .+/ {print $(3);}')

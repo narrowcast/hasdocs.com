@@ -22,7 +22,7 @@ if ((grep -Fiq "enchant" $BUILD_DIR/requirements.txt) || (grep -Fiq "enchant" $B
   else
     # Download and extract enchant into target vendor directory.
     curl -s -L -o tmp-enchant.tgz $VENDORED_ENCHANT
-    tar -zxvf tmp-enchant.tgz > /dev/null
+    tar -zxvf tmp-enchant.tgz -C vendor > /dev/null
     rm tmp-enchant.tgz
   fi
 

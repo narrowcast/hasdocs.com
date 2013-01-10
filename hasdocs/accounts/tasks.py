@@ -31,7 +31,7 @@ def github_api_get(url, params=None):
 def sync_user_repos_github(user, payload):
     """Sync the repositories of a user with GitHub."""
     logger.info('Syncing repositories for %s with GitHub' % user)
-    repos = github_api_get('/user/repos', params=payload)
+    repos = github_api_get('/user/repos?type=owner', params=payload)
     for repo in repos:
         project = Project.from_kwargs(**repo)
         logger.info('Project %s has been synced' % project.name)

@@ -8,9 +8,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, \
+    HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
@@ -137,11 +137,11 @@ def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""    
     if not request.GET.get('state') and not request.GET.get('code'):
         # Then this is not a proper redirect from GitHub
-        raise SuspiciousOperation
+        return HttpResponseForbidden
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
         logger.warning('Possible CSRF attack was attempted: %s' % request)
-        raise SuspiciousOperation
+        return HttpResponseForbidden
     logger.info('Received redirect from GitHub: %s' % request.GET['state'])
     data = dict(code=request.GET['code'], state=request.GET['state'])
     logger.info('Requesting access token from GitHub')

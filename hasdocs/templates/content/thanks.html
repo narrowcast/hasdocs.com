@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block title %}Thanks | HasDocs{% endblock %}
 
 {% block container %}
 
-  <h1 class="page-header">Thanks</h1>
-  <p>Thank you for contacting us. We will get back to you shortly.</p>
-  <a class="btn" href="/">Back to Home</a>
+  <div id="thanks">
+    <img src="{% static "img/thanks.png" %}" alt="Thanks" />
+    <div>
+      <h3>Thank you for contacting us.</h3>
+      <h3>We will get back to you shortly.</h3>
+      <a class="btn btn-primary btn-green" href="/">Back to Home</a>
+    </div>
+  </div>
 
 {% endblock %}

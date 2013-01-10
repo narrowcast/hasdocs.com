@@ -166,35 +166,35 @@ footer #copyright {
   font-weight: bold;
 }
 
-/* line 14, ../sass/application.scss */
+/* line 15, ../sass/application.scss */
 body {
   background: url("../img/background.png");
 }
 
-/* line 18, ../sass/application.scss */
+/* line 19, ../sass/application.scss */
 .container {
   padding: 0 32px;
 }
 
-/* line 22, ../sass/application.scss */
+/* line 23, ../sass/application.scss */
 .page-header {
   border-bottom-color: #cccccc;
 }
 
-/* line 27, ../sass/application.scss */
+/* line 28, ../sass/application.scss */
 a {
   color: #669933;
 }
-/* line 30, ../sass/application.scss */
+/* line 31, ../sass/application.scss */
 a:hover {
   color: #406020;
 }
 
-/* line 36, ../sass/application.scss */
+/* line 37, ../sass/application.scss */
 #intro {
   color: white;
 }
-/* line 39, ../sass/application.scss */
+/* line 40, ../sass/application.scss */
 #intro #intro-background {
   position: absolute;
   top: 41px;
@@ -204,39 +204,39 @@ a:hover {
   z-index: -1;
   background: url("../img/intro-background.png");
 }
-/* line 48, ../sass/application.scss */
+/* line 49, ../sass/application.scss */
 #intro #intro-image {
   float: right;
   margin: 0 10px;
 }
-/* line 52, ../sass/application.scss */
+/* line 53, ../sass/application.scss */
 #intro #intro-text {
   width: 460px;
   height: 330px;
   margin: 0 10px;
 }
-/* line 57, ../sass/application.scss */
+/* line 58, ../sass/application.scss */
 #intro h1 {
   font-size: 40px;
   text-shadow: 0 1px 1px black;
   padding-top: 60px;
 }
-/* line 62, ../sass/application.scss */
+/* line 63, ../sass/application.scss */
 #intro p {
   font-size: 18px;
   text-shadow: 0 1px 1px black;
   padding: 10px 0;
 }
-/* line 67, ../sass/application.scss */
+/* line 68, ../sass/application.scss */
 #intro a.btn-primary {
   margin-left: 70px;
 }
 
-/* line 72, ../sass/application.scss */
+/* line 73, ../sass/application.scss */
 #features {
   text-align: center;
 }
-/* line 73, ../sass/application.scss */
+/* line 74, ../sass/application.scss */
 #features #features-background {
   position: absolute;
   left: 0;
@@ -248,26 +248,26 @@ a:hover {
   -moz-box-shadow: 0 1px 10px;
   box-shadow: 0 1px 10px;
 }
-/* line 84, ../sass/application.scss */
+/* line 85, ../sass/application.scss */
 #features h3, #features p {
   color: #999;
 }
-/* line 87, ../sass/application.scss */
+/* line 88, ../sass/application.scss */
 #features h3 {
   margin-top: 0;
 }
 
-/* line 93, ../sass/application.scss */
+/* line 94, ../sass/application.scss */
 #bootcamp {
   list-style-type: none;
   counter-reset: li;
 }
-/* line 97, ../sass/application.scss */
+/* line 98, ../sass/application.scss */
 #bootcamp li {
   background: white;
   height: 214px;
 }
-/* line 101, ../sass/application.scss */
+/* line 102, ../sass/application.scss */
 #bootcamp li h4 {
   color: white;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5674b0), color-stop(100%, #293658));
@@ -280,67 +280,111 @@ a:hover {
   text-align: center;
   text-shadow: 0 1px 1px black;
 }
-/* line 110, ../sass/application.scss */
+/* line 111, ../sass/application.scss */
 #bootcamp #step1 {
   background: url("../img/signup.png") 0 36px;
 }
-/* line 113, ../sass/application.scss */
+/* line 114, ../sass/application.scss */
 #bootcamp #step2 {
   background: url("../img/write-the-docs.png") 0 36px;
 }
-/* line 116, ../sass/application.scss */
+/* line 117, ../sass/application.scss */
 #bootcamp #step3 {
   background: url("../img/import.png") 0 36px;
 }
-/* line 119, ../sass/application.scss */
+/* line 120, ../sass/application.scss */
 #bootcamp #step4 {
   background: url("../img/deploy.png") 0 36px;
 }
 
 /* line 126, ../sass/application.scss */
+article {
+  width: 660px;
+  margin: 10px auto;
+  display: block;
+  background: white;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  padding: 8px 18px 18px 18px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 -1px 1px rgba(113, 123, 149, 0.2);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 -1px 1px rgba(113, 123, 149, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 -1px 1px rgba(113, 123, 149, 0.2);
+}
+/* line 135, ../sass/application.scss */
+article h2 {
+  font-size: 18px;
+}
+
+/* line 142, ../sass/application.scss */
 #contact #div_id_name, #contact #div_id_email {
   float: left;
 }
-/* line 130, ../sass/application.scss */
+/* line 146, ../sass/application.scss */
 #contact #div_id_email label {
   width: 130px;
 }
-/* line 133, ../sass/application.scss */
+/* line 149, ../sass/application.scss */
 #contact #div_id_email div.controls {
   margin-left: 154px;
   margin-right: 30px;
 }
-/* line 138, ../sass/application.scss */
+/* line 154, ../sass/application.scss */
 #contact #id_subject, #contact #id_body {
   width: 580px;
 }
-/* line 141, ../sass/application.scss */
+/* line 157, ../sass/application.scss */
 #contact div.form-actions {
   background: none;
   border-top-color: #d4d4d4;
 }
 
-/* line 148, ../sass/application.scss */
+/* line 164, ../sass/application.scss */
+#thanks {
+  margin-top: 20px;
+}
+/* line 167, ../sass/application.scss */
+#thanks img {
+  float: left;
+  margin: 10px 50px;
+}
+/* line 171, ../sass/application.scss */
+#thanks div {
+  float: left;
+  margin: 110px 50px;
+}
+/* line 175, ../sass/application.scss */
+#thanks div h3 {
+  line-height: 25px;
+}
+/* line 178, ../sass/application.scss */
+#thanks div a {
+  margin-top: 20px;
+}
+
+/* line 185, ../sass/application.scss */
 #error-404 {
   background: url("../img/intro-background.png");
 }
-/* line 151, ../sass/application.scss */
+/* line 188, ../sass/application.scss */
 #error-404 img {
   display: block;
   margin: 0 auto;
 }
 
-/* line 159, ../sass/application.scss */
+/* line 196, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 163, ../sass/application.scss */
+/* line 200, ../sass/application.scss */
 #account-detail #sync {
   float: left;
   margin-right: 10px;
 }
-/* line 167, ../sass/application.scss */
+/* line 204, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

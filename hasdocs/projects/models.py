@@ -88,12 +88,12 @@ class Project(models.Model):
     # Programming language this project is in
     language = models.ForeignKey(
         Language, blank=True, null=True,
-        help_text="Specify the programming language this repository uses."
+        help_text="Choose the programming language this repository uses."
     )
     # Documentation generator to be used for this project
     generator = models.ForeignKey(
         Generator, blank=True, null=True,
-        help_text="Specify the documentation generator for this repository."
+        help_text="Choose the documentation generator for this repository."
     )
     # Path to the requirements file
     requirements_path = models.CharField(

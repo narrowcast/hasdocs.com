@@ -4,7 +4,6 @@
 
   <article id="getting-started">
     <h1 class="page-header">Getting Started with HasDocs</h1>
-    <p>Last Updated: {{ pub_date }}</p>
     <h4>Table of Contents</h4>
     <ul class="toc">
       <li>
@@ -21,10 +20,11 @@
       </li>
     </ul>
     <div class="content">
+      <hr />
       <p>
         HasDocs is a polyglod cloud documentation platform. With HasDocs, you
-        can build documentations using generators such as Sphinx, Jekyll, and
-        Javadoc.
+        can easily import repositories from GitHub and build documentations
+        using generators such as Sphinx, Jekyll, and Javadoc.
       </p>
       <h2>
         <a id="step-1-sign-up">Step 1: Sign up</a>
@@ -38,27 +38,46 @@
         <a id="step-2-write-the-docs">Step 2: Write the docs</a>
       </h2>
       <p>
-        Write the documentation for your project. HasDocs supports
+        Write the documentation for your project. HasDocs currently supports
         <a href="http://sphinx-doc.org/">Sphinx</a>,
-        <a href="http://jekyllrb.com/">Jekyll</a>,
-        <a href="http://rdoc.sourceforge.net/">RDoc</a>, and
-        <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html" target="_blank">Javadoc</a>.
+        <a href="http://jekyllrb.com/">Jekyll</a>, and
+        <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html" target="_blank">Javadoc</a>
+        as documentation generators.
+      </p>
+      <p>
+        You can also bypass the generator altogether to write the html yourself.
       </p>
       <h2>
         <a id="step-3-import-a-repository">Step 3: Import a repository</a>
       </h2>
       <p>
         Sync your GitHub repositories by clicking the sync button on your account
-        page. Then you can install a
+        page. Then install a
         <a href="https://help.github.com/articles/post-receive-hooks">a post-receive hook</a>
-        to the repo by clicking the create hook button.
+        by clicking the create hook button.
+      </p>
+      <p>
+        Choose the programming language the repo is in and the generator to use
+        for building the documentation.
+      </p>
+      <p>
+        Then specify the location of documentation relative to the project
+        root. For Python projects, virtualenv will install the dependencies if
+        an optional requirements file is specified.
       </p>
       <h2>
         <a id="step-4-deploy-the-docs">Step 4: Deploy the docs</a>
       </h2>
       <p>
-        Deploy the docs by pushing to the GitHub. Your docs are built by the
-        appropriate documentation generator and hosted on HasDocs.
+        Deploy the docs by pushing to GitHub. Your docs are built by the
+        appropriate documentation generator and uploaded to HasDocs.
+      </p>
+      <p>
+        Documentations are updated every time you push to GitHub.
+      </p>
+      <p>
+        For private repositories, docs are visible only to people with
+        appropriate permissions.
       </p>
     </div>
   </article>

@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -135,10 +136,13 @@ def oauth_authenticate(request):
 def oauth_authenticated(request):
     """Callback to be called after authorization from GitHub."""
     logger.info('Received redirect from GitHub: %s' % request.GET['state'])
+    if not request.GET.get('state') and not request.GET.get('code'):
+        # Then this is not a proper redirect from GitHub
+        raise SuspiciousOperation
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
         logger.warning('Possible CSRF attack was attempted: %s' % request)
-        return HttpResponse('You may be a victim of CSRF attack.')
+        raise SuspiciousOperation
     data = dict(code=request.GET['code'], state=request.GET['state'])
     logger.info('Requesting access token from GitHub')
     token = github.get_access_token('POST', data=data)

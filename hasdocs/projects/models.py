@@ -86,13 +86,25 @@ class Project(models.Model):
     # URL of the git repository
     git_url = models.CharField(max_length=200, blank=True)
     # Programming language this project is in
-    language = models.ForeignKey(Language, blank=True, null=True)
+    language = models.ForeignKey(
+        Language, blank=True, null=True,
+        help_text="Specify the programming language this repository uses."
+    )
     # Documentation generator to be used for this project
-    generator = models.ForeignKey(Generator, blank=True, null=True)
+    generator = models.ForeignKey(
+        Generator, blank=True, null=True,
+        help_text="Specify the documentation generator for this repository."
+    )
     # Path to the requirements file
-    requirements_path = models.CharField(max_length=200, blank=True)
+    requirements_path = models.CharField(
+        max_length=200, blank=True,
+        help_text="Specify the path of the pip requirements file, if any."
+    )
     # Path to the directory containing Sphinx documentation
-    docs_path = models.CharField(max_length=200, default='docs')
+    docs_path = models.CharField(
+        max_length=200, default='docs',
+        help_text="Specify the path of documenations relative to project root."
+    )
     # Published date
     pub_date = models.DateTimeField(auto_now_add=True)
     # Last modified date

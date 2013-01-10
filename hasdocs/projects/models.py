@@ -126,8 +126,10 @@ class Project(models.Model):
     def from_kwargs(cls, **kwargs):
         """Creates and returns a new project from the given kwargs."""
         owner = BaseUser.objects.get(id=kwargs.pop('owner')['id'])
-        project, created = Project.objects.get_or_create(
-            owner=owner, id=kwargs['id'])
+        try:
+            project = Project.objects.get(owner=owner, id=kwargs['id'])
+        except Project.DoesNotExist:
+            project = Project(owner=owner, id=kwargs['id'])
         for key, value in project.__dict__.iteritems():
             if key in kwargs:
                 setattr(project, key, kwargs.get(key))

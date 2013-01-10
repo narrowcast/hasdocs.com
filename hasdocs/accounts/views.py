@@ -134,8 +134,7 @@ def oauth_authenticate(request):
 
 
 def oauth_authenticated(request):
-    """Callback to be called after authorization from GitHub."""
-    logger.info('Received redirect from GitHub: %s' % request.GET['state'])
+    """Callback to be called after authorization from GitHub."""    
     if not request.GET.get('state') and not request.GET.get('code'):
         # Then this is not a proper redirect from GitHub
         raise SuspiciousOperation
@@ -143,6 +142,7 @@ def oauth_authenticated(request):
         # Then this is possibily a forgery
         logger.warning('Possible CSRF attack was attempted: %s' % request)
         raise SuspiciousOperation
+    logger.info('Received redirect from GitHub: %s' % request.GET['state'])
     data = dict(code=request.GET['code'], state=request.GET['state'])
     logger.info('Requesting access token from GitHub')
     token = github.get_access_token('POST', data=data)

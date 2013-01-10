@@ -5,10 +5,18 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}HasDocs | Cloud Documentation Platform{% endblock %}</title>
-    <meta name="description" content="HasDocs is polyglot continuous documentation platform.">
-    <meta name="author" content="Narrowcast, Inc.">
-    <meta name="viewport" content="width=1024">
+    <title>{% block title %}HasDocs | Cloud Documentation Platform{% endblock %}</title>    
+    <meta name="author" content="Narrowcast, Inc." />
+    <meta name="viewport" content="width=1024" />
+    <meta property="og:site_name" content="HasDocs | Cloud Documentation Platform" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    {% block meta %}
+      <meta property="og:title" content="HasDocs | Cloud Documentation Platform" />
+      <meta property="og:type" content="website" />
+      <meta property="og:image" content="{% static "img/logo.png" %}" />
+      <meta property="og:description" content="HasDocs is a polyglod cloud documentation platform. With HasDocs, you can easily import repositories from GitHub and build documentations using generators such as Sphinx, Jekyll, and Javadoc." />
+      <meta name="description" content="HasDocs is a polyglod cloud documentation platform. With HasDocs, you can easily import repositories from GitHub and build documentations using generators such as Sphinx, Jekyll, and Javadoc." />
+    {% endblock %}
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/application.css" %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static "img/favicon.ico" %}">

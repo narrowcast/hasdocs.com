@@ -35,6 +35,9 @@ source $BIN_DIR/steps/enchant
 
 cd $BUILD_DIR
 
+# Set environment variable
+export HASDOCS=True
+
 # Check whether to use pip or disutils
 if [ -z $3 ]; then
   echo "No requirements.txt provided; assuming dist package."

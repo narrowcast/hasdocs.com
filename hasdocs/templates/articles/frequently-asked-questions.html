@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+  <article id="faq">
+    <h1 class="page-header">Frequently Asked Questions</h1>
+    <h2>Changing behavior for HasDocs</h2>
+    <p>
+      When HasDocs builds your project, HASDOCS environment  variable is
+      set to True. You can vary build behavior by this.
+      In Sphinx's conf.py for example:
+      <pre class="python">import os
+on_hasdocs = os.environ.get('HASDOCS', None) == 'True'
+
+if on_hasdocs:
+    html_theme = 'default'
+else:
+    html_theme = 'nature'</pre>
+    </p>    
+  </article>
+
+{% endblock %}

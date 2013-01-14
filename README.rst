@@ -1,4 +1,4 @@
 hasdocs.com
 ===========
 
-Polyglot documentation generation and hosting
+HasDocs is a polyglot continuous documentation platform.

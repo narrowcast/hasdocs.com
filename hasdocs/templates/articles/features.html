@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+  <article>
+    <h1 class="page-header">Features</h1>
+    <h2>
+      <a id="automation">Build automation</a>
+    </h2>
+    <p>
+      A post-commit hook is installed on GitHub repository. Documentations is
+      rebuilt whenever you push new code. There is no need to upload and sync
+      the docs.
+    </p>
+    <h2>
+      <a id="polyglotism">Polyglotism</a>
+    </h2>
+    <p>
+      Various documentation generators are supported. Currently it supports
+      Jekyll(HTML, Textile, Markdown, and Liquid), Sphinx(Python), and
+      Javadoc(Java). RDoc and Pelican support will be added soon.
+    </p>
+    <h2>
+      <a id="hosting">Cloud hosting</a>
+    </h2>
+    <p>
+      Built documentation is stored in Amazon S3. This means your documentation
+      is always available from anywhere on the web. It is also highly scalable,
+      reliable, and fast.
+    </p>
+    <h2>
+      <a id="private-docs">Private documentations</a>
+    </h2>
+    <p>
+      Limit access to the documentation at team or individual level. The
+      permissions are synced with GitHub for easier management.
+    </p>
+  </article>
+
+{% endblock %}

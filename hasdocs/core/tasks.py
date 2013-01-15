@@ -39,7 +39,8 @@ def fetch_source(build, project):
     logger.info('Fetching source for %s from GitHub' % project)
     if project.owner.is_organization():
         access_token = project.owner.organization.team_set.get(
-            name='Owners').members.all()[0].github_access_token
+            name='Owners'
+        ).members.exclude(github_access_token='')[0].github_access_token
     else:
         access_token = project.owner.user.github_access_token
     payload = {'access_token': access_token}

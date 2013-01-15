@@ -1,3 +1,6 @@
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+
 from django import template
 from django.core.urlresolvers import reverse_lazy
 

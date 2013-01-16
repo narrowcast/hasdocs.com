@@ -18,4 +18,3 @@ find . -name *.java > file.lst
 #May receive the third arguement to change what kind of methods will be showed. '-protected' is default.
 javadoc -d html @file.lst
 rm file.lst
-

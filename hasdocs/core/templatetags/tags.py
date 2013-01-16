@@ -6,6 +6,7 @@ from pygments.lexers import get_lexer_by_name, HtmlLexer, PythonLexer
 from django import template
 from django.core.urlresolvers import reverse_lazy
 from django.template import Node
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -37,3 +38,14 @@ def active(path, url):
         return 'active'
     else:
         return ''
+
+
+# usage: {{ text|pygmentize:'language' }}
+@register.filter
+def pygmentize(text, language):
+    """Pygmentizes the given block of text."""
+    try:
+        lexer = get_lexer_by_name(language)
+    except:
+        lexer = HtmlLexer()
+    return mark_safe(highlight(text, lexer, HtmlFormatter()))

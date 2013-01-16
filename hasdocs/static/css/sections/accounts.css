@@ -1,17 +1,31 @@
-/* line 5, ../../sass/sections/accounts.scss */
+/* line 6, ../../sass/sections/accounts.scss */
+#accounts {
+  width: 200px;
+  margin-right: 20px;
+}
+/* line 10, ../../sass/sections/accounts.scss */
 #accounts h4 {
   padding: 0 0 5px 10px;
   border-bottom: 5px solid #669933;
 }
-/* line 9, ../../sass/sections/accounts.scss */
+/* line 14, ../../sass/sections/accounts.scss */
 #accounts ul {
   margin-bottom: 20px;
 }
-/* line 12, ../../sass/sections/accounts.scss */
+/* line 17, ../../sass/sections/accounts.scss */
 #accounts ul li {
   margin: 10px;
 }
-/* line 15, ../../sass/sections/accounts.scss */
+/* line 20, ../../sass/sections/accounts.scss */
 #accounts ul li img {
   margin-right: 6px;
+}
+
+/* line 28, ../../sass/sections/accounts.scss */
+#repositories h2 {
+  margin-bottom: 20px;
+}
+/* line 31, ../../sass/sections/accounts.scss */
+#repositories #sync-form {
+  margin-bottom: 12px;
 }

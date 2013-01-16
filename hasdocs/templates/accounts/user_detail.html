@@ -59,7 +59,7 @@
         </ul>
       {% endif %}
     </div>
-    <div class="span9">
+    <div id="repositories" class="span9">
       {% if owner %}
         <a class="btn" id="settings" href="{% url profile_settings %}">
           <i class="icon-edit"></i> Edit Your Profile
@@ -67,12 +67,12 @@
       {% endif %}
       <h2>Repositories</h2>
       {% if owner %}
-        <form action="{% url sync_account_github %}" method="post">
+        <form id="sync-form" action="{% url sync_account_github %}" method="post">
           {% csrf_token %}
           {% if account.is_organization %}
             <input name="organization" type="hidden" value="{{ account.login }}">
           {% endif %}
-          <button class="btn" id="sync" type="submit">
+          <button class="btn" id="sync-button" type="submit">
             <i class="icon-refresh"></i> Sync Now            
           </button>
           <p class="sync-date">Last synchronized from GitHub:

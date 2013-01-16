@@ -1,7 +1,12 @@
+@import "compass/css3/images";
+
 @import "../globals/variables";
 
 // Accounts section
 #accounts {
+  width: 200px;
+  margin-right: 20px;
+    
   h4 {
     padding: 0 0 5px 10px;
     border-bottom: 5px solid $main-color;
@@ -16,5 +21,14 @@
         margin-right: 6px;
       }
     }
+  }
+}
+
+#repositories {
+  h2 {
+    margin-bottom: 20px;
+  }
+  #sync-form {
+    margin-bottom: 12px;
   }
 }

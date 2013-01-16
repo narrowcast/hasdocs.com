@@ -18,6 +18,30 @@
   background-color: #334d19;
 }
 
+/* line 19, ../sass/globals/buttons.scss */
+.btn-gray {
+  color: #f1f1f1;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0000ff), color-stop(100%, #0000cc));
+  background-image: -webkit-linear-gradient(top, #0000ff, #0000cc);
+  background-image: -moz-linear-gradient(top, #0000ff, #0000cc);
+  background-image: -o-linear-gradient(top, #0000ff, #0000cc);
+  background-image: linear-gradient(top, #0000ff, #0000cc);
+  background-color: gray;
+  border-color: #666666 #666666 #595959;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+/* line 27, ../sass/globals/buttons.scss */
+.btn-gray:hover {
+  color: white;
+  background-color: #666;
+}
+/* line 31, ../sass/globals/buttons.scss */
+.btn-gray:active {
+  color: white;
+  background-color: #595959;
+}
+
 /* line 4, ../sass/globals/icons.scss */
 .large-icon {
   width: 37px;
@@ -138,22 +162,36 @@ footer #copyright {
   color: #777777;
 }
 
-/* line 5, ../sass/sections/accounts.scss */
+/* line 6, ../sass/sections/accounts.scss */
+#accounts {
+  width: 200px;
+  margin-right: 20px;
+}
+/* line 10, ../sass/sections/accounts.scss */
 #accounts h4 {
   padding: 0 0 5px 10px;
   border-bottom: 5px solid #669933;
 }
-/* line 9, ../sass/sections/accounts.scss */
+/* line 14, ../sass/sections/accounts.scss */
 #accounts ul {
   margin-bottom: 20px;
 }
-/* line 12, ../sass/sections/accounts.scss */
+/* line 17, ../sass/sections/accounts.scss */
 #accounts ul li {
   margin: 10px;
 }
-/* line 15, ../sass/sections/accounts.scss */
+/* line 20, ../sass/sections/accounts.scss */
 #accounts ul li img {
   margin-right: 6px;
+}
+
+/* line 28, ../sass/sections/accounts.scss */
+#repositories h2 {
+  margin-bottom: 20px;
+}
+/* line 31, ../sass/sections/accounts.scss */
+#repositories #sync-form {
+  margin-bottom: 12px;
 }
 
 /* line 4, ../sass/sections/plans.scss */

@@ -418,7 +418,7 @@ article h2 {
   margin-top: 15px;
 }
 /* line 200, ../sass/application.scss */
-#account-detail #sync {
+#account-detail #sync-button {
   float: left;
   margin-right: 10px;
 }

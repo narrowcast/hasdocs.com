@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
 {% load tags %}
+
+{% block meta %}
+
+  <link rel="stylesheet" type="text/css" href="{% static "css/pygments.css" %}">
+
+{% endblock %}
 
 {% block container %}
 

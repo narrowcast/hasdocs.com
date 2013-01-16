@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block container %}
 
   <article id="faq">
@@ -9,13 +11,15 @@
       When HasDocs builds your project, HASDOCS environment  variable is
       set to True. You can vary build behavior by this.
       In Sphinx's conf.py for example:
-      <pre class="python">import os
-on_hasdocs = os.environ.get('HASDOCS', None) == 'True'
-
-if on_hasdocs:
-    html_theme = 'default'
-else:
-    html_theme = 'nature'</pre>
+      {% pygmentize 'python' %}
+        import os
+        on_hasdocs = os.environ.get('HASDOCS', None) == 'True'
+        
+        if on_hasdocs:
+            html_theme = 'default'
+        else:
+            html_theme = 'nature'
+      {% endpygmentize %}
     </p>    
   </article>
 

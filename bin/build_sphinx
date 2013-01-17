@@ -63,7 +63,7 @@ pip install --use-mirrors -r $REQUIREMENTS --exists-action=w
 pip install --use-mirrors sphinx
 
 # Install Sphinx extensions
-pip install --use-mirrors sphinx-httpdomain
+pip install --use-mirrors sphinxcontrib-httpdomain
 
 # Build html docs
 cd $DOCS_DIR

@@ -6,7 +6,7 @@
 
 {% block container %}
   
-  <h1 class="page-header">Contact</h1>
+  <h1 class="page-header">Contact HasDocs</h1>
   <form id="contact" action="{% url contact %}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form|crispy }}

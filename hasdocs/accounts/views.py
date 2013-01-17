@@ -134,7 +134,7 @@ def oauth_authenticate(request):
 
 
 def oauth_authenticated(request):
-    """Callback to be called after authorization from GitHub."""    
+    """Callback to be called after authorization from GitHub.""" 
     if not request.GET.get('state') and not request.GET.get('code'):
         # Then this is not a proper redirect from GitHub
         return HttpResponseForbidden()

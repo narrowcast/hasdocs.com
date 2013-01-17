@@ -25,7 +25,17 @@
         else:
             html_theme = 'nature'
       {% endpygmentize %}
-    </p>    
+    </p>
+    <h2>GitHub permission scope</h2>
+    <p>
+      We require <code>repo</code> scope at GitHub, which includes the read/write access
+      to public and private repos and organization.
+    </p>
+    <p>
+      We only perform read opertations, but GitHub does not currently have a
+      read-only scope. Please be assured that we do not write to your repo or
+      look at your code.
+    </p>
   </article>
 
 {% endblock %}

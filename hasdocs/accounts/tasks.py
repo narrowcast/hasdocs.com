@@ -19,12 +19,12 @@ def github_api_get(url, params=None):
     if not r.ok:
         logger.warning('From GitHub: %s %s' % (r.status_code, r.reason))
         raise IOError(r.status_code, r.reason)
-    data = r.json
+    data = r.json()
     while r.links.get('next'):
         # Then there is more data to fetch
         r = requests.get(r.links['next']['url'])
-        data += r.json
-    return r.json
+        data += r.json()
+    return data
 
 
 @celery.task

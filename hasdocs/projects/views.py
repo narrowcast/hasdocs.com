@@ -120,7 +120,7 @@ def import_from_heroku(request):
         r = requests.get('%s/apps/%s' % (
             settings.HEROKU_API_URL, request.POST['app_name']
         ), auth=('', api_key))
-        app = r.json
+        app = r.json()
         # Creates a new project based on the Heroku app
         language = Language.objects.get(
             name=app['buildpack_provided_description'])

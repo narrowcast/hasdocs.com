@@ -140,10 +140,14 @@ def oauth_authenticated(request):
     if not request.GET.get('state') and not request.GET.get('code'):
         # Then this is not a proper redirect from GitHub
         return HttpResponseForbidden()
+    if request.GET.get('error'):
+        # Then there was an error (e.g. the user denied access)
+        logger.error(request.GET['error'])
+        return HttpResponseRedirect(reverse('home'))
     if request.GET['state'] != request.session['state']:
         # Then this is possibily a forgery
         logger.warning('Possible CSRF attack was attempted: %s' % request)
-        return HttpResponseForbidden()
+        return HttpResponseForbidden()    
     logger.info('Received redirect from GitHub: %s' % request.GET['state'])
     data = dict(code=request.GET['code'], state=request.GET['state'])
     logger.info('Requesting access token from GitHub')

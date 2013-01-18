@@ -1,14 +1,24 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block container %}
   
   <div class="row">
     <div class="settings-menu span3">
-      <h3>{{ request.user }}</h3>
-      <ul class="nav nav-tabs nav-stacked">
-        <li class=""><a href="{% url profile_settings %}">Profile</a></li>
-        <li class=""><a href="{% url billing_settings %}">Billing</a></li>
-        <li class=""><a href="{% url connections_settings %}">Connections</a></li>
+      <h3>
+        <img src="{{ request.user.gravatar_url }}" width="24" class="img-rounded" /> {{ request.user }}
+      </h3>
+      <ul class="nav nav-stacked">
+        <li class="{% active request.path 'profile_settings' %}">
+          <a href="{% url profile_settings %}">Profile</a>
+        </li>
+        <li class="{% active request.path 'billing_settings' %}">
+          <a href="{% url billing_settings %}">Billing</a>
+        </li>
+        <li class="{% active request.path 'connections_settings' %}">
+          <a href="{% url connections_settings %}">Connections</a>
+        </li>
       </ul>
     </div>
     <div class="settings-content span9">

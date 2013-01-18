@@ -11,6 +11,7 @@
 @import "sections/footer";
 @import "sections/accounts";
 @import "sections/plans";
+@import "sections/settings";
 
 body {
   background: url("../img/background.png");
@@ -31,6 +32,14 @@ a {
   &:hover {
     color: $main-color-dark;
   }
+}
+
+// Forms
+form {
+  .form-actions {
+    background: none;
+    border-top-color: $border-color;
+  }  
 }
 
 // Home

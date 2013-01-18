@@ -1,0 +1,32 @@
+@import "compass/css3/images";
+
+@import "../globals/variables";
+
+// Settings menu panel
+.settings-menu {
+  width: 200px;
+  margin-right: 20px;
+  
+  h3 {
+    padding: 0 0 5px 10px;
+    margin-bottom: 0;
+    border-bottom: 5px solid $main-color;
+  }
+  .nav-stacked {
+    a {
+      font-weight: bold;
+      color: #aaa;
+      padding: 8px;
+      line-height: 20px;
+      
+      &:hover {
+        color: $main-color;
+        background: none;
+      }
+    }
+    .active a {
+      color: $main-color;
+      @include background(linear-gradient(top, #28475e, #020304));
+    }
+  }
+}

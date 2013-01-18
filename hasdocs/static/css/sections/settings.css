@@ -1,0 +1,32 @@
+/* line 6, ../../sass/sections/settings.scss */
+.settings-menu {
+  width: 200px;
+  margin-right: 20px;
+}
+/* line 10, ../../sass/sections/settings.scss */
+.settings-menu h3 {
+  padding: 0 0 5px 10px;
+  margin-bottom: 0;
+  border-bottom: 5px solid #669933;
+}
+/* line 16, ../../sass/sections/settings.scss */
+.settings-menu .nav-stacked a {
+  font-weight: bold;
+  color: #aaa;
+  padding: 8px;
+  line-height: 20px;
+}
+/* line 22, ../../sass/sections/settings.scss */
+.settings-menu .nav-stacked a:hover {
+  color: #669933;
+  background: none;
+}
+/* line 27, ../../sass/sections/settings.scss */
+.settings-menu .nav-stacked .active a {
+  color: #669933;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #28475e), color-stop(100%, #020304));
+  background: -webkit-linear-gradient(top, #28475e, #020304);
+  background: -moz-linear-gradient(top, #28475e, #020304);
+  background: -o-linear-gradient(top, #28475e, #020304);
+  background: linear-gradient(top, #28475e, #020304);
+}

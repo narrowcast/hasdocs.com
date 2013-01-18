@@ -1,0 +1,46 @@
+{% extends "accounts/base_settings.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Profile | HasDocs{% endblock %}
+
+{% block content %}
+  
+  <h1 class="page-header">Settings</h1>
+  <form method="post" action="{{ request.path }}" class="form-horizontal">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="form-actions">
+      <input class="btn btn-primary" type="submit" value="Save" />
+    </div>
+  </form>
+
+{% endblock %}
+
+{% block script %}
+  
+  <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
+  <script type="text/javascript">
+    // This identifies our website in the createToken call below
+    Stripe.setPublishableKey("pk_jsH8dK033n1JG9WKO7tdYhKfpXwdU");
+    
+    // Event handler for payment form submission
+    $(function() {
+      $("#payment-form").submit(function(event) {
+        // Disables the submit button to prevent repeated clicks
+        $('.submit-button').prop('disabled', true);
+
+        Stripe.createToken({
+          number: $('.card-number').val(),
+          cvc: $('.card-cvc').val(),
+          exp_month: $('.card-expiry-month').val(),
+          exp_year: $('.card-expiry-year').val()
+        }, stripeResponseHandler);
+    
+        // Prevent the form from submitting with the default action
+        return false;
+      });
+    });
+  </script>
+  
+{% endblock %}

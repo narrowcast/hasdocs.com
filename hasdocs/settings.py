@@ -297,6 +297,9 @@ GS_ACCESS_KEY_ID = os.environ['GS_ACCESS_KEY_ID']
 GS_SECRET_ACCESS_KEY = os.environ['GS_SECRET_ACCESS_KEY']
 GS_BUCKET_NAME = os.environ['GS_BUCKET_NAME']
 
+# Stripe
+STRIPE_API_KEY = os.environ['STRIPE_API_KEY']
+
 # Virtualenv
 VENV_NAME = 'venv'
 VENV_FILENAME = '.venv.tar.gz'

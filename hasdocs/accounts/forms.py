@@ -27,14 +27,3 @@ class ConnectionsUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('github_access_token', 'heroku_api_key')
-
-
-class OrganizationsUpdateForm(forms.ModelForm):
-    """Form for updating a user's organizations."""
-    class Meta:
-        model = User
-        #fields = ('organization_set', )
-
-    def __init__(self, *args, **kwargs):
-        super(OrganizationsUpdateForm, self).__init__(*args, **kwargs)
-        #self.fields['organization_set'].queryset = Organization.objects

@@ -18,7 +18,7 @@ from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
 
 from hasdocs.accounts.forms import BillingUpdateForm, ConnectionsUpdateForm, \
-    OrganizationsUpdateForm, ProfileUpdateForm
+    ProfileUpdateForm
 from hasdocs.accounts.models import Organization, User
 from hasdocs.accounts.tasks import github_api_get, sync_user_account_github, \
     sync_org_account_github
@@ -74,6 +74,7 @@ class SettingsUpdate(UpdateView):
         return self.request.user
 
     def form_valid(self, form):
+        """Displays a success message."""
         messages.success(self.request,
                          _("Thanks, your settings have been saved."))
         return super(SettingsUpdate, self).form_valid(form)
@@ -85,17 +86,18 @@ class ProfileUpdate(SettingsUpdate):
 
 
 class BillingUpdate(SettingsUpdate):
+    """View for updating billing settings."""
     form_class = BillingUpdateForm
+    template_name = 'accounts/billing_settings.html'
+    
+    def form_valid(self, form):        
+        print "BillingUpdate: form_valid"
+        return super(BillingUpdate, self).form_valid(form)
 
 
 class ConnectionsUpdate(SettingsUpdate):
     """View for updating connections settings."""
     form_class = ConnectionsUpdateForm
-
-
-class OrganizationsUpdate(SettingsUpdate):
-    """View for updating organizations settings."""
-    form_class = OrganizationsUpdateForm
 
 
 def create_user(access_token):

@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from hasdocs.accounts.views import BillingUpdate, ConnectionsUpdate, \
-    OrganizationsUpdate, ProfileUpdate, UserDetail
+    ProfileUpdate, UserDetail
 from hasdocs.core.views import ArticleDetail, Contact, Plans
 from hasdocs.projects.views import  ProjectBuildDetail, ProjectBuildList, \
     ProjectActivate, ProjectDelete, ProjectDetail, ProjectList, ProjectUpdate
@@ -36,9 +36,6 @@ urlpatterns = patterns(
     # Connections settings
     url(r'^settings/connections/$', ConnectionsUpdate.as_view(),
         name='connections_settings'),
-    # Organizations settings
-    url(r'^settings/organizations/$', OrganizationsUpdate.as_view(),
-        name='organizations_settings'),
 
     # OAuth
     url(r'^oauth2/$', 'hasdocs.accounts.views.oauth_authenticate',

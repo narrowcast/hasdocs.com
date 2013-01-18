@@ -146,7 +146,7 @@ def oauth_authenticated(request):
         logger.error(request.GET['error'])
         mail_admins(
             'Error while authenticating with GitHub',
-            request.GET['error'] + request, fail_silently=True
+            request.GET['error'], fail_silently=True
         )
         return HttpResponseRedirect(reverse('home'))
     if request.GET['state'] != request.session['state']:

@@ -6,9 +6,29 @@
   height: $large-icon-size;
   display: inline-block;
 }
+
+.small-icon {
+  width: $small-icon-size;
+  height: $small-icon-size;
+  display: inline-block;
+}
+
 .public-repo-icon {
   background: url("../img/public-repo-icon.png") no-repeat;
 }
+
 .private-repo-icon {
   background: url("../img/private-repo-icon.png") no-repeat;
+}
+
+.profile-icon {
+  background: url("../img/profile-icons.png") no-repeat;
+}
+
+.billing-icon {
+  background: url("../img/profile-icons.png") -18px 0 no-repeat;
+}
+
+.connections-icon {
+  background: url("../img/profile-icons.png") -36px 0 no-repeat;
 }

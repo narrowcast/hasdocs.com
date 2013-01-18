@@ -5,12 +5,34 @@
   display: inline-block;
 }
 
-/* line 9, ../../sass/globals/icons.scss */
+/* line 10, ../../sass/globals/icons.scss */
+.small-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+/* line 16, ../../sass/globals/icons.scss */
 .public-repo-icon {
   background: url("../img/public-repo-icon.png") no-repeat;
 }
 
-/* line 12, ../../sass/globals/icons.scss */
+/* line 20, ../../sass/globals/icons.scss */
 .private-repo-icon {
   background: url("../img/private-repo-icon.png") no-repeat;
+}
+
+/* line 24, ../../sass/globals/icons.scss */
+.profile-icon {
+  background: url("../img/profile-icons.png") no-repeat;
+}
+
+/* line 28, ../../sass/globals/icons.scss */
+.billing-icon {
+  background: url("../img/profile-icons.png") -18px 0 no-repeat;
+}
+
+/* line 32, ../../sass/globals/icons.scss */
+.connections-icon {
+  background: url("../img/profile-icons.png") -36px 0 no-repeat;
 }

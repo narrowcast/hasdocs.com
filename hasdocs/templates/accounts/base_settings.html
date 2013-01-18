@@ -11,13 +11,19 @@
       </h3>
       <ul class="nav nav-stacked">
         <li class="{% active request.path 'profile_settings' %}">
-          <a href="{% url profile_settings %}">Profile</a>
+          <a href="{% url profile_settings %}">
+            <span class="small-icon profile-icon"></span> Profile
+          </a>
         </li>
         <li class="{% active request.path 'billing_settings' %}">
-          <a href="{% url billing_settings %}">Billing</a>
+          <a href="{% url billing_settings %}">
+            <span class="small-icon billing-icon"></span> Billing
+          </a>
         </li>
         <li class="{% active request.path 'connections_settings' %}">
-          <a href="{% url connections_settings %}">Connections</a>
+          <a href="{% url connections_settings %}">
+            <span class="small-icon connections-icon"></span> Connections
+          </a>
         </li>
       </ul>
     </div>

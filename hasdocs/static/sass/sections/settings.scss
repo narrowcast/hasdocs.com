@@ -18,6 +18,7 @@
       color: #aaa;
       padding: 8px;
       line-height: 20px;
+      height: 26px;
       
       &:hover {
         color: $main-color;
@@ -27,6 +28,10 @@
     .active a {
       color: $main-color;
       @include background(linear-gradient(top, #28475e, #020304));
+    }
+    .small-icon {
+      position: relative;
+      top: 3px;
     }
   }
 }

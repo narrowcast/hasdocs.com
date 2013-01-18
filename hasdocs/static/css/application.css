@@ -49,14 +49,36 @@
   display: inline-block;
 }
 
-/* line 9, ../sass/globals/icons.scss */
+/* line 10, ../sass/globals/icons.scss */
+.small-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+/* line 16, ../sass/globals/icons.scss */
 .public-repo-icon {
   background: url("../img/public-repo-icon.png") no-repeat;
 }
 
-/* line 12, ../sass/globals/icons.scss */
+/* line 20, ../sass/globals/icons.scss */
 .private-repo-icon {
   background: url("../img/private-repo-icon.png") no-repeat;
+}
+
+/* line 24, ../sass/globals/icons.scss */
+.profile-icon {
+  background: url("../img/profile-icons.png") no-repeat;
+}
+
+/* line 28, ../sass/globals/icons.scss */
+.billing-icon {
+  background: url("../img/profile-icons.png") -18px 0 no-repeat;
+}
+
+/* line 32, ../sass/globals/icons.scss */
+.connections-icon {
+  background: url("../img/profile-icons.png") -36px 0 no-repeat;
 }
 
 /* line 6, ../sass/components/projects.scss */
@@ -221,13 +243,14 @@ footer #copyright {
   color: #aaa;
   padding: 8px;
   line-height: 20px;
+  height: 26px;
 }
-/* line 22, ../sass/sections/settings.scss */
+/* line 23, ../sass/sections/settings.scss */
 .settings-menu .nav-stacked a:hover {
   color: #669933;
   background: none;
 }
-/* line 27, ../sass/sections/settings.scss */
+/* line 28, ../sass/sections/settings.scss */
 .settings-menu .nav-stacked .active a {
   color: #669933;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #28475e), color-stop(100%, #020304));
@@ -235,6 +258,11 @@ footer #copyright {
   background: -moz-linear-gradient(top, #28475e, #020304);
   background: -o-linear-gradient(top, #28475e, #020304);
   background: linear-gradient(top, #28475e, #020304);
+}
+/* line 32, ../sass/sections/settings.scss */
+.settings-menu .nav-stacked .small-icon {
+  position: relative;
+  top: 3px;
 }
 
 /* line 16, ../sass/application.scss */

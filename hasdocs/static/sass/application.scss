@@ -148,6 +148,11 @@ article {
     font-size: 15px;
     line-height: 32px;
   }
+  p.meta {
+    font-size: 13px;
+    color: $muted-color;
+    margin-top: -10px;
+  }
 }
 
 // Contact

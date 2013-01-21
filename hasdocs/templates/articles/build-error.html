@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block container %}
 
   <article>
     <h1 class="page-header">Build error</h1>
+    <p class="meta">Last Updated: {% mod_date request.get_full_path %}</p>
     <ul>
       <li>
         <a href="#common-issues">Common issues</a>

@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block container %}
 
   <article id="getting-started">
     <h1 class="page-header">Getting Started with HasDocs</h1>
+    <p class="meta">Last Updated: {% mod_date request.get_full_path %}</p>
     <h4>Table of Contents</h4>
     <ul class="toc">
       <li>

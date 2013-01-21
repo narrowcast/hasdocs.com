@@ -1,7 +1,9 @@
+import os
+from time import ctime, gmtime, strftime
+
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name, HtmlLexer, PythonLexer
-
 
 from django import template
 from django.core.urlresolvers import reverse_lazy
@@ -38,6 +40,13 @@ def active(path, url):
         return 'active'
     else:
         return ''
+
+
+# usage: {{ mod_date request.get_full_path }}
+@register.simple_tag
+def mod_date(path):
+    path = os.path.join('hasdocs/templates/', '.'.join((path[1:-1], 'html')))
+    return strftime('%B %d, %Y', gmtime(os.stat(path).st_mtime))
 
 
 # usage: {{ text|pygmentize:'language' }}

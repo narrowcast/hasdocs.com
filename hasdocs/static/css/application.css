@@ -427,74 +427,80 @@ article h3 {
   font-size: 15px;
   line-height: 32px;
 }
+/* line 151, ../sass/application.scss */
+article p.meta {
+  font-size: 13px;
+  color: #777777;
+  margin-top: -10px;
+}
 
-/* line 155, ../sass/application.scss */
+/* line 160, ../sass/application.scss */
 #contact #div_id_name, #contact #div_id_email {
   float: left;
 }
-/* line 159, ../sass/application.scss */
+/* line 164, ../sass/application.scss */
 #contact #div_id_email label {
   width: 130px;
 }
-/* line 162, ../sass/application.scss */
+/* line 167, ../sass/application.scss */
 #contact #div_id_email div.controls {
   margin-left: 154px;
   margin-right: 30px;
 }
-/* line 167, ../sass/application.scss */
+/* line 172, ../sass/application.scss */
 #contact #id_subject, #contact #id_body {
   width: 580px;
 }
-/* line 170, ../sass/application.scss */
+/* line 175, ../sass/application.scss */
 #contact div.form-actions {
   background: none;
   border-top-color: #d4d4d4;
 }
 
-/* line 177, ../sass/application.scss */
+/* line 182, ../sass/application.scss */
 #thanks {
   margin-top: 20px;
 }
-/* line 180, ../sass/application.scss */
+/* line 185, ../sass/application.scss */
 #thanks img {
   float: left;
   margin: 10px 50px;
 }
-/* line 184, ../sass/application.scss */
+/* line 189, ../sass/application.scss */
 #thanks div {
   float: left;
   margin: 110px 50px;
 }
-/* line 188, ../sass/application.scss */
+/* line 193, ../sass/application.scss */
 #thanks div h3 {
   line-height: 25px;
 }
-/* line 191, ../sass/application.scss */
+/* line 196, ../sass/application.scss */
 #thanks div a {
   margin-top: 20px;
 }
 
-/* line 198, ../sass/application.scss */
+/* line 203, ../sass/application.scss */
 #error-404 {
   background: url("../img/intro-background.png");
 }
-/* line 201, ../sass/application.scss */
+/* line 206, ../sass/application.scss */
 #error-404 img {
   display: block;
   margin: 0 auto;
 }
 
-/* line 209, ../sass/application.scss */
+/* line 214, ../sass/application.scss */
 #account-detail #settings {
   float: right;
   margin-top: 15px;
 }
-/* line 213, ../sass/application.scss */
+/* line 218, ../sass/application.scss */
 #account-detail #sync-button {
   float: left;
   margin-right: 10px;
 }
-/* line 217, ../sass/application.scss */
+/* line 222, ../sass/application.scss */
 #account-detail p.sync-date {
   font-size: 12px;
   line-height: 30px;

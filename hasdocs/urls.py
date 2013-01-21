@@ -77,6 +77,9 @@ urlpatterns = patterns(
     # Heroku http deploy hook
     url(r'^post-receive/heroku/$', 'hasdocs.core.views.post_receive_heroku',
         name='heroku_hook'),
+    # Restart build
+    url(r'^(?P<username>[\w-]+)/(?P<project>[\w.-]+)/builds/restart/$',
+        'hasdocs.core.views.restart_build', name='restart_build'),
 
     # Sync user's repositories with GitHub
     url(r'^sync/github/$', 'hasdocs.accounts.views.sync_account_github',

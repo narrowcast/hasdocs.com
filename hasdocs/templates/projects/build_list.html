@@ -21,5 +21,9 @@
       </tr>
     {% endfor %}
   </table>
+  <form action="{% url restart_build owner project %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary btn-green">Restart Build</button>
+  </form>
   
 {% endblock %}

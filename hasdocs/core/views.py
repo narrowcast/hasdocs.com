@@ -8,7 +8,7 @@ from storages.backends.s3boto import S3BotoStorage
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import mail_managers
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, TemplateDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -82,6 +82,17 @@ def serve_static_cname(request, path):
     project = domain.project
     path = '%s/%s/%s' % (project.owner, project.name, path)
     return serve(request, path)
+
+
+def restart_build(request, username, project):
+    """Restarts build for the given project."""
+    logger.info('Restarting build for %s/%s' % (username, project))
+    if request.method == 'POST':
+        project = Project.objects.get(owner__login=username, name=project)
+        update_docs(project)
+        return HttpResponseRedirect('..')
+    else:
+        raise Http404
 
 
 @csrf_exempt

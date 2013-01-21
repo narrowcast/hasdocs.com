@@ -19,8 +19,27 @@
       <a id="common-issues">Common issues</a>
     </h2>
     <p>
-      Build can fail due to errors in source. Maybe a dependency is not
-      specified correctly.
+      Build can fail for many reasons. The following are the most common cases
+      for build failure.
+    </p>
+    </p>
+    <h3>Documentation or requirements path</h3>
+    <p>
+      For Sphinx projects, <code>docs</code> is the most common path for documentation.
+      For pip, optional <code>requirements.txt</code> is the common filename for
+      dependencies. Many Jekyll projects have the current directory <code>.</code>
+      as the docs path.
+    </p>    
+    <h3>Modules with C extensions</h3>
+    <p>
+      It is also possible that your project has some modules with C
+      extensions. Most libraries for web applications are available at build
+      time.
+    </p>
+    <p>
+      If a shared library need for a module, however, isn't available, please
+      contact us at <a href="mailto:support@hasdocs.com">support@hasdocs.com</a>
+      for help.
     </p>
     <h2>
       <a id="seeing-the-build-logs">Seeing the build logs</a>

@@ -47,10 +47,15 @@ class ProjectActivate(PermissionRequiredMixin, ProjectMixin, UpdateView):
         create_hook_github(self.request, self.object)
         self.object.active = True
         # Initiates first build
-        update_docs(self.object)
+        self.build = update_docs(self.object)
         logger.info('Created hook for %s/%s' % (
             self.kwargs['username'], self.kwargs['project']))
         return super(ProjectActivate, self).form_valid(form)
+
+    def get_success_url(self):
+        """Returns the url of the newly created build."""
+        return reverse('project_build_detail', args=[
+            self.kwargs['username'], self.kwargs['project'], self.build.pk])
 
 
 class ProjectDetail(PermissionRequiredMixin, ProjectMixin, DetailView):

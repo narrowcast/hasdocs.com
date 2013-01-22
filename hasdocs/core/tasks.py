@@ -37,6 +37,7 @@ def update_docs(project):
         build_docs.s(project),
         upload_docs.s(project)
     ).apply_async()
+    return build
 
 
 @celery.task

@@ -8,6 +8,7 @@ from storages.backends.s3boto import S3BotoStorage
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import mail_managers
+from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, TemplateDoesNotExist
@@ -89,8 +90,9 @@ def restart_build(request, username, project):
     logger.info('Restarting build for %s/%s' % (username, project))
     if request.method == 'POST':
         project = Project.objects.get(owner__login=username, name=project)
-        update_docs(project)
-        return HttpResponseRedirect('..')
+        build = update_docs(project)
+        return HttpResponseRedirect(reverse('project_build_detail', args=[
+            username, project, build.pk]))
     else:
         raise Http404
 

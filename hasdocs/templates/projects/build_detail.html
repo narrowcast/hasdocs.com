@@ -5,24 +5,26 @@
 {% block container %}
   
   <h1 class="page-header">Build {{ build.number }} for {{ build.project.owner}}/{{ build.project }}</h1>
-  <dl>
-    <dt>Build</dt>
-    <dd>{{ build.number }}</dd>
-    <dt>Status</dt>
-    <dd>{{ build.status }}</dd>
-    <dt>Finished</dt>
-    <dd>{{ build.finished_at|timesince }} ago</dd>
-    <dt>Duration</dt>
-    <dd>{{ build.duration }}</dd>
-  </dl>
-  <pre id="build-logs" class="pre-scrollable">{{ build.output }}</pre>
+  <div class="build">
+    <dl>
+      <dt>Build</dt>
+      <dd>{{ build.number }}</dd>
+      <dt>Status</dt>
+      <dd>{{ build.status }}</dd>
+      <dt>Finished</dt>
+      <dd>{{ build.finished_at|timesince }} ago</dd>
+      <dt>Duration</dt>
+      <dd>{{ build.duration }}</dd>
+    </dl>
+    <pre id="build-logs" class="pre-scrollable">{{ build.output }}</pre>
+  </div>
   
 {% endblock %}
 
 {% block script %}
   <script src="http://js.pusher.com/1.12/pusher.min.js" type="text/javascript"></script>
   <script type="text/javascript">
-    var pusher = new Pusher('2810636863645fc69bfb');    
+    var pusher = new Pusher('2810636863645fc69bfb');
     var channel = pusher.subscribe('build-{{ build.pk }}');
     channel.bind('log', function(data) {
       var logs = $("#build-logs");

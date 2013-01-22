@@ -22,9 +22,9 @@
 {% block script %}
   <script src="http://js.pusher.com/1.12/pusher.min.js" type="text/javascript"></script>
   <script type="text/javascript">
-    var pusher = new Pusher('2810636863645fc69bfb');
-    var channel = pusher.subscribe('test-channel');
-    channel.bind('my-event', function(data) {
+    var pusher = new Pusher('2810636863645fc69bfb');    
+    var channel = pusher.subscribe('build-{{ build.pk }}');
+    channel.bind('log', function(data) {
       $("#build-logs").append(data.message);
     });
   </script>

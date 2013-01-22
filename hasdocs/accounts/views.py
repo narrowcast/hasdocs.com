@@ -1,7 +1,7 @@
 import base64
 import logging
 import os
-from thrading import Thread
+from threading import Thread
 
 from rauth.service import OAuth2Service
 

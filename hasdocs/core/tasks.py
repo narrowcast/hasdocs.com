@@ -112,7 +112,8 @@ def build_docs(build, project):
             line = proc.stdout.readline()
             if line:
                 build.output += line
-                pusher['test-channel'].trigger('my-event', {'message': line})
+                channel = 'build-%s' % build.pk
+                pusher[channel].trigger('log', {'message': line})
         build.save()
         logger.info('Built docs for %s/%s' % (project.owner, project.name))
         return build

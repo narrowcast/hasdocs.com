@@ -9,10 +9,15 @@ else:
     TEMPLATE_DEBUG = False
 
 ADMINS = (
-    ('Chee-Hyung Yoon', 'yoonchee@gmail.com'),
+    ('Chee-Hyung Yoon', 'yoon@virect.com'),
 )
 
-MANAGERS = ADMINS
+MANAGERS = (
+    ('Chee-Hyung Yoon', 'yoon@virect.com'),
+    ('Dongyoon Kim', 'kim@virect.com'),
+    ('Naezin Hyeon', 'hyeon@virect.com'),
+    ('Hyunhee Yoon', 'hyunhee@virect.com'),
+)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 

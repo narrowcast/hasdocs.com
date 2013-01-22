@@ -300,6 +300,11 @@ GS_BUCKET_NAME = os.environ['GS_BUCKET_NAME']
 # Stripe
 STRIPE_API_KEY = os.environ['STRIPE_API_KEY']
 
+# Pusher
+PUSHER_APP_ID = os.environ['PUSHER_APP_ID']
+PUSHER_API_KEY = os.environ['PUSHER_API_KEY']
+PUSHER_API_SECRET = os.environ['PUSHER_API_SECRET']
+
 # Virtualenv
 VENV_NAME = 'venv'
 VENV_FILENAME = '.venv.tar.gz'

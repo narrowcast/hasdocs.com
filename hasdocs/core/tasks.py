@@ -4,6 +4,7 @@ import subprocess
 import tarfile
 
 import celery
+import pusher
 import requests
 from storages.backends.s3boto import S3BotoStorage
 
@@ -18,6 +19,11 @@ logger = celery.utils.log.get_task_logger(__name__)
 docs_storage = S3BotoStorage(
     bucket=settings.AWS_DOCS_BUCKET_NAME, acl='private',
     reduced_redundancy=True, secure_urls=False
+)
+
+pusher = pusher.Pusher(
+    app_id=settings.PUSHER_APP_ID,
+    key=settings.PUSHER_API_KEY, secret=settings.PUSHER_API_SECRET
 )
 
 
@@ -98,7 +104,15 @@ def build_docs(build, project):
     elif project.generator.name == 'Jekyll':
         args += ['bin/build_jekyll', build.path, project.docs_path]
     try:
-        build.output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(
+            args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            universal_newlines=True)
+        # Poll until the process terminates
+        while proc.poll() is None:
+            line = proc.stdout.readline()
+            if line:
+                build.output += line
+                pusher['test-channel'].trigger('my-event', {'message': line})
         build.save()
         logger.info('Built docs for %s/%s' % (project.owner, project.name))
         return build

@@ -25,7 +25,9 @@
     var pusher = new Pusher('2810636863645fc69bfb');    
     var channel = pusher.subscribe('build-{{ build.pk }}');
     channel.bind('log', function(data) {
-      $("#build-logs").append(data.message);
+      var logs = $("#build-logs");
+      logs.append(data.message);
+      logs[0].scrollTop = logs[0].scrollHeight;
     });
   </script>
 {% endblock %}

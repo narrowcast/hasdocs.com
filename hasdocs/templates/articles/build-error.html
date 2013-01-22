@@ -40,15 +40,15 @@
       time.
     </p>
     <p>
-      If a shared library need for a module, however, isn't available, please
+      If a shared library required for a module, however, isn't available, please
       contact us at <a href="mailto:support@hasdocs.com">support@hasdocs.com</a>
       for help.
     </p>
     <h3>Absolute binary path</h3>
     <p>
-      If you specify an absolute path (/User/foo/bin/sphinx-build, for example) for
-      a binary file in Makefile or other scripts, build may fail after failing to
-      locate the binary on the build system.
+      If you specify an absolute path such as <code>/User/foo/bin/sphinx-build</code>
+      for a binary file in <code>Makefile</code> or other scripts, build may fail
+      after failing to locate the binary on the build system.
     </p>
     <h2>
       <a id="seeing-the-build-logs">Seeing the build logs</a>
@@ -84,7 +84,7 @@
     <h3>Javadoc</h3>
     <p>
       Java docs are built by running
-      <code>find . -name *.java > file.lst && javadoc -d html @file.lst</code>.
+      <code>find . -name '*.java' > file.lst && javadoc -d html @file.lst</code>.
     </p>
     <hr />
     <p>

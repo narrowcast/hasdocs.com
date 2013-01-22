@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+from threading import Thread
 
 from rauth.service import OAuth2Service
 
@@ -8,7 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.core.mail import mail_admins
+from django.core.mail import mail_admins, mail_managers
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, \
     HttpResponseRedirect, HttpResponseForbidden
@@ -110,6 +111,10 @@ def create_user(access_token):
     user = User.from_kwargs(github_access_token=access_token, **data)
     # Authenticate and sign in the user
     user = authenticate(access_token=access_token)
+    logger.info('Created a new user %s.' % user)
+    subject = 'New user %s' % user
+    message = 'http://www.hasdocs.com/%s\nhttps://github.com/%s' % (user, user)
+    Thread(target=mail_managers, args=(subject, message)).start()
     return user
 
 

@@ -9,10 +9,15 @@ else:
     TEMPLATE_DEBUG = False
 
 ADMINS = (
-    ('Chee-Hyung Yoon', 'yoonchee@gmail.com'),
+    ('Chee-Hyung Yoon', 'yoon@virect.com'),
 )
 
-MANAGERS = ADMINS
+MANAGERS = (
+    ('Chee-Hyung Yoon', 'yoon@virect.com'),
+    ('Dongyoon Kim', 'kim@virect.com'),
+    ('Naezin Hyeon', 'hyeon@virect.com'),
+    ('Hyunhee Yoon', 'hyunhee@virect.com'),
+)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
@@ -299,6 +304,11 @@ GS_BUCKET_NAME = os.environ['GS_BUCKET_NAME']
 
 # Stripe
 STRIPE_API_KEY = os.environ['STRIPE_API_KEY']
+
+# Pusher
+PUSHER_APP_ID = os.environ['PUSHER_APP_ID']
+PUSHER_API_KEY = os.environ['PUSHER_API_KEY']
+PUSHER_API_SECRET = os.environ['PUSHER_API_SECRET']
 
 # Virtualenv
 VENV_NAME = 'venv'

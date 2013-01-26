@@ -133,6 +133,9 @@ class Project(models.Model):
         for key, value in project.__dict__.iteritems():
             if key in kwargs:
                 setattr(project, key, kwargs.get(key))
+        # TODO: Quick hack to handle cases where description is None
+        if not project.description:
+            project.description = ''
         # Sets project language
         try:
             language = Language.objects.get(name=kwargs['language'])

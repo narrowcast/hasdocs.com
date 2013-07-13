@@ -38,8 +38,17 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    <link rel="stylesheet" href="{% static "css/gh-fork-ribbon.css" %}" />
+    <!--[if IE]>
+      <link rel="stylesheet" href="{% static "css/gh-fork-ribbon.ie.css" %}" />
+    <![endif]-->
   </head>
   <body>
+    <div class="github-fork-ribbon-wrapper left">
+      <div class="github-fork-ribbon">
+        <a href="https://github.com/narrowcast/hasdocs.com">Fork me on GitHub</a>
+      </div>
+    </div>
     <div id="navbar" class="navbar navbar-inverse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">

@@ -14,9 +14,10 @@ ADMINS = (
 
 MANAGERS = (
     ('Chee-Hyung Yoon', 'yoon@virect.com'),
-    ('Dongyoon Kim', 'kim@virect.com'),
     ('Naezin Hyeon', 'hyeon@virect.com'),
     ('Jihwan Park', 'park@virect.com'),
+    ('Jeyeon Hwang', 'hwang@virect.com'),
+    ('Taenyon Kim', 'taenyon.kim@virect.com'),
 )
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))

@@ -15,7 +15,6 @@ ADMINS = (
 MANAGERS = (
     ('Chee-Hyung Yoon', 'yoon@virect.com'),
     ('Naezin Hyeon', 'hyeon@virect.com'),
-    ('Jihwan Park', 'park@virect.com'),
     ('Jeyeon Hwang', 'hwang@virect.com'),
     ('Taenyon Kim', 'taenyon.kim@virect.com'),
 )

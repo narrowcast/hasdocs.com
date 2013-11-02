@@ -1,4 +1,4 @@
-Django==1.4.3
+Django==1.4.9
 Jinja2==2.6
 Pygments==1.5
 South==0.7.6
@@ -19,7 +19,7 @@ django-storages==1.1.5
 docutils==0.9.1
 gevent==0.13.8
 greenlet==0.4.0
-gunicorn==0.17.2
+gunicorn==18.0
 kombu==2.5.3
 mock==1.0.1
 newrelic==1.8.0.13

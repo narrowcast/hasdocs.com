@@ -17,6 +17,7 @@ MANAGERS = (
     ('Naezin Hyeon', 'hyeon@virect.com'),
     ('Jeyeon Hwang', 'hwang@virect.com'),
     ('Taenyon Kim', 'taenyon.kim@virect.com'),
+    ('Hye Ryeon Lee', 'lee@virect.com'),
 )
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))

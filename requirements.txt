@@ -1,4 +1,4 @@
-Django==1.4.9
+Django==1.4.10
 Jinja2==2.6
 Pygments==1.5
 South==0.7.6

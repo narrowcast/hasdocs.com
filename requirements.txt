@@ -9,7 +9,7 @@ anyjson==0.3.3
 billiard==2.7.3.34
 boto==2.7.0
 celery==3.0.24
-distribute==0.6.32
+distribute==0.7.3
 dj-database-url==0.2.2
 django-celery==3.0.23
 django-crispy-forms==1.2.0
@@ -24,7 +24,7 @@ kombu==2.5.16
 mock==1.0.1
 newrelic==1.8.0.13
 psycopg2==2.4.5
-pusher==0.6
+pusher==0.8
 py-bcrypt==0.4
 pylibmc==1.2.3
 python-dateutil==2.2

@@ -14,7 +14,7 @@ django-storages==1.1.5
 docutils==0.9.1
 gevent==0.13.8
 greenlet==0.4.5
-gunicorn==19.2.0
+gunicorn==19.3.0
 Jinja2==2.6
 kombu==2.5.16
 mock==1.0.1
